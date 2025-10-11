@@ -11,6 +11,8 @@ import {
   Plane,
   Smartphone,
   Sun,
+  Trophy,
+  Tv,
   Wifi,
 } from "lucide-react";
 import Image from "next/image";
@@ -27,13 +29,13 @@ export default function WelcomePage() {
 
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
-    { name: "Data", icon: Wifi, link: "#" },
-    { name: "Electricity", icon: Lightbulb, link: "#" },
-    { name: "Flight", icon: Plane, tag: "5% off", link: "#" },
-    { name: "Internet", icon: Wifi, link: "#" },
-    { name: "E-Sim", icon: CardSim, link: "#" },
-    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "#" },
-    { name: "Transport", icon: Bus, link: "#" },
+    { name: "Data", icon: Wifi, link: "/app/payments/data" },
+    { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
+    { name: "Flight", icon: Plane, tag: "5% off", link: "/app/payments/" },
+    { name: "Cable/TV", icon: Tv, link: "/app/payments/data" },
+    { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
+    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "/app/payments/" },
+    { name: "Transport", icon: Bus, link: "/app/payments/" },
     { name: "More", icon: LayoutDashboard, link: "#" },
   ];
 

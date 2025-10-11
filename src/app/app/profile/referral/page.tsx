@@ -167,7 +167,7 @@ export default function ReferralPage() {
       <AnimatePresence>
         {showShareModal && (
           <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end justify-center z-[99]"
+            className="fixed inset-0 bg-black/40 w-full max-w-3xl mx-auto backdrop-blur-sm flex items-end justify-center z-[99]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -277,7 +277,7 @@ export default function ReferralPage() {
               exit={{ y: 300 }}
               transition={{ type: "spring", damping: 20, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full bg-white rounded-t-3xl p-6 shadow-lg"
+              className="w-full max-w-3xl mx-auto bg-white rounded-t-3xl p-6 shadow-lg"
             >
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-gray-800">

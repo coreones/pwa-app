@@ -6,7 +6,7 @@ import PaymentFlow from "../components/PaymentFlow";
 export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-white">
-      <PaymentFlow type={"airtime"} />
+      <PaymentFlow type={"data"} />
     </div>
   );
 }
