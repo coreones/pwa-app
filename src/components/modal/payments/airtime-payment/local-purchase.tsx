@@ -1,9 +1,10 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
 export default function LocalPurchase() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
+  const [saveBebeficiary, setSaveBeneficiary] = useState(false);
 
   const handleNext = () => {
     setStep((prevStep) => prevStep + 1);
@@ -13,6 +14,9 @@ export default function LocalPurchase() {
     setStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
   };
 
+  const handleSaveBeneficiary = () => {
+    setSaveBeneficiary(!saveBebeficiary);
+  };
   const dropdownAmount = [
     { value: 100, label: "₦100" },
     { value: 200, label: "₦200" },
@@ -20,6 +24,13 @@ export default function LocalPurchase() {
     { value: 1000, label: "₦1000" },
     { value: 2000, label: "₦2000" },
     { value: 5000, label: "₦5000" },
+  ];
+
+  const purchaceData = [
+    { title: "Product name", value: "Airtime" },
+    { title: "Service Provider", value: "Airtel" },
+    { title: "Phone Number", value: "08012345678" },
+    { title: "Amount", value: "₦1200" },
   ];
 
   const renderstep = () => {
@@ -69,24 +80,76 @@ export default function LocalPurchase() {
               </div>
               <div className="flex items-center w-full mt-10  border-b-2 border-primary/40 pb-2 p-2">
                 <span className="text-2xl font-black">₦</span>
-                 <input
+                <input
                   type="text"
                   name=""
                   id=""
                   placeholder="100"
                   className="w-full text-2xl font-semibold pl-10 outline-none"
                 />
-                <button type="button" className=" bg-alternate px-8 hover:bg-alternate/70 py-2 text-lg text-white rounded-2xl">
+                <button
+                  onClick={handleNext}
+                  type="button"
+                  className=" bg-alternate px-8 hover:bg-alternate/70 py-2 text-lg text-white rounded-2xl"
+                >
                   Pay
                 </button>
               </div>
             </div>
 
             <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
-                <h1 className=" text-xl font-semibold text-black/70 ">Save as Beneficiary</h1>
-                <div className={`" w-20 border-2 border-primary rounded-full  flex `}>
+              <h1 className=" text-xl font-semibold text-black/70 ">
+                Save as Beneficiary
+              </h1>
+              <div
+                className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${
+                  saveBebeficiary ? "justify-end " : "justify-start"
+                } `}
+              >
+                <div
+                  onClick={handleSaveBeneficiary}
+                  className={`" w-8 h-8 rounded-full   ${
+                    saveBebeficiary
+                      ? "translate-x-0 bg-primary"
+                      : "translate-x-[-2px] bg-gray-500"
+                  }  transition-all duration-500 cursor-pointer `}
+                ></div>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="w-full absolute top-0 left-0 min-h-full bg-black/30 flex pb-20 items-end ">
+            <div className=" w-full bg-white rounded-t-[60px] pb-20">
+              <div className="w-full h-auto relative p-3 mx-auto  max-w-xl  ">
+                <button
+                  onClick={handleBack}
+                  className="text-gray-500 hover:text-red-500 cursor-pointer"
+                >
+                  <X size={30} className="absolute top-5 left-5 " />
+                </button>
+
+                <div className="flex w-fit mx-auto items-end py-10">
+                  <span className="text-2xl font-bold text-primary ">₦</span>
+                  <span className="text-4xl font-bold text-primary">1200</span>
+                </div>
+
+                <div className="flex flex-col   bg-alternate/10 rounded-2xl">
+                  {purchaceData.map((item, index) => (
+                    <div key={index} className="flex hover:bg-white/100 justify-between px-6 py-2">
+                      <span className="text-lg font-semibold text-black/70">
+                        {item.title}
+                      </span>
+                      <span className="text-lg font-bold ">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="w-full flex justify-center ">
 
                 </div>
+              </div>
             </div>
           </div>
         );
