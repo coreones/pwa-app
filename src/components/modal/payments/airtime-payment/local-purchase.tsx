@@ -120,14 +120,14 @@ export default function LocalPurchase() {
         );
       case 2:
         return (
-          <div className="w-full absolute top-0 left-0 min-h-full bg-black/30 flex pb-20 items-end ">
-            <div className=" w-full bg-white rounded-t-[60px] pb-20">
-              <div className="w-full h-auto relative p-3 mx-auto  max-w-xl  ">
+          <div className="w-full absolute top-0 left-0 min-h-full bg-black/30 flex pb-5 items-end ">
+            <div className=" w-full bg-white relative rounded-t-[60px] pb-20">
+              <div className="w-full h-auto  p-3 mx-auto  max-w-xl  ">
                 <button
                   onClick={handleBack}
                   className="text-gray-500 hover:text-red-500 cursor-pointer"
                 >
-                  <X size={30} className="absolute top-5 left-5 " />
+                  <X size={30} className="absolute top-8 left-8 " />
                 </button>
 
                 <div className="flex w-fit mx-auto items-end py-10">
@@ -137,7 +137,10 @@ export default function LocalPurchase() {
 
                 <div className="flex flex-col   bg-alternate/10 rounded-2xl">
                   {purchaceData.map((item, index) => (
-                    <div key={index} className="flex hover:bg-white/100 justify-between px-6 py-2">
+                    <div
+                      key={index}
+                      className="flex  justify-between px-6 py-2"
+                    >
                       <span className="text-lg font-semibold text-black/70">
                         {item.title}
                       </span>
@@ -146,8 +149,13 @@ export default function LocalPurchase() {
                   ))}
                 </div>
 
-                <div className="w-full flex justify-center ">
-
+                <div className="w-full flex justify-center  pt-10">
+                  <button
+                    onClick={handleNext}
+                    className="w-full max-w-sm py-4 bg-primary/80 rounded-2xl text-2xl text-white font-black "
+                  >
+                    Pay
+                  </button>
                 </div>
               </div>
             </div>
