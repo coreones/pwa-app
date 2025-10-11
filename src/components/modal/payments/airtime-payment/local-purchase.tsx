@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { OTPKeypad } from "../../keypad";
 
 export default function LocalPurchase() {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const [saveBebeficiary, setSaveBeneficiary] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [toggleDropdown, setToggleDropdown] = useState(false);
