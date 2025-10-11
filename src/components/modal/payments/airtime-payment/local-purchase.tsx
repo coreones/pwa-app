@@ -1,10 +1,17 @@
 import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
+import { OTPKeypad } from "../../keypad";
 
 export default function LocalPurchase() {
   const [step, setStep] = useState(2);
   const [saveBebeficiary, setSaveBeneficiary] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
+
+  const handleToggleDropdown = () => {
+    setToggleDropdown(!toggleDropdown);
+  };
 
   const handleNext = () => {
     setStep((prevStep) => prevStep + 1);
@@ -33,15 +40,23 @@ export default function LocalPurchase() {
     { title: "Amount", value: "₦1200" },
   ];
 
+  const serviceProviders = [
+    { value: "airtel", name: "Airtel", imgSrc: "/svg/x.svg" },
+    { value: "mtn", name: "MTN", imgSrc: "/svg/x.svg" },
+    { value: "glo", name: "Glo", imgSrc: "/svg/x.svg" },
+    { value: "9mobile", name: "9mobile", imgSrc: "/svg/x.svg" },
+  ];
+
   const renderstep = () => {
     switch (step) {
       case 1:
         return (
           <div className="h-full w-full p-3 space-y-8 relative ">
-            <div className=" w-full flex flex-col gap-3 items-start">
+            <div className=" w-full flex flex-col gap-3 relative items-start">
               <h1 className="text-lg font-semibold">Select service Provider</h1>
-              <div className="w-full flex bg-white p-3 rounded-2xl items-center">
+              <div className="w-full flex  p-3 rounded-2xl items-center">
                 <button
+                  onClick={handleToggleDropdown}
                   type="button"
                   className="w-fit flex items-center gap-2 border-r-2 px-2 border-gray-300 cursor-pointer "
                 >
@@ -63,6 +78,29 @@ export default function LocalPurchase() {
                   className="w-full text-3xl font-semibold pl-5 outline-none"
                 />
               </div>
+
+              {toggleDropdown && (
+                <div className=" w-full max-w-xs absolute top-full rounded-2xl p-4 bg-[#21A29D] left-0">
+                  
+                  {serviceProviders.map((item, index) => (
+                    <div
+                    onClick={handleToggleDropdown}
+                      key={index}
+                      className="w-full  p-3 rounded-2xl flex items-center gap-5 hover:bg-alternate/50 cursor-pointer"
+                    >
+                      <div className="w-12 h-12 rounded-full flex flex-none relative">
+                        <Image
+                          src={item.imgSrc}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="text-lg font-semibold">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className=" w-full flex flex-col gap-3  bg-white p-3 rounded-2xl items-start">
@@ -120,7 +158,7 @@ export default function LocalPurchase() {
         );
       case 2:
         return (
-          <div className="w-full absolute top-0 left-0 min-h-full bg-black/30 flex pb-5 items-end ">
+          <div className="w-full absolute top-0 left-0 min-h-full bg-black/30 z-0 flex items-end ">
             <div className=" w-full bg-white relative rounded-t-[60px] pb-20">
               <div className="w-full h-auto  p-3 mx-auto  max-w-xl  ">
                 <button
@@ -157,6 +195,21 @@ export default function LocalPurchase() {
                     Pay
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="w-full absolute top-0 left-0 min-h-full z-0 bg-black/30 flex items-end ">
+            <div className=" w-full bg-white relative z-10 rounded-t-[60px] pb-20">
+              <div className=" max-w-lg mx-auto w-full p-3">
+                <OTPKeypad
+                  otp={otp}
+                  setOtp={setOtp}
+                  headerText="Enter your pin"
+                  onclick={handleBack}
+                />
               </div>
             </div>
           </div>

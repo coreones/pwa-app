@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from "react";
+import { OTPKeypad } from "./keypad";
 
 interface ResetPasswordProps {
   setModal: Dispatch<SetStateAction<boolean>>;
@@ -10,43 +10,6 @@ interface ResetPasswordProps {
 export default function ResetBillPointPin({ setModal }: ResetPasswordProps) {
   const [otp, setOtp] = useState(["", "", "", ""]);
 
-  const handleChange = (index: number, value: string) => {
-    if (!/^[0-9]?$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
-    }
-  };
-
-  const handleInput = (num: number | string): void => {
-    if (num === "⌫") {
-      const lastFilledIndex = otp.lastIndexOf(
-        otp
-          .slice()
-          .reverse()
-          .find((d: string) => d !== "") ?? ""
-      );
-      if (lastFilledIndex !== -1) {
-        handleChange(lastFilledIndex, "");
-        const prevInput = document.getElementById(`otp-${lastFilledIndex - 1}`);
-        prevInput?.focus();
-      }
-    } else if (num !== "") {
-      const firstEmptyIndex = otp.findIndex((d: string) => d === "");
-      if (firstEmptyIndex !== -1) {
-        handleChange(firstEmptyIndex, num.toString());
-        const nextInput = document.getElementById(`otp-${firstEmptyIndex + 1}`);
-        nextInput?.focus();
-      }
-    }
-  };
-
-  const numPad = [1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"];
   return (
     <div className="min-h-screen absolute top-0 left-0 w-full bg-gray-50">
       <div className="w-full grid grid-cols-1 grid-rows-3 gap-10 h-screen max-w-3xl mx-auto ">
@@ -81,33 +44,9 @@ export default function ResetBillPointPin({ setModal }: ResetPasswordProps) {
           </div>
         </div>
 
-        {/* Form */}
         <div className="space-y-6 row-span-2 w-full max-w-sm mx-auto text-lg">
-          <div className="flex justify-between gap-2 mt-10">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                id={`otp-${index}`}
-                type="text"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                className="w-15 h-15 text-center border-3 text-primary border-[#21A29D] text-2xl font-semibold rounded-2xl tracking-widest  "
-              />
-            ))}
-          </div>
-
-          <div className="max-w-sm mx-auto grid grid-cols-3 gap-4 mt-10">
-            {numPad.map((num, index) => (
-              <button
-                key={index}
-                onClick={() => handleInput(num)}
-                className="w-full h-15 text-primary rounded-2xl flex items-center justify-center text-2xl font-semibold hover:bg-alternate/50 transition-colors"
-              >
-                {num}
-              </button>
-            ))}
-          </div>
+          <OTPKeypad otp={otp} setOtp={setOtp} />
+          
           <button
             type="button"
             disabled={otp.some((digit) => digit === "")}
