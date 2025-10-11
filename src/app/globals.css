@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #015E56;
+  --foreground: #FFFFFF;
+  --card: #0F7C77;
+  --text: #0A0C0B;
+}
+
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;  
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-nunito);
+  --font-mono: var(--font-nunito);
+}
+
+@theme {
+  --color-primary: #015E56;
+  --color-secondary: #FFFFFF;
+  --color-alternate: #0F7C77;
+  --color-text: #0A0C0B;
+
+}
+
+
+html, body {
+  -webkit-overflow-scrolling: touch; 
+  overflow: auto;
+}
+
+body {
+  background: whitesmoke;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer body {
+  .radio-custom {
+    @apply appearance-none w-6 h-6 border-4 border-primary rounded-full checked:bg-primary focus:outline-none focus:ring-3 focus:ring-primary/30 focus:ring-offset-3 cursor-pointer;
+  }
+}
+
+.active {
+  color: var(--color-primary)
+}
