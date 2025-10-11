@@ -1,122 +1,149 @@
-"use client"
+"use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
-export default function Login() {
+export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleBack = () => window.history.back();
 
-   const handleBack = () => {
-    window.history.back();
-  }
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="w-full grid grid-cols-1 grid-rows-3 gap-10 h-screen max-w-3xl mx-auto ">
-        {/* Header */}
-        <div className="row-span-1 mx-auto w-full bg-[#21A29D] p-5 rounded-b-[40px]">
-          <div className="mb-8 text-xl font-bold rext-white">
-            <button onClick={handleBack} className="hover:bg-alternate/20 p-2 rounded-full">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#21A29D]/10 to-white flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-lg bg-white rounded-2xl p-8 md:p-10"
+      >
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="mb-6 text-gray-500 hover:text-[#21A29D] flex items-center gap-2"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back
+        </button>
 
-          <div className="text-3xl mx-auto w-fit font-bold text-whte ">
-            Log in to
-          </div>
-          <div className="flex  mx-auto w-fit items-center gap-3">
-            <h1 className="text-3xl font-bold text-white">CoreOnes</h1>
-          </div>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
+            Welcome Back 👋
+          </h2>
+          <p className="text-gray-500 mt-2">
+            Log in to your BillNa account and continue managing your bills with ease.
+          </p>
         </div>
 
         {/* Form */}
-        <div className="space-y-6 row-span-2 w-full max-w-md mx-auto text-lg">
-          <div className="space-y-4">
-            <div>
-              <label className="block  font-medium text-gray-700 mb-2">
-                Email
-              </label>
+        <form className="space-y-5">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              className="w-full text-stone-800 placeholder:text-stone-200 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#21A29D] focus:border-transparent outline-none"
+            />
+          </div>
 
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <div className="relative">
               <input
-                type="text"
-                placeholder="Full Name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"
+                type={showPassword ? "text" : "password"}
+                placeholder="********"
+                className="w-full text-stone-800 placeholder:text-stone-200 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#21A29D] focus:border-transparent outline-none"
               />
-            </div>
-
-            <div>
-              <label className="block  font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"
-              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-5 0-9.27-3.11-11-7.5a11.866 11.866 0 013.09-4.59m3.64-2.44A9.993 9.993 0 0112 5c5 0 9.27 3.11 11 7.5a11.873 11.873 0 01-4.358 5.319M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 3l18 18M10.477 10.477A3 3 0 0114.12 14.12M9.88 9.88a3 3 0 104.24 4.24M3.98 8.223A10.05 10.05 0 0112 5c5 0 9.27 3.11 11 7.5a11.873 11.873 0 01-2.386 3.592M9.88 9.88L3 3"
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
 
-          <button className="w-full bg-[#21A29D] text-white font-semibold py-4 px-6 rounded-lg hover:bg-[#21A29D]/90 transition-colors">
+          {/* Forgot Password */}
+          <div className="flex justify-end">
+            <Link
+              href="/auth/forgot-password"
+              className="text-[#21A29D] text-sm font-medium hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          {/* Continue Button */}
+          <button
+            type="submit"
+            className="w-full bg-[#21A29D] text-white font-semibold py-4 px-6 rounded-lg hover:bg-[#1b8e89] transition-all"
+          >
             Continue
           </button>
+        </form>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center ">
-              <span className="px-2 bg-gray-50 text-gray-500">or</span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors">
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Continue with Google
-            </button>
-
-            <button className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-              </svg>
-              Continue with Apple
-            </button>
-          </div>
-
-          <p className=" text-center text-gray-500">
-            Dont have an account?{" "}
-            <Link href="/auth/signup" className="text-[#21A29D] underline">
+        {/* Footer */}
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p>
+            Don’t have an account?{" "}
+            <Link
+              href="/auth/signup"
+              className="text-[#21A29D] font-semibold hover:underline"
+            >
               Sign up
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

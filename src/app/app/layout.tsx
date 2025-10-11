@@ -1,80 +1,65 @@
 "use client";
 
-import "../globals.css";
 import {
   Headset,
   HomeIcon,
   Send,
   Settings,
-  User,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
-export default function RootLayout({
+export default function AppLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const pathname = usePathname();
 
-  const isActive = (linkPath: string) => {
-    return pathname === linkPath;
-  };
+  const isActive = (linkPath: string) => pathname === linkPath;
 
-  const navitems = [
-    {
-      icon: <HomeIcon size={24} />,
-      name: "Home",
-      link: "/app",
-    },
-    {
-      icon: <Send size={24} />,
-      name: "Referal",
-      link: "/app/profile/referal",
-    },
-    {
-      icon: <Headset size={24} />,
-      name: "Help",
-      link: "/app/profile/helpAndSupport",
-    },
-    {
-      icon: <Settings size={24} />,
-      name: "Settings",
-      link: "/app/profile",
-    },
+  const navItems = [
+    { icon: HomeIcon, name: "Home", link: "/app" },
+    { icon: Send, name: "Referral", link: "/app/profile/referal" },
+    { icon: Headset, name: "Help", link: "/app/profile/helpAndSupport" },
+    { icon: Settings, name: "Settings", link: "/app/profile" },
   ];
-  return (
-    <html lang="en">
-      <body className=" w-full max-w-3xl mx-auto relative">
-        <div className="h-full w-full overflow-y-scroll">{children}</div>
 
-        <div className="fixed max-w-3xl mx-auto bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-          <div className="w-full max-w-3xl mx-auto flex items-center justify-around py-4">
-            {navitems?.map((item, id) => (
-              <Link
-                key={id}
-                href={item.link}
-                className={`flex flex-col items-center  gap-1 ${
-                  isActive(item.link)
-                    ? "text-[#21A29D] scale-150 "
-                    : "text-gray-400"
+  return (
+    <div className="relative w-full max-w-3xl mx-auto flex flex-col min-h-screen bg-gray-50">
+      {/* Content */}
+      <main className="flex-1 overflow-y-auto">{children}</main>
+
+      {/* Mobile Nav */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-md rounded-3xl bg-white/90 backdrop-blur-lg border border-gray-200 shadow-md px-4 py-3 flex items-center justify-between">
+        {navItems.map((item, id) => {
+          const Icon = item.icon;
+          const active = isActive(item.link);
+          return (
+            <Link
+              key={id}
+              href={item.link}
+              className="flex-1 flex flex-col items-center justify-center gap-1 text-xs font-medium"
+            >
+              <motion.div
+                animate={{
+                  scale: active ? 1.2 : 1,
+                  y: active ? -4 : 0,
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                className={`flex flex-col items-center justify-center ${
+                  active ? "text-[#21A29D]" : "text-gray-400"
                 }`}
               >
-                  <div
-                    className={`${
-                      isActive(item.link) ? "scale-100 items-center flex flex-col  transition-all duration-1000 " : ""
-                    } w-fit `}
-                  >
-                    {item.icon}
-                  <span className="text-xs font-medium">{item.name}</span>
-                  </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </body>
-    </html>
+                <Icon size={22} strokeWidth={2} />
+                <span className="text-[11px]">{item.name}</span>
+              </motion.div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }

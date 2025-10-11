@@ -19,182 +19,150 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
 export default function WelcomePage() {
+  const [showBalance, setShowBalance] = useState<boolean>(true);
+
+  const handleShowBalance = () => {
+    setShowBalance(!showBalance)
+  }
+
   const items = [
+    { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
+    { name: "Data", icon: Wifi, link: "#" },
+    { name: "Electricity", icon: Lightbulb, link: "#" },
+    { name: "Flight", icon: Plane, tag: "5% off", link: "#" },
+    { name: "Internet", icon: Wifi, link: "#" },
+    { name: "E-Sim", icon: CardSim, link: "#" },
+    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "#" },
+    { name: "Transport", icon: Bus, link: "#" },
+    { name: "More", icon: LayoutDashboard, link: "#" },
+  ];
+
+  const slides = [
     {
-      name: "Airtime",
-      icon: <Smartphone className="text-primary sm:text-2xl" />,
-      tag: "",
-      link: "/app/payments/airtime",
+      bg: "bg-gradient-to-r from-[#21A29D] to-teal-600",
+      textColor: "text-white",
+      title: "Welcome back, Tali 👋",
+      desc: "Earn 5% cashback on your first flight booking.",
     },
     {
-      name: "Data",
-      icon: <Wifi className="text-primary sm:text-2xl" />,
-      tag: "",
+      bg: "bg-gradient-to-r from-amber-600 to-orange-500",
+      textColor: "text-white",
+      title: "Exclusive Deal ✈️",
+      desc: "Get flight discounts every Friday — limited time!",
     },
     {
-      name: "Electricity",
-      icon: <Lightbulb className="text-primary sm:text-2xl" />,
-      tag: "",
-    },
-    {
-      name: "Flight",
-      icon: <Plane className="text-primary sm:text-2xl" />,
-      tag: "5% off",
-    },
-    {
-      name: "Internet",
-      icon: <Wifi className="text-primary sm:text-2xl" />,
-      tag: "",
-    },
-    {
-      name: "E-Sim",
-      icon: <CardSim className="text-primary sm:text-2xl" />,
-      tag: "",
-    },
-    {
-      name: "Gift Card",
-      icon: <Gift className="text-primary sm:text-2xl" />,
-      tag: "Best rate",
-    },
-    {
-      name: "Transport",
-      icon: <Bus className="text-primary sm:text-2xl" />,
-      tag: "",
-    },
-    {
-      name: "More",
-      icon: <LayoutDashboard className="text-primary sm:text-2xl" />,
-      tag: "",
+      bg: "bg-gradient-to-r from-indigo-700 to-blue-600",
+      textColor: "text-white",
+      title: "Stay Connected 🌍",
+      desc: "Buy data or airtime instantly, 24/7 — no delays.",
     },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const slides = [
-    <div
-      key={1}
-      className="bg-black relative overflow-hidden flex-none text-white w-full rounded-2xl py-10 px-8 flex flex-col justify-start items-start gap-1.5"
-    >
-      <div className="absolute w-32 h-32 top-0 -right-5 rounded-full bg-gray-400/10"/>
-      <h2 className="text-3xl font-black text-white">Hello Tali!</h2>
-      <p className="w-[90%] font-normal text-xl text-gray-200">Welcome back, get 5% off on your first flight.</p>
-    </div>,
-    <div
-      key={2}
-      className="bg-amber-800 relative flex-none text-white w-full rounded-2xl py-10 px-8 flex flex-col justify-start items-start gap-1.5"
-    >
-      <div className="absolute w-32 h-32 top-0 -right-5 rounded-full bg-amber-400/10"/>
-      <h2 className="text-3xl font-black text-white">Hello Tali!</h2>
-      <p className="w-[90%] font-normal text-xl text-amber-200">Welcome back, get 5% off on your first flight.</p>
-    </div>,
-    <div
-      key={3}
-      className="bg-teal-800 relative flex-none text-white w-full rounded-2xl py-10 px-8 flex flex-col justify-start items-start gap-1.5"
-    >
-      <div className="absolute w-32 h-32 top-0 -right-5 rounded-full bg-teal-400/10"/>
-      <h2 className="text-3xl font-black text-white">Hello Tali!</h2>
-      <p className="w-[90%] font-normal text-xl text-teal-200">Welcome back, get 5% off on your first flight.</p>
-    </div>,
-  ];
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 5000);
-
+    const interval = setInterval(
+      () => setCurrentIndex((prev) => (prev + 1) % slides.length),
+      5000
+    );
     return () => clearInterval(interval);
   }, [slides.length]);
 
   return (
-    <div className="min-h-screen  bg-gray-50">
-      <div className="grid grid-cols-1 grid-rows-10  relative gap-10 h-screen w-full max-w-3xl mx-auto overflow-y-scroll">
-        {/* Header */}
-        <div className=" row-span-3 bg-[#21A29D] py-5  px-10 flex items-start justify-between flex-col rounded-b-[60px] relative">
-          <div className="flex w-full items-center gap-4">
-            <div className="w-16 h-16 relative rounded-full bg-gray-700 overflow-hidden flex-shrink-0">
-              <Image
-                src="/img/user.png"
-                alt="Profile"
-                fill
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-white text-xl font-semibold">Tali Nanzing</h2>
-              <p className="text-white text-sm">talinanzing111@gmail.com</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex flex-col w-full max-w-3xl mx-auto h-screen overflow-y-auto pb-28">
+        {/* HEADER */}
+        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-10 pb-8 relative shadow-sm">
+          {/* Profile Row */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
+                <Image src="/img/user.png" alt="Profile" fill className="object-cover" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-lg">Tali Nanzing</h2>
+                <p className="text-sm text-white/80">talinanzing111@gmail.com</p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-2 cursor-pointer rounded-full bg-white flex flex-none ">
-                <ChartNoAxesColumn size={20} color="black" />
+              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+                <ChartNoAxesColumn size={20} />
               </button>
-              <button className="p-2 cursor-pointer rounded-full bg-white flex-none flex items-center justify-center">
-                <Sun size={20} color="black" />
+              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+                <Sun size={20} />
               </button>
             </div>
           </div>
 
-          <div className="flex items-center w-full max-w-xl mx-auto justify-between pb-5">
-            <div className="flex items-center gap-3 ">
-              <div className="text-3xl font-black ">
-                <span>N</span>
-                <span>0.00</span>
-              </div>
-              <button className="cursor-pointer  ">
-                <Eye size={30} fill="black" />
+          {/* Balance */}
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3">
+              <h3 className="text-3xl font-bold tracking-tight">{showBalance ? "₦0.00" : "₦****"}</h3>
+              <button className="cursor-pointer" onClick={handleShowBalance}>
+                <Eye size={22} />
               </button>
             </div>
-            <button className="text-black py-2 px-8 rounded-2xl text-lg bg-white">
+            <button className="bg-white text-[#21A29D] font-medium py-2 px-5 rounded-2xl hover:bg-gray-50 transition">
               History
             </button>
           </div>
 
-          <div className="max-w-xl mx-auto w-full">
-            <button className="bg-white rounded-2xl text-black  py-2 px-6  ring-offset-2 font-black  cursor-pointer">
-              Add Money
+          {/* CTA */}
+          <div className="w-full text-center">
+            <button className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
+              + Add Money
             </button>
           </div>
         </div>
 
-        <div className=" row-span-7 p-6 max-w-xl mx-auto w-full overflow-y-scroll  space-y-5">
-          <div className="grid grid-cols-3 gap-2 sm:gap-4">
-            {items.map((item, index) => (
-              <Link
-                href={item.link || "#"}
-                key={index}
-                className="flex relative justify-between h-full items-center flex-col p-2 sm:p-4 space-y-4 bg-white rounded-2xl"
-              >
-                <div className="bg-alternate/10 rounded-full p-2 sm:p-4 w-fit">
-                  {item.icon}
-                </div>
-
-                <div className="sm:text-lg text-sm font-semibold text-black/80">
-                  {item.name}
-                </div>
-
-                {item.tag && (
-                  <div className="absolute z-10 top-0 right-0 bg-red-500 rounded-2xl px-2 py-1 text-xs text-white">
-                    {item.tag}
-                  </div>
-                )}
-              </Link>
-            ))}
+        {/* MAIN CONTENT */}
+        <div className="flex-1 px-6 py-8 space-y-8">
+          {/* Services Grid */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">Quick Actions</h3>
+            <div className="grid grid-cols-3 gap-3 sm:gap-5">
+              {items.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    href={item.link}
+                    key={idx}
+                    className="relative flex flex-col items-center justify-center p-3 sm:p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all"
+                  >
+                    <div className="bg-[#21A29D]/10 p-3 rounded-full mb-2">
+                      <Icon className="text-[#21A29D]" size={22} />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">{item.name}</span>
+                    {item.tag && (
+                      <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] px-2 py-[2px] rounded-full">
+                        {item.tag}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="w-full flex justify-center mb-20 overflow-hidden">
-            <div className="relative w-full ">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, x: 300 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -300 }}
-                  transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="w-full"
-                >
-                  {slides[currentIndex]}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+          {/* Promo Slider */}
+          <div className="overflow-hidden rounded-2xl shadow-md">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 100 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className={`p-6 ${slides[currentIndex].bg} ${slides[currentIndex].textColor}`}
+              >
+                <h2 className="text-2xl font-bold mb-2">
+                  {slides[currentIndex].title}
+                </h2>
+                <p className="text-sm opacity-90">
+                  {slides[currentIndex].desc}
+                </p>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
