@@ -12,7 +12,7 @@ export function MenuItem({
   onclick,
   type = "button",
   link = "#",
-  amount =" 0.00",
+  amount = "0.00",
 }: {
   icon: ReactNode;
   label: string;
@@ -23,103 +23,66 @@ export function MenuItem({
   link?: Url | string | undefined;
   amount?: number | string | undefined;
 }) {
-  return (
-    <>
-      {type === "button" && (
-        <button
-          onClick={onclick}
-          type="button"
-          className={` w-full  flex items-center cursor-pointer hover:bg-[#21A29D] pr-2 rounded-2xl transition-all duration-300 ${
-            showBorder ? "border-b border-gray-800" : ""
-          }`}
-        >
-          <div className="flex w-full justify-start text-start items-center gap-4 p-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-              {icon}
-            </div>
-            <span
-              className={`flex-1 ${
-                isRed ? "text-red-500" : "text-white"
-              } text-base`}
-            >
-              {label}
-            </span>
-          </div>
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      )}
-      {type === "link" && (
-        <Link
-          href={link}
-          className={` w-full  flex items-center cursor-pointer hover:bg-[#21A29D] pr-2 rounded-2xl transition-all duration-300 ${
-            showBorder ? "border-b border-gray-800" : ""
-          }`}
-        >
-          <div className="flex w-full justify-start text-start items-center gap-4 p-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-              {icon}
-            </div>
-            <span
-              className={`flex-1 ${
-                isRed ? "text-red-500" : "text-white"
-              } text-base`}
-            >
-              {label}
-            </span>
-          </div>
-          <svg
-            className="w-5 h-5 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </Link>
-      )}
-      {type === "data" && (
-        <Link
-          href={link}
-          className={` w-full  flex items-center cursor-pointer hover:bg-[#21A29D] pr-2 rounded-2xl transition-all duration-300 ${
-            showBorder ? "border-b border-gray-800" : ""
-          }`}
-        >
-          <div className="flex w-full justify-start text-start items-center gap-4 p-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-              {icon}
-            </div>
-            <span
-              className={`flex-col ${
-                isRed ? "text-red-500" : "text-white"
-              } text-base flex`}
-            >
-              <span className="font-bold">{label}</span>
-              <span className="text-sm">Total Amont</span>
-            </span>
-          </div>
+  const baseClasses =
+    "w-full flex items-center justify-between gap-3 p-3 transition-all duration-200 rounded-xl hover:bg-[#21A29D]/10";
+  const borderClass = showBorder ? "border-b border-stone-100" : "";
+  const labelClass = `flex-1 text-[15px] font-medium ${isRed ? "text-red-500" : "text-stone-700"
+    }`;
 
-          <span>{amount}</span>
-        </Link>
-      )}
-    </>
+  const iconWrapper =
+    "w-10 h-10 flex items-center justify-center rounded-full bg-[#21A29D]/10 text-[#21A29D] flex-shrink-0";
+
+  const Chevron = () => (
+    <svg
+      className="w-5 h-5 text-stone-500"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
   );
+
+  if (type === "button") {
+    return (
+      <button onClick={onclick} type="button" className={`${baseClasses} ${borderClass}`}>
+        <div className="flex justify-start items-center gap-4 flex-row">
+          <div className={iconWrapper}>{icon}</div>
+          <span className={labelClass}>{label}</span>
+        </div>
+        <Chevron />
+      </button>
+    );
+  }
+
+  if (type === "link") {
+    return (
+      <Link href={link || "#"} className={`${baseClasses} ${borderClass}`}>
+        <div className="flex items-center gap-4 flex-1">
+          <div className={iconWrapper}>{icon}</div>
+          <span className={labelClass}>{label}</span>
+        </div>
+        <Chevron />
+      </Link>
+    );
+  }
+
+  if (type === "data") {
+    return (
+      <Link href={link || "#"} className={`${baseClasses} ${borderClass}`}>
+        <div className="flex items-center gap-4 flex-1">
+          <div className={iconWrapper}>{icon}</div>
+          <div className="flex flex-col">
+            <span className="text-stone-800 font-semibold">{label}</span>
+            <span className="text-sm text-stone-500">Total Amount</span>
+          </div>
+        </div>
+        <span className="text-stone-700 font-medium">{amount}</span>
+      </Link>
+    );
+  }
+
+  return null;
 }
 
 export function ToggleItem({
@@ -133,31 +96,27 @@ export function ToggleItem({
 }) {
   const [isToggled, setIsToggled] = useState(false);
 
-  const handleToggle = (label: string) => {
-    setIsToggled(!isToggled);
-  };
   return (
     <div
-      className={`${
-        showBorder ? "border-b border-gray-800" : ""
-      } cursor-pointer hover:bg-[#21A29D] pr-2 rounded-2xl transition-all duration-300 `}
+      className={`cursor-pointer transition-all duration-200 rounded-xl p-3 hover:bg-[#21A29D]/10 ${showBorder ? "border-b border-stone-100" : ""
+        }`}
     >
-      <div className="flex items-center gap-4 p-4">
-        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#21A29D]/10 text-[#21A29D] flex-shrink-0">
           {icon}
         </div>
-        <span className="flex-1 text-white text-base">{label}</span>
+        <span className="flex-1 text-[15px] text-stone-700 font-medium">{label}</span>
         <button
           type="button"
-          onClick={() => handleToggle(label)}
-          className={`${
-            isToggled ? "justify-end" : "justify-start"
-          } items-center px-1  w-14 h-8 bg-white rounded-full relative flex `}
+          onClick={() => setIsToggled(!isToggled)}
+          className={`w-14 h-8 flex items-center rounded-full transition-all duration-300 ${isToggled
+              ? "bg-[#21A29D]/30 justify-end"
+              : "bg-stone-200 justify-start"
+            } p-1`}
         >
           <div
-            className={`  w-6 h-6 ${
-              isToggled ? "bg-[#21A29D]" : "bg-gray-800"
-            }  rounded-full`}
+            className={`w-6 h-6 rounded-full transition-all duration-300 ${isToggled ? "bg-[#21A29D]" : "bg-white shadow"
+              }`}
           ></div>
         </button>
       </div>

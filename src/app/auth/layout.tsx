@@ -5,7 +5,8 @@ export default function AuthLayout({
 }>) {
   return (
     <div className=" w-full max-w-3xl mx-auto relative">
-      <div className="h-full w-full overflow-y-scroll">{children}</div>
+      <div className="h-full w-full overflow-y-scroll">
+        {children}</div>
     </div>
   );
 }

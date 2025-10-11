@@ -2,66 +2,63 @@
 
 import DeactivateAccount from "@/components/modal/deactivate-account";
 import DeleteAccount from "@/components/modal/delete-account";
-import EditProfile from "@/components/profile/edit-profile";
-import BillTag from "@/components/profile/set-billTag";
 import { MenuItem } from "@/components/ui/buttons";
-import { NotebookPen, User } from "lucide-react";
+import { ArrowLeftIcon, Lock, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 
-export default function page() {
+export default function Page() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const handleBack = () => {
     window.history.back();
   };
-  return (
-    <div className="min-h-screen bg-[#21A29D] p-4 relative">
-      <div className="mx-auto max-w-3xl">
-        <div className=" flex  items-center w-full">
-          <div className="mb-8 text-xl font-bold rext-white">
-            <button onClick={handleBack} className="hover:bg-alternate/20 p-2 rounded-full">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          </div>
-          {/* Header */}
-          <h1 className="text-center text-2xl font-semibold w-full text-white mb-6">
-            My Profile
-          </h1>
-        </div>
 
-        <div className="flex flex-col bg-[#3FD9D4]/20 p-3 rounded-2xl gap-3">
+  return (
+    <div className="min-h-screen bg-white text-stone-800">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
+        <button
+          onClick={handleBack}
+          className="p-2 rounded-full hover:bg-white/20 transition"
+        >
+          <ArrowLeftIcon className="w-6 h-6 text-white" />
+        </button>
+        <h1 className="text-lg font-semibold text-white">Deactivate/Delete Account</h1>
+        <div className="w-8" /> {/* Spacer */}
+      </header>
+
+      {/* Profile Actions */}
+      <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl shadow-sm">
+        <p className="text-stone-600 mb-4 text-sm text-center">
+          Manage your account status. You can deactivate or permanently delete your profile.
+        </p>
+
+        <div className="flex flex-col divide-y divide-stone-200">
           <MenuItem
-            icon={<User size={20} color="black" />}
+            icon={<Lock size={20} className="text-stone-700" />}
             showBorder={false}
-            label={"Deactivate Account"}
+            label="Deactivate Account"
+            type="button"
             onclick={() => setActiveModal("Deactivate Account")}
-           
           />
+
           <MenuItem
-            onclick={() => setActiveModal("Delete Account")}
-            icon={<NotebookPen size={20} color="black" />}
+            icon={<Trash2 size={20} className="text-red-500" />}
             showBorder={false}
-            label={"Delete Account"}
+            label="Delete Account"
+            type="button"
+            onclick={() => setActiveModal("Delete Account")}
           />
         </div>
       </div>
 
+      {/* Modals */}
       {activeModal === "Deactivate Account" && (
         <DeactivateAccount setTab={setActiveModal} />
       )}
-      {activeModal === "Delete Account" && <DeleteAccount setTab={setActiveModal} />}
+      {activeModal === "Delete Account" && (
+        <DeleteAccount setTab={setActiveModal} />
+      )}
     </div>
   );
 }

@@ -1,73 +1,97 @@
 "use client";
 
-import TransactionHistory from "@/components/profile/reports/transaction-history";
-import WalletHistory from "@/components/profile/reports/wallet-history";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import TransactionHistory from "./components/TransactionHistory";
+import WalletHistory from "./components/WalletHistory";
 
-export default function page() {
-  const [activeTab, setActiveTab] = React.useState<string>(
-    "Transaction History"
-  );
-  const handleBack = () => {
-    window.history.back();
-  };
+export default function ReportsPage() {
+  const [activeTab, setActiveTab] = useState("Transaction History");
+  const [loading, setLoading] = useState(true);
+
+  const handleBack = () => window.history.back();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setLoading(false), 1500); // simulate loading
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
-    <div
-      className={` grid grid-cols-1 grid-rows-4 w-full min-h-screen bg-[#21A29D] `}
-    >
-      <div className=" flex flex-col  row-span-1 justify-between-center w-full p-4">
-        <div className="mb-8 text-xl font-bold rext-white">
+    <div className="min-h-screen flex flex-col bg-stone-50">
+      {/* HEADER */}
+      <div className="bg-[#21A29D] p-4 pt-8 rounded-b-3xl shadow-md w-full fixed mx-auto max-w-3xl h-[170px]">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleBack}
-            className="hover:bg-alternate/20 p-2 rounded-full"
+            className="p-2 rounded-full hover:bg-white/20 transition-colors"
           >
             <svg
-              className="w-6 h-6"
+              className="w-6 h-6 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
+          <h1 className="text-2xl font-semibold text-white ml-2">Reports</h1>
         </div>
-        {/* Header */}
-        <h1 className="text-center text-2xl font-semibold w-full text-white mb-6">
-          Reports
-        </h1>
 
-        <div className="flex items-center w-full p-3 gap-3 bg-alternate rounded-2xl">
-          <button
-            onClick={() => setActiveTab("Transaction History")}
-            className={`w-full font-semibold transition-colors duration-300 text-primary rounded-lg px-3 py-2 ${
-              activeTab === "Transaction History"
-                ? "border-2 border-primary bg-white text-primary"
-                : "border-2 border-transparent text-white"
-            } `}
-          >
-            Transaction History
-          </button>
-          <button
-            onClick={() => setActiveTab("Wallet History")}
-            className={`w-full font-semibold transition-colors duration-300 text-primary rounded-lg px-3 py-2 ${
-              activeTab === "Wallet History"
-                ? "border-2 border-primary bg-white text-primary"
-                : "border-2 border-transparent text-white"
-            } `}
-          >
-            Wallet History
-          </button>
+        {/* TAB BUTTONS */}
+        <div className="flex items-center gap-3 mt-6 bg-[#3FD9D4]/30 p-2 rounded-2xl">
+          {["Transaction History", "Wallet History"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 font-medium text-sm md:text-base px-3 py-2 rounded-xl transition-all duration-300 ${activeTab === tab
+                ? "bg-white text-[#21A29D] shadow-md border border-[#21A29D]/30"
+                : "text-white/90 hover:bg-white/10"
+                }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className=" row-span-3 space-y-10 bg-white rounded-t-[60px] flex items-start w-full p-4">
-        {activeTab === "Transaction History" && <TransactionHistory />}
-        {activeTab === "Wallet History" && <WalletHistory />}
+      {/* CONTENT */}
+      <div className="flex-1 mt-[180px] overflow-scroll w-full bg-white rounded-t-3xl p-5 shadow-inner">
+        {loading ? (
+          <div className="space-y-4 animate-pulse">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center bg-stone-100 p-4 rounded-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-stone-200 rounded-full" />
+                  <div>
+                    <div className="h-3 w-24 bg-stone-200 rounded-md mb-2" />
+                    <div className="h-3 w-16 bg-stone-200 rounded-md" />
+                  </div>
+                </div>
+                <div className="h-3 w-10 bg-stone-200 rounded-md" />
+              </div>
+            ))}
+          </div>
+        ) : activeTab === "Transaction History" ? (
+          <TransactionHistory
+            data={[
+              { name: "Airtime Purchase", date: "Oct 10, 2025", amount: "-₦500", status: "Successful" },
+              { name: "Electricity Bill", date: "Oct 8, 2025", amount: "-₦8,200", status: "Successful" },
+              { name: "Bet9ja Top-up", date: "Oct 6, 2025", amount: "-₦2,000", status: "Failed" },
+              { name: "Wallet Funding", date: "Oct 3, 2025", amount: "+₦50,000", status: "Successful" },
+            ]}
+          />
+        ) : (
+          <WalletHistory
+            data={[
+              { type: "Deposit", date: "Oct 10, 2025", amount: "+₦20,000" },
+              { type: "Transfer", date: "Oct 8, 2025", amount: "-₦5,000" },
+              { type: "Cashback", date: "Oct 7, 2025", amount: "+₦1,200" },
+              { type: "POS Withdrawal", date: "Oct 5, 2025", amount: "-₦10,000" },
+            ]}
+          />
+        )}
       </div>
     </div>
   );

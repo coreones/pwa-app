@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 const geist = localFont({
     src: [
         { path: "../../public/fonts/Geist/webfonts/Geist-Thin.woff2", weight: "200", style: "normal" },
@@ -27,7 +28,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={geist.variable}>
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
             <body className="min-h-screen w-full overflow-x-hidden font-geist bg-white text-gray-900">
+                <Toaster />
                 {children}
             </body>
         </html>

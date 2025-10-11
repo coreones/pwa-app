@@ -1,65 +1,67 @@
 "use client";
-
-import EditProfile from "@/components/profile/edit-profile";
-import BillTag from "@/components/profile/set-billTag";
 import { MenuItem } from "@/components/ui/buttons";
-import { NotebookPen, User } from "lucide-react";
+import { UserIcon, PencilSquareIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
+import EditProfile from "./modals/EditProfile";
+import ETag from "./modals/ETag";
 
-export default function page() {
+export default function ETagPage() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const handleBack = () => {
     window.history.back();
   };
-  return (
-    <div className="min-h-screen bg-[#21A29D] p-4 relative">
-      <div className="mx-auto max-w-3xl">
-        <div className=" flex  items-center w-full">
-          <div className="mb-8 text-xl font-bold rext-white">
-            <button onClick={handleBack} className="hover:bg-alternate/20 p-2 rounded-full">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          </div>
-          {/* Header */}
-          <h1 className="text-center text-2xl font-semibold w-full text-white mb-6">
-            My Profile
-          </h1>
-        </div>
 
-        <div className="flex flex-col bg-[#3FD9D4]/20 p-3 rounded-2xl gap-3">
-          <MenuItem
-            icon={<User size={20} color="black" />}
-            showBorder={false}
-            label={"Profile Information"}
-            onclick={() => setActiveModal("profile information")}
-           
-          />
-          <MenuItem
-            onclick={() => setActiveModal("BillTag")}
-            icon={<NotebookPen size={20} color="black" />}
-            showBorder={false}
-            label={"Set BillTag"}
-          />
+  return (
+    <div className="min-h-screen bg-stone-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-[#21A29D] px-4 py-5 flex items-center shadow-md">
+        <button
+          onClick={handleBack}
+          className="p-2 rounded-full hover:bg-white/10 transition"
+        >
+          <ArrowLeftIcon className="w-6 h-6 text-white" />
+        </button>
+        <h1 className="flex-1 text-center text-white text-xl font-semibold tracking-wide">
+          My Profile
+        </h1>
+        <div className="w-8" /> {/* Spacer */}
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 px-4 pt-8 pb-24">
+        <div className="mx-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-4">
+            <p className="text-stone-600 font-medium mb-2">
+              Manage your personal details and customize your E-Tag.
+            </p>
+
+            <div className="divide-y divide-stone-200">
+              <MenuItem
+                icon={<UserIcon className="w-5 h-5 text-[#21A29D]" />}
+                showBorder={false}
+                label="Profile Information"
+                type="button"
+                onclick={() => setActiveModal("EditProfile")}
+              />
+
+              <MenuItem
+                icon={<PencilSquareIcon className="w-5 h-5 text-[#21A29D]" />}
+                showBorder={false}
+                label="Set ETag"
+                type="button"
+                onclick={() => setActiveModal("ETag")}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      {activeModal === "profile information" && (
+      {/* Modals */}
+      {activeModal === "EditProfile" && (
         <EditProfile setTab={setActiveModal} />
       )}
-      {activeModal === "BillTag" && <BillTag setTab={setActiveModal} />}
+      {activeModal === "ETag" && <ETag setTab={setActiveModal} />}
     </div>
   );
 }

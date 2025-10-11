@@ -1,67 +1,59 @@
 "use client";
 
-import EditProfile from "@/components/profile/edit-profile";
-import BillTag from "@/components/profile/set-billTag";
 import { MenuItem } from "@/components/ui/buttons";
 import { NotebookPen, User } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
-export default function page() {
-  const [activeModal, setActiveModal] = useState<string | null>(null);
-
+export default function LegalPage() {
   const handleBack = () => {
     window.history.back();
   };
+
   return (
-    <div className="min-h-screen bg-[#21A29D] p-4 relative">
-      <div className="mx-auto max-w-3xl">
-        <div className=" flex  items-center w-full">
-          <div className="mb-8 text-xl font-bold rext-white">
-            <button
-              onClick={handleBack}
-              className="hover:bg-alternate/20 p-2 rounded-full"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
+    <div className="min-h-screen bg-white text-stone-800">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
+        <button
+          onClick={handleBack}
+          className="p-2 rounded-full hover:bg-white/20 transition"
+        >
+          <ArrowLeftIcon className="w-6 h-6 text-white" />
+        </button>
+        <h1 className="text-lg font-semibold text-white">Legal</h1>
+        <div className="w-8" /> {/* Spacer */}
+      </header>
+
+      <div className="mx-auto max-w-3xl px-4 py-8">
+        {/* Content Card */}
+        <div className="bg-stone-50 border border-stone-200 rounded-3xl p-4 sm:p-6 shadow-sm">
+          <p className="text-stone-600 text-center mb-6">
+            Review our legal documents and policies below.
+          </p>
+
+          <div className="flex flex-col ">
+            <MenuItem
+              icon={<User size={20} className="text-[#21A29D]" />}
+              showBorder={false}
+              label="Privacy Policy"
+              type="link"
+              link="#"
+            />
+            <MenuItem
+              icon={<NotebookPen size={20} className="text-[#21A29D]" />}
+              showBorder={false}
+              label="Terms of Service"
+              type="link"
+              link="#"
+            />
           </div>
-          {/* Header */}
-          <h1 className="text-center text-2xl font-semibold w-full text-white mb-6">
-            Legal
-          </h1>
         </div>
 
-        <div className="flex flex-col bg-[#3FD9D4]/20 p-3 rounded-2xl gap-3">
-          <MenuItem
-            icon={<User size={20} color="black" />}
-            showBorder={false}
-            label={"Privacy Policy"}
-            onclick={() => setActiveModal("profile information")}
-            type="link"
-            link={"#"}
-          />
-          <MenuItem
-            onclick={() => setActiveModal("BillTag")}
-            icon={<NotebookPen size={20} color="black" />}
-            showBorder={false}
-            label={"Terms of Service"}
-            type="link"
-            link={"#"}
-          />
+        {/* Footer */}
+        <div className="text-center mt-10 text-sm text-stone-500">
+          © {new Date().getFullYear()} BillNa Inc. All rights reserved.
         </div>
       </div>
-
     </div>
   );
 }

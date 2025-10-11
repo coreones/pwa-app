@@ -1,164 +1,170 @@
-"use client"
+"use client";
 
 import { MenuItem } from "@/components/ui/buttons";
-
 import {
-  ChartNoAxesColumn,
-  Gift,
-  Lightbulb,
-  NotepadText,
-  Plane,
   Smartphone,
-  Ticket,
+  ChartNoAxesColumn,
+  Lightbulb,
   TvMinimalPlay,
+  Gift,
+  ShoppingBag,
+  Plane,
   Volleyball,
   Wifi,
+  NotepadText,
+  Ticket,
 } from "lucide-react";
-import Image from "next/image";
 
-export default function ProfilePage() {
+export default function ExpensesPage() {
+  const handleBack = () => {
+    window.history.back();
+  };
 
-    const handleBack = () => {
-        window.history.back()
-    }
   return (
-    <div className="min-h-screen bg-[#21A29D] p-4">
-      <div className="mx-auto max-w-3xl">
-        {/* Header */}
-       <div className=" flex  items-center w-full">
-            <div className="mb-8 text-xl font-bold rext-white">
-              <button
-                onClick={handleBack}
-                className="hover:bg-alternate/20 p-2 rounded-full"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-            </div>
-            {/* Header */}
-            <h1 className="text-center text-2xl font-semibold w-full text-white mb-6">
-              Expenses
-            </h1>
-          </div>
+    <div className="min-h-screen bg-white pb-16">
+      {/* Top Header */}
+      <div className="bg-[#21A29D] text-white p-4 rounded-b-3xl shadow-md">
+        <div className="max-w-3xl mx-auto flex items-center">
+          <button
+            onClick={handleBack}
+            className="p-2 rounded-full hover:bg-white/10 transition-all"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <h1 className="text-2xl font-semibold text-center flex-1">
+            Expenses
+          </h1>
+        </div>
+      </div>
 
-     
-        {/* Account Section */}
-        <div className="mb-6 bg-[#3FD9D4]/20 p-3 rounded-2xl">
-          <h3 className="text-white text-lg font-semibold mb-3">Bills payment</h3>
-          <div className=" rounded-2xl overflow-hidden">
+      {/* Page Content */}
+      <div className="max-w-3xl mx-auto p-4 space-y-6">
+        {/* Bills Payment */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+          <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
+            <Smartphone className="w-5 h-5 text-[#21A29D]" />
+            Bills Payment
+          </h3>
+          <div className="divide-y divide-stone-100">
             <MenuItem
-              icon={<Smartphone size={20} color="black" />}
+              icon={<Smartphone size={20} color="#21A29D" />}
               label="Airtime"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<ChartNoAxesColumn size={20} color="black" />}
+              icon={<ChartNoAxesColumn size={20} color="#21A29D" />}
               label="Data"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<Lightbulb size={20} color="black" />}
+              icon={<Lightbulb size={20} color="#21A29D" />}
               label="Electricity"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<TvMinimalPlay size={20} color="black" />}
-              label="TV"
-              showBorder={false}
-              type="data"
-            />
-           
-          </div>
-        </div>
-
-        {/* Preference Section */}
-        <div className="mb-6  bg-[#3FD9D4]/20 p-3 rounded-2xl">
-          <h3 className="text-white text-lg font-semibold mb-3">Life Style</h3>
-          <div className=" rounded-2xl overflow-hidden">
-             <MenuItem
-              icon={<Gift size={20} color="black" />}
-              label="Gift Card"
-              showBorder={false}
-              type="data"
-            />
-            <MenuItem
-              icon={<Gift size={20} color="black" />}
-              label="ESims"
-              showBorder={false}
-              type="data"
-            />
-            <MenuItem
-              icon={<Gift size={20} color="black" />}
-              label="Gift User"
+              icon={<TvMinimalPlay size={20} color="#21A29D" />}
+              label="Cable TV"
               showBorder={false}
               type="data"
             />
           </div>
         </div>
 
-        {/* Privacy & Security Section */}
-        <div className="mb-6  bg-[#3FD9D4]/20 p-3 rounded-2xl">
-          <h3 className="text-white text-lg font-semibold mb-3">
-           Digital
+        {/* Lifestyle */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+          <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
+            <Gift className="w-5 h-5 text-[#21A29D]" />
+            Lifestyle
           </h3>
-          <div className=" rounded-2xl overflow-hidden">
+          <div className="divide-y divide-stone-100">
             <MenuItem
-              icon={<Volleyball size={20} color="black" />}
-              label="Sport Funding"
+              icon={<Gift size={20} color="#21A29D" />}
+              label="Gift Cards"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<Wifi size={20} color="black" />}
-              label="Internet"
+              icon={<ShoppingBag size={20} color="#21A29D" />}
+              label="eSIMs"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<Plane size={20} color="black" />}
-              label="Flight"
+              icon={<Gift size={20} color="#21A29D" />}
+              label="Gift a User"
               showBorder={false}
               type="data"
             />
           </div>
         </div>
 
-        {/* More Section */}
-        <div className="mb-6  bg-[#3FD9D4]/20 p-3 rounded-2xl">
-          <h3 className="text-white text-lg font-semibold mb-3">Others</h3>
-          <div className=" rounded-2xl overflow-hidden">
+        {/* Digital */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+          <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
+            <Wifi className="w-5 h-5 text-[#21A29D]" />
+            Digital
+          </h3>
+          <div className="divide-y divide-stone-100">
             <MenuItem
-              icon={<NotepadText size={20} color="black" />}
+              icon={<Volleyball size={20} color="#21A29D" />}
+              label="Sports Funding"
+              showBorder={false}
+              type="data"
+            />
+            <MenuItem
+              icon={<Wifi size={20} color="#21A29D" />}
+              label="Internet Subscription"
+              showBorder={false}
+              type="data"
+            />
+            <MenuItem
+              icon={<Plane size={20} color="#21A29D" />}
+              label="Flight Booking"
+              showBorder={false}
+              type="data"
+            />
+          </div>
+        </div>
+
+        {/* Education & Tickets */}
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+          <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
+            <NotepadText className="w-5 h-5 text-[#21A29D]" />
+            Others
+          </h3>
+          <div className="divide-y divide-stone-100">
+            <MenuItem
+              icon={<NotepadText size={20} color="#21A29D" />}
               label="Education"
               showBorder={false}
               type="data"
             />
             <MenuItem
-              icon={<Ticket size={20} color="black" />}
-              label="Ticket"
+              icon={<Ticket size={20} color="#21A29D" />}
+              label="Tickets"
               showBorder={false}
               type="data"
             />
-           
           </div>
         </div>
 
-        {/* Version */}
-        <p className="text-center text-gray-400 text-sm mb-8">
+        {/* App Version */}
+        <p className="text-center text-stone-400 text-sm pt-4">
           Version 1.6.5 (56)
         </p>
       </div>
