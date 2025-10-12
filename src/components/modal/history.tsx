@@ -147,7 +147,7 @@ console.log(typeof(singleTransaction))
                             Credited To
                         </div>
                         <div className="text-alternate">
-                            {singleTransaction.creditedTo}
+                            
                         </div>
 
                    </div>
