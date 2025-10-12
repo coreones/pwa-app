@@ -9,8 +9,8 @@ interface ResetPasswordProps {
 
 export default function ResetPassword({ setModal }: ResetPasswordProps) {
   return (
-    <div className="min-h-screen absolute top-0 left-0 w-full bg-gray-50">
-      <div className="w-full grid grid-cols-1 grid-rows-3 gap-10 h-screen max-w-3xl mx-auto ">
+    <div className="container absolute top-0 left-0 w-full bg-gray-50">
+      <div className="w-full grid grid-cols-1 grid-rows-3 gap-10 h-auto">
         {/* Header */}
         <div className="row-span-1 mx-auto w-full bg-[#21A29D] p-5 rounded-b-[60px]">
           <div className="mb-8 text-xl font-bold rext-white">
@@ -37,30 +37,30 @@ export default function ResetPassword({ setModal }: ResetPasswordProps) {
           <div className="text-4xl max-w-md text-center mx-auto w-fit font-bold text-whte ">
             Reset your password below
           </div>
-          
+
         </div>
 
         {/* Form */}
         <div className="space-y-6 row-span-2 w-full max-w-md mx-auto text-lg">
           <div className="space-y-4">
-           
+
             <div>
               <label htmlFor="NP" className="block  font-medium text-gray-700 mb-2">
-               New Password
+                New Password
               </label>
               <input
-              id="NP"
+                id="NP"
                 type="password"
                 placeholder="Password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"
               />
             </div>
-             <div>
+            <div>
               <label htmlFor="CNP" className="block  font-medium text-gray-700 mb-2">
-               Confirm New Password
+                Confirm New Password
               </label>
               <input
-              id="CNP"
+                id="CNP"
                 type="password"
                 placeholder="Password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"

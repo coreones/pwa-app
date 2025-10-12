@@ -13,7 +13,7 @@ export default function ETagPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
+    <div className="container flex flex-col">
       {/* Header */}
       <div className="bg-[#21A29D] px-4 py-5 flex items-center shadow-md">
         <button

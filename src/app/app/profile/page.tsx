@@ -32,27 +32,25 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-stone-900">
+    <div className="container">
       {/* Top header */}
-      <div className="bg-[#21A29D] px-6 pb-6 pt-10 rounded-b-3xl">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between">
-            <h1 className="text-white text-2xl font-extrabold tracking-tight">
-              Profile
-            </h1>
-            <Link href="/app/profile/my-profile" className="text-white/90 text-sm font-medium hover:underline">
-              Edit
-            </Link>
-          </div>
-
-          <p className="mt-2 text-white/90 text-sm">
-            Manage your account, security and preferences
-          </p>
+      <div className="w-full bg-[#21A29D] px-6 pb-6 pt-10 rounded-b-3xl">
+        <div className="flex items-center justify-between">
+          <h1 className="text-white text-2xl font-extrabold tracking-tight">
+            Profile
+          </h1>
+          <Link href="/app/profile/my-profile" className="text-white/90 text-sm font-medium hover:underline">
+            Edit
+          </Link>
         </div>
+
+        <p className="mt-2 text-white/90 text-sm">
+          Manage your account, security and preferences
+        </p>
       </div>
 
       {/* Content container */}
-      <main className="max-w-3xl mx-auto px-5 mt-6 pb-12 space-y-6">
+      <main className="w-full mx-auto px-5 mt-6 pb-12 space-y-6">
         {/* Profile card */}
         <motion.section
           initial={{ opacity: 0, y: 8 }}

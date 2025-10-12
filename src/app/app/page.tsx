@@ -71,8 +71,8 @@ export default function WelcomePage() {
   }, [slides.length]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex flex-col w-full max-w-3xl mx-auto h-screen overflow-y-auto pb-28">
+    <div className="min-h-screen container">
+      <div className="flex flex-col w-full mx-auto h-screen overflow-y-auto pb-28">
         {/* HEADER */}
         <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-10 pb-8 relative shadow-sm">
           {/* Profile Row */}

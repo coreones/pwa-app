@@ -11,7 +11,7 @@ export default function LegalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-stone-800">
+    <div className="container">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
         <button
@@ -24,7 +24,7 @@ export default function LegalPage() {
         <div className="w-8" /> {/* Spacer */}
       </header>
 
-      <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="py-8">
         {/* Content Card */}
         <div className="bg-stone-50 border border-stone-200 rounded-3xl p-4 sm:p-6 shadow-sm">
           <p className="text-stone-600 text-center mb-6">

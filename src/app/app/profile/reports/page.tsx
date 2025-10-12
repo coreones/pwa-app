@@ -16,9 +16,9 @@ export default function ReportsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50">
+    <div className="container flex flex-col">
       {/* HEADER */}
-      <div className="bg-[#21A29D] p-4 pt-8 rounded-b-3xl shadow-md w-full fixed mx-auto max-w-3xl h-[170px]">
+      <div className="bg-[#21A29D] container pt-8 rounded-b-3xl shadow-md w-full fixed h-[170px]">
         <div className="flex items-center gap-3">
           <button
             onClick={handleBack}

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function WelcomePage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#21A29D] via-[#21A29D]/30 to-[#ffffff] relative overflow-hidden p-6">
+    <div className="container flex flex-col items-center justify-center bg-gradient-to-b from-[#21A29D] via-[#21A29D]/30 to-[#ffffff] relative overflow-hidden py-6">
       {/* Background decorative shapes */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -13,7 +13,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Main content */}
-      <div className="w-full max-w-3xl text-center space-y-10">
+      <div className="w-full text-center space-y-10">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

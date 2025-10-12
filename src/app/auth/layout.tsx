@@ -4,7 +4,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className=" w-full max-w-3xl mx-auto relative">
+    <div className="container min-h-screen">
       <div className="h-full w-full overflow-y-scroll">
         {children}</div>
     </div>

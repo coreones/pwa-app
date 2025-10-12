@@ -45,8 +45,8 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-100 text-stone-900 relative">
-      <div className="mx-auto h-full grid grid-cols-1 grid-rows-12 max-w-3xl">
+    <div className="container bg-gradient-to-b from-stone-50 via-white to-stone-100 text-stone-900 relative">
+      <div className="mx-auto h-full grid grid-cols-1 grid-rows-12">
         {/* Header Section */}
         <div className="relative flex flex-col bg-[#21A29D] text-white rounded-b-[60px] row-span-4 justify-center items-center px-6">
           <button

@@ -27,7 +27,7 @@ export default function AppLayout({
   ];
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto flex flex-col min-h-screen bg-white">
+    <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
       {/* Main content area */}
       <main
         className="flex-1 overflow-y-auto pb-[120px]">
@@ -36,17 +36,11 @@ export default function AppLayout({
 
       {/* Floating Mobile Nav */}
       <div
-        className="
-          fixed bottom-0 left-0 right-0
+        className="max-w-3xl w-full mx-auto bg-white/95 fixed bottom-0 left-0 right-0
           pb-[env(safe-area-inset-bottom)]  /* Respect iPhone/Android nav bars */
-          flex items-center justify-between
-          w-full max-w-3xl mx-auto
-          bg-white/95 backdrop-blur-lg border-t border-gray-200
-          shadow-[0_-2px_10px_rgba(0,0,0,0.08)]
-          px-4 py-4 rounded-t-2xl                  
-          z-50
-        "
-      >
+          flex items-center justify-between w-full backdrop-blur-lg border-t border-gray-200
+          shadow-[0_-2px_10px_rgba(0,0,0,0.08)]  p-4 rounded-t-2xl z-50
+        ">
         {navItems.map((item, id) => {
           const Icon = item.icon;
           const active = isActive(item.link);

@@ -33,7 +33,7 @@ export default function HelpAndSupportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="container flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
         <button
@@ -47,7 +47,7 @@ export default function HelpAndSupportPage() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 p-5 space-y-6 max-w-3xl w-full mx-auto">
+      <main className="flex-1 p-5 space-y-6 w-full">
         {/* Contact Section */}
         <section className="bg-gray-50 border border-gray-100 rounded-2xl shadow-sm p-5 space-y-4">
           <h2 className="text-gray-800 font-semibold text-lg">
@@ -129,7 +129,7 @@ export default function HelpAndSupportPage() {
       <AnimatePresence>
         {showReportModal && (
           <motion.div
-            className="fixed max-w-3xl mx-auto inset-0 bg-black/40 backdrop-blur-sm flex items-end justify-center z-[99]"
+            className="fixed container inset-0 bg-black/40 backdrop-blur-sm flex items-end justify-center z-[99]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -169,8 +169,8 @@ export default function HelpAndSupportPage() {
                     type="submit"
                     disabled={!issue.trim()}
                     className={`w-full flex items-center justify-center gap-2 font-semibold py-3 rounded-xl transition ${issue.trim()
-                        ? "bg-[#21A29D] hover:bg-[#1c8c87] text-white"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      ? "bg-[#21A29D] hover:bg-[#1c8c87] text-white"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
                       }`}
                   >
                     <PaperAirplaneIcon className="w-5 h-5" />

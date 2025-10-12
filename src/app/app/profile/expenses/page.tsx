@@ -21,10 +21,10 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-16">
+    <div className="container pb-16">
       {/* Top Header */}
       <div className="bg-[#21A29D] text-white p-4 rounded-b-3xl shadow-md">
-        <div className="max-w-3xl mx-auto flex items-center">
+        <div className="flex items-center">
           <button
             onClick={handleBack}
             className="p-2 rounded-full hover:bg-white/10 transition-all"
@@ -50,7 +50,7 @@ export default function ExpensesPage() {
       </div>
 
       {/* Page Content */}
-      <div className="max-w-3xl mx-auto p-4 space-y-6">
+      <div className="space-y-6">
         {/* Bills Payment */}
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
           <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">

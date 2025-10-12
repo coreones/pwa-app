@@ -32,13 +32,15 @@ html,
 body {
   -webkit-overflow-scrolling: touch;
   overflow: auto;
-  font-family: var(--font-geist), sans-serif;
 }
 
 body {
-  background: whitesmoke;
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-stone-50 text-stone-800;
+  font-family: var(--font-geist), sans-serif;
+}
+
+.container {
+  @apply max-w-3xl w-full mx-auto p-0 m-0;
 }
 
 @layer body {
