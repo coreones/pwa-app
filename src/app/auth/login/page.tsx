@@ -3,11 +3,30 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import api from "@/lib/axios";
+import { setClientCookie } from "@/lib/cookies";
+import { useRouter } from "next/navigation";
 import { useBack } from "@/hooks/useBack";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleBack = useBack("/app");
+
+  const handleLogin = async () => {
+    try {
+      const { data } = await api.post("/auth/login", { email, password });
+      setClientCookie("accessToken", data.accessToken, { path: "/" });
+      setClientCookie("refreshToken", data.refreshToken, { path: "/" });
+      router.push("/dashboard");
+    } catch (err) {
+      console.error("Login failed", err);
+      alert("Login failed");
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#21A29D]/10 to-white flex items-center justify-center p-6">
@@ -49,7 +68,8 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form method="POST"
+          onSubmit={handleLogin} className="space-y-5">
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -58,6 +78,8 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full text-stone-800 placeholder:text-stone-200 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#21A29D] focus:border-transparent outline-none"
             />
           </div>
@@ -71,6 +93,8 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full text-stone-800 placeholder:text-stone-200 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#21A29D] focus:border-transparent outline-none"
               />
               <button

@@ -7,14 +7,18 @@ import {
   Settings,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { loading, authenticated } = useAuth();
+  const router = useRouter();
+
   const pathname = usePathname();
 
   const isActive = (linkPath: string) => pathname === linkPath;
@@ -25,6 +29,10 @@ export default function AppLayout({
     { icon: Headset, name: "Help", link: "/app/profile/help-and-support" },
     { icon: Settings, name: "Settings", link: "/app/profile" },
   ];
+
+
+  if (loading) return <p>Loading...</p>;
+  if (!authenticated) return router.push("/auth/login");
 
   return (
     <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
