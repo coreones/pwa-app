@@ -30,7 +30,7 @@ interface Props {
   data: Transaction[];
 }
 
-export default function TransactionHistory({ data }: Props) {
+export default function     TransactionHistory({ data }: Props) {
   const [selectedTransaction, setSelectedTransaction] = useState<
     number | string | null
   >(null);
@@ -198,6 +198,18 @@ export default function TransactionHistory({ data }: Props) {
                       <div className="text-stone-700 w-ful">Remark</div>
                       <div className="text-alternate">
                         {singleTransaction?.remark}
+                      </div>
+                    </div>
+                     <div className="w-full flex justify-between items-center">
+                      <div className="text-stone-700 w-ful">Status</div>
+                      <div className={` ${
+                      singleTransaction?.status === "Successful"
+                        ? "text-alternate"
+                        : singleTransaction?.status === "Failed"
+                        ? "text-red-500"
+                        : "text-stont-800"
+                    }`}>
+                        {singleTransaction?.status}
                       </div>
                     </div>
                   </div>

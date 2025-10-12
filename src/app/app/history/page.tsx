@@ -12,7 +12,7 @@ export default function History() {
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
         <button
-          //   onClick={handleBack}
+            onClick={() => window.history.back()}
           className="p-2 rounded-full hover:bg-white/20 transition"
         >
           <ArrowLeftIcon className="w-6 h-6 text-white" />

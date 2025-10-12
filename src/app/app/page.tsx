@@ -22,11 +22,11 @@ import AddFunds from "@/components/modal/payments/add-funds";
 
 export default function WelcomePage() {
   const [showBalance, setShowBalance] = useState<boolean>(true);
-  const [addFunds, setAddFunds] = useState(false)
+  const [addFunds, setAddFunds] = useState(false);
 
   const handleShowBalance = () => {
-    setShowBalance(!showBalance)
-  }
+    setShowBalance(!showBalance);
+  };
 
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
@@ -80,11 +80,18 @@ export default function WelcomePage() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
-                <Image src="/img/user.png" alt="Profile" fill className="object-cover" />
+                <Image
+                  src="/img/user.png"
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div>
                 <h2 className="font-semibold text-lg">Tali Nanzing</h2>
-                <p className="text-sm text-white/80">talinanzing111@gmail.com</p>
+                <p className="text-sm text-white/80">
+                  talinanzing111@gmail.com
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -100,19 +107,27 @@ export default function WelcomePage() {
           {/* Balance */}
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
-              <h3 className="text-3xl font-bold tracking-tight">{showBalance ? "₦0.00" : "₦****"}</h3>
+              <h3 className="text-3xl font-bold tracking-tight">
+                {showBalance ? "₦0.00" : "₦****"}
+              </h3>
               <button className="cursor-pointer" onClick={handleShowBalance}>
                 <Eye size={22} />
               </button>
             </div>
-            <button className="bg-white text-[#21A29D] font-medium py-2 px-5 rounded-2xl hover:bg-gray-50 transition">
+            <Link
+              href={"/app/history"}
+              className="bg-white text-[#21A29D] font-medium py-2 px-5 rounded-2xl hover:bg-gray-50 transition"
+            >
               History
-            </button>
+            </Link>
           </div>
 
           {/* CTA */}
           <div className="w-full text-center">
-            <button onClick={() => setAddFunds(true)} className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
+            <button
+              onClick={() => setAddFunds(true)}
+              className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition"
+            >
               + Add Money
             </button>
           </div>
@@ -122,7 +137,9 @@ export default function WelcomePage() {
         <div className="flex-1 px-6 py-8 space-y-8">
           {/* Services Grid */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">Quick Actions</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Quick Actions
+            </h3>
             <div className="grid grid-cols-3 gap-3 sm:gap-5">
               {items.map((item, idx) => {
                 const Icon = item.icon;
@@ -135,7 +152,9 @@ export default function WelcomePage() {
                     <div className="bg-[#21A29D]/10 p-3 rounded-full mb-2">
                       <Icon className="text-[#21A29D]" size={22} />
                     </div>
-                    <span className="text-sm font-medium text-gray-700">{item.name}</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {item.name}
+                    </span>
                     {item.tag && (
                       <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] px-2 py-[2px] rounded-full">
                         {item.tag}
