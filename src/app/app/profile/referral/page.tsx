@@ -25,7 +25,7 @@ import api from "@/lib/axios";
 type ReferralsList = {
   name: string,
   status: string,
-  data: string
+  date: string
 }
 export default function ReferralPage() {
   const { user } = useAuth();
@@ -34,7 +34,7 @@ export default function ReferralPage() {
   const referralLink = `${window.location.host}/auth/register?ref=${referralCode}`;
   const [showShareModal, setShowShareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [referrals, setReferrals] = useState<ReferralsList[] | [] | null>(null);
+  const [referrals, setReferrals] = useState<ReferralsList[] | []>([]);
 
   useEffect(() => {
     const refCode = user?.referral_code;
@@ -297,6 +297,7 @@ export default function ReferralPage() {
                   <XMarkIcon className="w-6 h-6" />
                 </button>
               </div>
+
 
               {referrals.length === 0 ? (
                 <p className="text-center text-gray-500 py-6">

@@ -55,7 +55,7 @@ export default function DashboardPage() {
     { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
     { name: "Gift Card", icon: Gift, tag: "Best rate", link: "" },
     { name: "Transport", icon: Bus, link: "" },
-    { name: "More", icon: LayoutDashboard, link: "#" },
+    { name: "More", icon: LayoutDashboard, link: "" },
   ];
 
   const slides = [
