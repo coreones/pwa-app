@@ -13,7 +13,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Main content */}
-      <div className="w-full text-center space-y-10">
+      <div className="w-full text-center space-y-10 pt-[200px]">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -70,7 +70,7 @@ export default function WelcomePage() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="w-full flex flex-col gap-4 max-w-sm mx-auto pt-8"
         >
-          <Link href={"/auth/signup"} className="w-full cursor-pointer bg-[#21A29D] text-white font-semibold py-4 px-6 rounded-xl shadow-md hover:shadow-lg hover:bg-[#1b8e89] transition-all">
+          <Link href={"/auth/register"} className="w-full cursor-pointer bg-[#21A29D] text-white font-semibold py-4 px-6 rounded-xl shadow-md hover:shadow-lg hover:bg-[#1b8e89] transition-all">
             Create Account
           </Link>
           <Link href={"/auth/login"} className="w-full cursor-pointer border-2 border-[#21A29D] text-[#21A29D] bg-white font-semibold py-4 px-6 rounded-xl hover:bg-[#21A29D]/5 transition-all">

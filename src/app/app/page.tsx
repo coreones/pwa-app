@@ -19,8 +19,10 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import AddFunds from "@/components/modal/payments/add-funds";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function WelcomePage() {
+export default function DashboardPage() {
+  const { user } = useAuth();
   const [showBalance, setShowBalance] = useState<boolean>(true);
   const [addFunds, setAddFunds] = useState(false)
 
@@ -44,7 +46,7 @@ export default function WelcomePage() {
     {
       bg: "bg-gradient-to-r from-[#21A29D] to-teal-600",
       textColor: "text-white",
-      title: "Welcome back, Tali 👋",
+      title: `Welcome back, ${user?.username ?? "User"} 👋`,
       desc: "Earn 5% cashback on your first flight booking.",
     },
     {
@@ -80,11 +82,11 @@ export default function WelcomePage() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
-                <Image src="/img/user.png" alt="Profile" fill className="object-cover" />
+                <Image src={user?.photo ?? "/default.png"} alt="Profile" fill className="object-cover" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">Tali Nanzing</h2>
-                <p className="text-sm text-white/80">talinanzing111@gmail.com</p>
+                <h2 className="font-semibold text-lg">{user?.firstname ?? "unknown"} {user?.lastname ?? "user"}</h2>
+                <p className="text-sm text-white/80">{user?.email ?? "*****@gmail.com"}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

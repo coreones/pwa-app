@@ -7,7 +7,7 @@ import { getClientCookie, setClientCookie } from "./cookies";
 import { ApiResponse } from "@/types/api";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

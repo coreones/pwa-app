@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Headset,
-  HomeIcon,
-  Send,
-  Settings,
-} from "lucide-react";
+import { Headset, HomeIcon, Send, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -18,7 +13,6 @@ export default function AppLayout({
 }) {
   const { loading, authenticated } = useAuth();
   const router = useRouter();
-
   const pathname = usePathname();
 
   const isActive = (linkPath: string) => pathname === linkPath;
@@ -30,25 +24,55 @@ export default function AppLayout({
     { icon: Settings, name: "Settings", link: "/app/profile" },
   ];
 
+  // Bounce animation for loader dots
+  const bounceTransition = {
+    y: {
+      duration: 0.4,
+      yoyo: Infinity,
+      ease: "easeOut",
+    },
+  };
 
-  if (loading) return <p>Loading...</p>;
-  if (!authenticated) return router.push("/auth/login");
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-white">
+        <div className="flex items-center gap-2">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="w-4 h-4 bg-[#21A29D] rounded-full"
+              animate={{ y: ["0%", "-50%", "0%"] }}
+              transition={{ ...bounceTransition, delay: i * 0.2 }}
+            />
+          ))}
+        </div>
+        <motion.p
+          className="mt-4 text-gray-600 font-medium text-lg"
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ repeat: Infinity, duration: 1 }}
+        >
+          Loading...
+        </motion.p>
+      </div>
+    );
+
+  if (!authenticated) {
+    router.push("/auth/login");
+    return null;
+  }
 
   return (
     <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
       {/* Main content area */}
-      <main
-        className="flex-1 overflow-y-auto pb-[120px]">
-        {children}
-      </main>
+      <main className="flex-1 overflow-y-auto pb-[120px]">{children}</main>
 
       {/* Floating Mobile Nav */}
       <div
         className="max-w-3xl w-full mx-auto bg-white/95 fixed bottom-0 left-0 right-0
-          pb-[env(safe-area-inset-bottom)]  /* Respect iPhone/Android nav bars */
-          flex items-center justify-between w-full backdrop-blur-lg border-t border-gray-200
-          shadow-[0_-2px_10px_rgba(0,0,0,0.08)]  p-4 rounded-t-2xl z-50
-        ">
+          pb-[env(safe-area-inset-bottom)] flex items-center justify-between w-full
+          backdrop-blur-lg border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] p-4
+          rounded-t-2xl z-50"
+      >
         {navItems.map((item, id) => {
           const Icon = item.icon;
           const active = isActive(item.link);
