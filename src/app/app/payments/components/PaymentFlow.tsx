@@ -68,17 +68,17 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       airtel: "/img/airtel.png",
       glo: "/img/glo.png",
       "9mobile": "/svg/9mobile.svg",
-      bet9ja: "🏆",
-      sportybet: "🏆",
-      "1xbet": "🏆",
-      betking: "🏆",
-      dstv: "📺",
-      gotv: "📺",
-      startimes: "📺",
-      ikedc: "💡",
-      eedc: "💡",
-      aedc: "💡",
-      kedco: "💡",
+      bet9ja: "/img/bulb.svg",
+      sportybet: "/img/bulb.svg",
+      "1xbet": "/img/1xbet.webp",
+      betking: "/img/betking.png",
+      dstv: "/img/dstv.png",
+      gotv: "/svg/gotv.svg",
+      startimes: "/img/startime.png",
+      ikedc: "/svg/bulb.svg",
+      eedc: "/svg/bulb.svg",
+      aedc: "/svg/bulb.svg",
+      kedco: "/svg/bulb.svg",
     };
     return logos[provider as keyof typeof logos] || "●";
   };
@@ -144,7 +144,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       plans: [{ data: "Unlimited", price: "₦1000000", duration: "365days" }],
     },
   ];
-
 
   const providers = {
     airtime: [
@@ -349,25 +348,25 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 </>
               )}
 
-                <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
-              <h1 className=" text-xl font-semibold text-black/70 ">
-                Save as Beneficiary
-              </h1>
-              <div
-                className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${
-                  saveBebeficiary ? "justify-end " : "justify-start"
-                } `}
-              >
+              <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
+                <h1 className=" text-xl font-semibold text-black/70 ">
+                  Save as Beneficiary
+                </h1>
                 <div
-                  onClick={handleSaveBeneficiary}
-                  className={`" w-8 h-8 rounded-full   ${
-                    saveBebeficiary
-                      ? "translate-x-0 bg-primary"
-                      : "translate-x-[-2px] bg-gray-500"
-                  }  transition-all duration-500 cursor-pointer `}
-                ></div>
+                  className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${
+                    saveBebeficiary ? "justify-end " : "justify-start"
+                  } `}
+                >
+                  <div
+                    onClick={handleSaveBeneficiary}
+                    className={`" w-8 h-8 rounded-full   ${
+                      saveBebeficiary
+                        ? "translate-x-0 bg-primary"
+                        : "translate-x-[-2px] bg-gray-500"
+                    }  transition-all duration-500 cursor-pointer `}
+                  ></div>
+                </div>
               </div>
-            </div>
 
               <button
                 onClick={handleNext}
@@ -676,9 +675,14 @@ function ProviderSelect({
             }}
             className="w-full shadow-lg relative rounded-xl bg-white flex flex-col items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-b-0"
           >
-                <div className="w-12 h-12 rounded-full overflow-hidden relative ">
-                    <Image src={getProviderLogo(provider.value)}  alt={provider.name} fill className="object-cover"  />
-                </div>
+            <div className="w-12 h-12 rounded-full overflow-hidden relative ">
+              <Image
+                src={getProviderLogo(provider.value)}
+                alt={provider.name}
+                fill
+                className="object-cover"
+              />
+            </div>
             <span className="font-medium text-gray-800">{provider.name}</span>
           </button>
         ))}
@@ -750,7 +754,6 @@ function PlanSelect({
           </button>
         ))}
       </div>
-
     </div>
   );
 }
