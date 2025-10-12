@@ -1,7 +1,7 @@
 import { ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
-import { OTPKeypad } from "../../keypad";
+import { OTPKeypad } from "../keypad";
 
 export default function LocalPurchase() {
   const [step, setStep] = useState(1);
