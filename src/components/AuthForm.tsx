@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,7 @@ import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 import { setClientCookie } from "@/lib/cookies";
 import { setClientLocalStorage } from "@/lib/local-storage";
-
+import { useSearchParams } from "next/navigation";
 // Zod schemas
 const loginSchema = z.object({
     entity: z.string().min(4, "Email or username is required"),
@@ -60,6 +60,13 @@ export default function AuthForm({ type }: AuthFormProps) {
     const handleBack = useBack("/app");
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const searchParams = useSearchParams();
+    const [ref, setRef] = useState<string | null>(null);
+
+    useEffect(() => {
+        const refParam = searchParams.get("ref");
+        if (refParam) setRef(refParam);
+    }, [searchParams]);
 
     // Determine schema and default values
     const schema =
@@ -92,7 +99,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     router.push("/app");
                 }
             } else if (type === "register") {
-                const res = await api.post<ApiResponse>("/auth/register", data);
+                const res = await api.post<ApiResponse>("/auth/register", {...data, referral_code: ref});
                 if (!res.data.error) {
                     toast.success("Account created successfully!");
                     router.push("/auth/login");

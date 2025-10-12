@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeftIcon,
@@ -16,16 +16,23 @@ import {
   GlobeAltIcon,
   ChatBubbleBottomCenterTextIcon,
 } from "@heroicons/react/24/solid";
-import Link from "next/link";
+
 import toast from "react-hot-toast";
 import { useBack } from "@/hooks/useBack";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ReferralPage() {
+  const { user } = useAuth();
   const handleBack = useBack("/app");
-  const referralCode = "TALI001";
-  const referralLink = `https://billna.app/ref/${referralCode}`;
+  const [referralCode, setReferralCode] = useState("XXXXXX");
+  const referralLink = `${window.location.host}/auth/register?ref=${referralCode}`;
   const [showShareModal, setShowShareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  
+  useEffect(() => {
+    const refCode = user?.referral_code;
+    if (refCode) setReferralCode(refCode);
+  }, [user]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralCode);
