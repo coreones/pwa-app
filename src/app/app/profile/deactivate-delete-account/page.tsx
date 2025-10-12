@@ -3,15 +3,14 @@
 import DeactivateAccount from "@/components/modal/deactivate-account";
 import DeleteAccount from "@/components/modal/delete-account";
 import { MenuItem } from "@/components/ui/buttons";
+import { useBack } from "@/hooks/useBack";
 import { ArrowLeftIcon, Lock, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 
-export default function Page() {
+export default function DeactivateDeleteAccountPage() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  const handleBack = () => {
-    window.history.back();
-  };
+  const handleBack = useBack("/app");
 
   return (
     <div className="min-h-screen bg-white text-stone-800">

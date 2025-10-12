@@ -12,13 +12,14 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
+import { useBack } from "@/hooks/useBack";
 
 export default function HelpAndSupportPage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [issue, setIssue] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleBack = () => window.history.back();
+  const handleBack = useBack("/app");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

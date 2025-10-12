@@ -3,9 +3,12 @@
 import Image from "next/image";
 import { Trophy, Medal, ChevronLeft } from "lucide-react";
 import React from "react";
+import { useBack } from "@/hooks/useBack";
 
 export default function LeaderboardPage() {
   const [loading, setLoading] = React.useState(true);
+
+  const handleBack = useBack("/app");
 
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
@@ -35,7 +38,7 @@ export default function LeaderboardPage() {
       {/* Header */}
       <div className="relative bg-[#21A29D] text-white p-6 rounded-b-3xl shadow-md">
         <button
-          onClick={() => window.history.back()}
+          onClick={handleBack}
           className="absolute top-5 left-5 bg-white/10 hover:bg-white/20 p-2 rounded-full"
         >
           <ChevronLeft className="w-6 h-6 text-white" />

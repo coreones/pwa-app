@@ -1,6 +1,7 @@
 "use client";
 
 import { MenuItem } from "@/components/ui/buttons";
+import { useBack } from "@/hooks/useBack";
 import {
   Smartphone,
   ChartNoAxesColumn,
@@ -16,9 +17,7 @@ import {
 } from "lucide-react";
 
 export default function ExpensesPage() {
-  const handleBack = () => {
-    window.history.back();
-  };
+  const handleBack = useBack("/app");
 
   return (
     <div className="container pb-16">

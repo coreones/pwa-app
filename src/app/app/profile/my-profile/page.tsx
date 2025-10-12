@@ -4,13 +4,11 @@ import { UserIcon, PencilSquareIcon, ArrowLeftIcon } from "@heroicons/react/24/o
 import React, { useState } from "react";
 import EditProfile from "./modals/EditProfile";
 import ETag from "./modals/ETag";
+import { useBack } from "@/hooks/useBack";
 
-export default function ETagPage() {
+export default function MyProfilePage() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
-
-  const handleBack = () => {
-    window.history.back();
-  };
+  const handleBack = useBack("/app");
 
   return (
     <div className="container flex flex-col">

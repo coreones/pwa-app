@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useBack } from "@/hooks/useBack";
 
 export default function ForgotPasswordPage() {
-  const handleBack = () => {
-    window.history.back();
-  };
+
+  const handleBack = useBack("/app");
 
   return (
 

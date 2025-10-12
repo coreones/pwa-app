@@ -4,11 +4,11 @@ import { MenuItem } from "@/components/ui/buttons";
 import { NotebookPen, User } from "lucide-react";
 import React from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useBack } from "@/hooks/useBack";
 
 export default function LegalPage() {
-  const handleBack = () => {
-    window.history.back();
-  };
+
+  const handleBack = useBack("/app");
 
   return (
     <div className="container">

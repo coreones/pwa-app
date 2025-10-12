@@ -3,8 +3,10 @@
 import React, { useState, useRef } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import ChangePin from "./modal/ChangePinModal";
+import { useBack } from "@/hooks/useBack";
 
-export default function Page() {
+export default function ChangePinPage() {
+  const handleBack = useBack("/app");
   const [activeModal, setActiveModal] = useState(false);
   const [otp, setOtp] = useState<string[]>(["", "", "", "", ""]);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -36,10 +38,6 @@ export default function Page() {
   };
 
   const isOtpComplete = otp.every((digit) => digit !== "");
-
-  const handleBack = () => {
-    window.history.back();
-  };
 
   return (
     <div className="container bg-gradient-to-b from-stone-50 via-white to-stone-100 text-stone-900 relative">

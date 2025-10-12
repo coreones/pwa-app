@@ -18,9 +18,10 @@ import {
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useBack } from "@/hooks/useBack";
 
 export default function ReferralPage() {
-  const handleBack = () => window.history.back();
+  const handleBack = useBack("/app");
   const referralCode = "TALI001";
   const referralLink = `https://billna.app/ref/${referralCode}`;
   const [showShareModal, setShowShareModal] = useState(false);

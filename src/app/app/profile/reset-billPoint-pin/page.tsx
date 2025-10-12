@@ -1,6 +1,7 @@
 "use client";
 
 import ResetBillPointPin from "@/components/modal/reset-billPoint-pin";
+import { useBack } from "@/hooks/useBack";
 import React, { useState } from "react";
 
 export default function page() {
@@ -19,9 +20,7 @@ export default function page() {
     }
   };
 
-  const handleBack = () => {
-    window.history.back();
-  };
+  const handleBack = useBack("/app");
   return (
     <div className="min-h-screen text-white bg-white relative">
       <div className="mx-auto h-full relative min-h-screen grid grid-cols-1 grid-rows-12  max-w-3xl">
@@ -97,7 +96,7 @@ export default function page() {
         </div>
       </div>
 
-      {activeModal && <ResetBillPointPin setModal={setActiveModal}/>}
+      {activeModal && <ResetBillPointPin setModal={setActiveModal} />}
     </div>
   );
 }

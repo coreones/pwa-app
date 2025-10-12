@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from "react";
 import TransactionHistory from "./components/TransactionHistory";
 import WalletHistory from "./components/WalletHistory";
+import { useBack } from "@/hooks/useBack";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("Transaction History");
   const [loading, setLoading] = useState(true);
-
-  const handleBack = () => window.history.back();
+  const handleBack = useBack("/app");
 
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(false), 1500); // simulate loading

@@ -3,13 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useBack } from "@/hooks/useBack";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleBack = () => {
-    window.history.back();
-  };
+  const handleBack = useBack("/app");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#21A29D]/10 to-white flex items-center justify-center p-6">
