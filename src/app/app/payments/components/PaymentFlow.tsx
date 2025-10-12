@@ -16,7 +16,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatNGN } from "@/utils/amount";
 
 interface PaymentPageProps {
-  type: "airtime" | "data" | "betting" | "tv" | "electricity";
+  type:
+    | "airtime"
+    | "data"
+    | "betting"
+    | "tv"
+    | "electricity"
+    | "billNaTransaction"
+    | "bankTransaction";
 }
 type Provider = {
   service_id: string,
@@ -38,6 +45,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     plan: "",
     customer_id: "",
     meter: "",
+    planType: "",
+
     variation_id: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
@@ -76,6 +85,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     airtime: { title: "Buy Airtime" },
     data: { title: "Purchase Data" },
     betting: { title: "Betting Top-Up" },
+    tv: { title: "Cable Subscription" },
+    electricity: { title: "Electricity Token" },
+    billNaTransaction: { title: "In App Transaction" },
+    bankTransaction: { title: "Transfer to other bank" },
     tv: { title: "Cable/TV Subscription" },
     electricity: { title: " Electricity Token" },
   };
@@ -188,6 +201,48 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     },
   ];
 
+  const providers: {
+    airtime: { value: string; name: string }[];
+    data: { value: string; name: string }[];
+    betting: { value: string; name: string }[];
+    tv: { value: string; name: string }[];
+    electricity: { value: string; name: string }[];
+    billNaTransaction: { value: string; name: string }[];
+    bankTransaction: { value: string; name: string }[];
+  } = {
+    airtime: [
+      { value: "mtn", name: "MTN" },
+      { value: "airtel", name: "Airtel" },
+      { value: "glo", name: "Glo" },
+      { value: "9mobile", name: "9mobile" },
+    ],
+    data: [
+      { value: "mtn", name: "MTN" },
+      { value: "airtel", name: "Airtel" },
+      { value: "glo", name: "Glo" },
+      { value: "9mobile", name: "9mobile" },
+    ],
+    betting: [
+      { value: "bet9ja", name: "Bet9ja" },
+      { value: "sportybet", name: "SportyBet" },
+      { value: "1xbet", name: "1xBet" },
+      { value: "betking", name: "BetKing" },
+    ],
+    tv: [
+      { value: "dstv", name: "DSTV" },
+      { value: "gotv", name: "GOTV" },
+      { value: "startimes", name: "Startimes" },
+    ],
+    electricity: [
+      { value: "ikedc", name: "IKEDC" },
+      { value: "eedc", name: "EEDC" },
+      { value: "aedc", name: "AEDC" },
+      { value: "kedco", name: "KEDCO" },
+    ],
+    billNaTransaction: [],
+    bankTransaction: [],
+  };
+
   const dataPlans = [
     { value: "500mb", label: "500MB - ₦200", amount: "200" },
     { value: "1gb", label: "1GB - ₦350", amount: "350" },
@@ -226,6 +281,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
           !!formData.variation_id &&
           !!formData.amount
         );
+      case "billNaTransaction":
+        return baseCheck && !!formData.account && !!formData.amount;
+      case "bankTransaction":
+        return baseCheck && !!formData.account && !!formData.amount;
       default:
         return false;
     }
@@ -381,6 +440,42 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       handleFormChange("variation_id", e.target.value)
                     }
                   />
+                  <AmountGrid
+                    value={formData.amount}
+                    onChange={(value) => handleFormChange("amount", value)}
+                    presetAmounts={presetAmounts}
+                  />
+                </>
+              )}
+
+              {type === "bankTransaction" && (
+                <>
+                  <InputField
+                    label="Account Number"
+                    placeholder="Enter meter number"
+                    value={formData.account}
+                    onChange={(e) => handleFormChange("account", e.target.value)}
+                    verify
+                  />
+                 
+                  <AmountGrid
+                    value={formData.amount}
+                    onChange={(value) => handleFormChange("amount", value)}
+                    presetAmounts={presetAmounts}
+                  />
+                </>
+              )}
+
+              {type === "billNaTransaction" && (
+                <>
+                  <InputField
+                    label="BillN Account Number"
+                    placeholder="Enter account number"
+                    value={formData.account}
+                    onChange={(e) => handleFormChange("account", e.target.value)}
+                    verify
+                  />
+                 
                   <AmountGrid
                     value={formData.amount}
                     onChange={(value) => handleFormChange("amount", value)}

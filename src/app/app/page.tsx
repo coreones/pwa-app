@@ -38,11 +38,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getWalletBalance = async () => {
-      const res = await api.get("/user/wallet")
+      const res = await api.get("/user/wallet");
       if (!res.data.error) {
-        setWallet(res.data.data)
+        setWallet(res.data.data);
       }
-    }
+    };
     getWalletBalance();
   }, []);
   const router = useRouter();
@@ -98,11 +98,20 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
-                <Image src={user?.photo ?? "/default.png"} alt="Profile" fill className="object-cover" />
+                <Image
+                  src={user?.photo ?? "/default.png"}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">{user?.firstname ?? "unknown"} {user?.lastname ?? "user"}</h2>
-                <p className="text-sm text-white/80">{user?.email ?? "*****@gmail.com"}</p>
+                <h2 className="font-semibold text-lg">
+                  {user?.firstname ?? "unknown"} {user?.lastname ?? "user"}
+                </h2>
+                <p className="text-sm text-white/80">
+                  {user?.email ?? "*****@gmail.com"}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -132,12 +141,25 @@ export default function DashboardPage() {
               + Add Money
             </button>
           </div>
-
         </div>
 
         {/* MAIN CONTENT */}
         <div className="flex-1 px-6 py-8 space-y-8">
           {/* Services Grid */}
+          <div className="w-full flex gap-3 ">
+            <Link
+              href={"/app/payments/transfer-to-billNa"}
+              className="w-full p-4 text-white font-bold text-center rounded-xl bg-gradient-to-br from-primary to-alternate/50"
+            >
+              Transfer to BillNa
+            </Link>{""}
+            <Link
+              href={"/app/payments/transfer-to-bank"}
+              className="w-full p-4 text-white font-bold text-center rounded-xl bg-gradient-to-br from-primary to-alternate/50"
+            >
+              Transfer to other bank
+            </Link>
+          </div>
           <div>
             <h3 className="text-lg font-semibold mb-4 text-gray-700">
               Quick Actions
@@ -156,7 +178,7 @@ export default function DashboardPage() {
                           return router.push(item.link);
                         }
                       };
-                      return link()
+                      return link();
                     }}
                     key={idx}
                     className="relative flex flex-col items-center justify-center p-3 sm:p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all"
