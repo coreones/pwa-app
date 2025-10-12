@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useBack } from "@/hooks/useBack";
 import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
-import { setClientCookie } from "@/lib/cookies";
+import { deleteClientCookie, setClientCookie } from "@/lib/cookies";
 import { setClientLocalStorage } from "@/lib/local-storage";
 import { useSearchParams } from "next/navigation";
 // Zod schemas
@@ -94,6 +94,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 const res = await api.post<ApiResponse>("/auth/login", data);
                 if (!res.data.error) {
                     toast.success("Logged in successfully!");
+                    deleteClientCookie("accessToken");
                     setClientCookie("accessToken", res.data.data.token);
                     setClientLocalStorage("user", JSON.stringify(res.data.data.user));
                     router.push("/app");

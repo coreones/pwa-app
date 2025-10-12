@@ -1,10 +1,11 @@
 "use client";
 import { MenuItem } from "@/components/ui/buttons";
-import { UserIcon, PencilSquareIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { UserIcon, PencilSquareIcon, ArrowLeftIcon, HomeIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import EditProfile from "./modals/EditProfile";
 import ETag from "./modals/ETag";
 import { useBack } from "@/hooks/useBack";
+import Address from "./modals/Address";
 
 export default function MyProfilePage() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -44,6 +45,14 @@ export default function MyProfilePage() {
               />
 
               <MenuItem
+                icon={<HomeIcon className="w-5 h-5 text-[#21A29D]" />}
+                showBorder={false}
+                label="My Address"
+                type="button"
+                onclick={() => setActiveModal("MyAddress")}
+              />
+
+              <MenuItem
                 icon={<PencilSquareIcon className="w-5 h-5 text-[#21A29D]" />}
                 showBorder={false}
                 label="Set ETag"
@@ -59,6 +68,7 @@ export default function MyProfilePage() {
       {activeModal === "EditProfile" && (
         <EditProfile setTab={setActiveModal} />
       )}
+      {activeModal === "MyAddress" && <Address setTab={setActiveModal} />}
       {activeModal === "ETag" && <ETag setTab={setActiveModal} />}
     </div>
   );

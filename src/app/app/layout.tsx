@@ -56,10 +56,10 @@ export default function AppLayout({
       </div>
     );
 
-  if (!authenticated) {
-    router.push("/auth/login");
-    return null;
-  }
+  // if (!authenticated) {
+  //   router.push("/auth/login");
+  //   return null;
+  // }
 
   return (
     <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">

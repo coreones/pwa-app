@@ -20,7 +20,13 @@ import {
 import toast from "react-hot-toast";
 import { useBack } from "@/hooks/useBack";
 import { useAuth } from "@/hooks/useAuth";
+import api from "@/lib/axios";
 
+type ReferralsList = {
+  name: string,
+  status: string,
+  data: string
+}
 export default function ReferralPage() {
   const { user } = useAuth();
   const handleBack = useBack("/app");
@@ -28,11 +34,22 @@ export default function ReferralPage() {
   const referralLink = `${window.location.host}/auth/register?ref=${referralCode}`;
   const [showShareModal, setShowShareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  
+  const [referrals, setReferrals] = useState<ReferralsList[] | [] | null>(null);
+
   useEffect(() => {
     const refCode = user?.referral_code;
     if (refCode) setReferralCode(refCode);
   }, [user]);
+
+  useEffect(() => {
+    const getReferralsList = async () => {
+      const res = await api.get("/user/referrals")
+      if (!res.data.error) {
+        setReferrals(res.data.data)
+      }
+    }
+    getReferralsList();
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralCode);
@@ -44,24 +61,6 @@ export default function ReferralPage() {
     toast.success("Referral link copied");
   };
 
-  // Example Referral History Data
-  const referrals = [
-    {
-      name: "David Johnson",
-      date: "Oct 3, 2025",
-      status: "earned",
-    },
-    {
-      name: "Mary Obi",
-      date: "Sep 28, 2025",
-      status: "pending",
-    },
-    {
-      name: "Tunde Bello",
-      date: "Sep 20, 2025",
-      status: "earned",
-    },
-  ];
 
   return (
     <div className="min-h-screen w-full bg-[#21A29D] flex flex-col relative overflow-hidden">

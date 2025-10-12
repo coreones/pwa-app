@@ -22,15 +22,29 @@ import AddFunds from "@/components/modal/payments/add-funds";
 import { useAuth } from "@/hooks/useAuth";
 import ComingSoon from "@/components/coming-soon";
 import { useRouter } from "next/navigation";
+import { Wallet } from "@/types/api";
+import api from "@/lib/axios";
+import { formatNGN } from "@/utils/amount";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [showBalance, setShowBalance] = useState<boolean>(true);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
   const [isComing, setIsComing] = useState(false);
   const handleShowBalance = () => {
     setShowBalance(!showBalance);
   };
+
+  useEffect(() => {
+    const getWalletBalance = async () => {
+      const res = await api.get("/user/wallet")
+      if (!res.data.error) {
+        setWallet(res.data.data)
+      }
+    }
+    getWalletBalance();
+  }, []);
   const router = useRouter();
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
@@ -92,9 +106,9 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+              {/* <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
                 <ChartNoAxesColumn size={20} />
-              </button>
+              </button> */}
               <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
                 <Sun size={20} />
               </button>
@@ -102,32 +116,23 @@ export default function DashboardPage() {
           </div>
 
           {/* Balance */}
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex items-center gap-2">
               <h3 className="text-3xl font-bold tracking-tight">
-                {showBalance ? "₦0.00" : "₦****"}
+                {showBalance ? formatNGN(wallet?.balance) : "₦****"}
               </h3>
               <button className="cursor-pointer" onClick={handleShowBalance}>
                 <Eye size={22} />
               </button>
             </div>
-            <Link
-              href={"/app/history"}
-              className="bg-white text-[#21A29D] font-medium py-2 px-5 rounded-2xl hover:bg-gray-50 transition"
-            >
-              History
-            </Link>
-          </div>
-
-          {/* CTA */}
-          <div className="w-full text-center">
             <button
               onClick={() => setAddFunds(true)}
-              className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition"
+              className="bg-white text-[#21A29D] font-semibold py-3 px-6 rounded-2xl shadow-sm hover:shadow-md transition"
             >
               + Add Money
             </button>
           </div>
+
         </div>
 
         {/* MAIN CONTENT */}

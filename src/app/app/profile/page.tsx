@@ -21,14 +21,19 @@ import {
   Wallet,
 } from "lucide-react";
 import { MenuItem, ToggleItem } from "@/components/ui/buttons";
+import api from "@/lib/axios";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
-  const handleLogout = () => {
-    // wire real logout here
+  const handleLogout = async () => {
+    const res = await api.post("/auth/logout")
+    toast.success("Logged out");
+    router.push("/auth/login")
     setShowConfirmLogout(false);
-    alert("Logged out (demo)");
   };
 
   return (
@@ -123,7 +128,7 @@ export default function ProfilePage() {
 
       {/* Confirm logout modal */}
       <AnimateModal show={showConfirmLogout} onClose={() => setShowConfirmLogout(false)}>
-        <div className="text-center">
+        <div className="text-center pb-8">
           <h3 className="text-lg font-semibold text-stone-900">Confirm Logout</h3>
           <p className="mt-2 text-sm text-stone-500">Are you sure you want to log out? You can always sign back in.</p>
 
@@ -136,7 +141,7 @@ export default function ProfilePage() {
             </button>
             <button
               onClick={handleLogout}
-              className="flex-1 py-3 rounded-xl bg-red-600 text-white font-semibold"
+              className="flex-1 py-3 rounded-xl bg-red-600 text-white font-semibold cursor-pointer"
             >
               Logout
             </button>

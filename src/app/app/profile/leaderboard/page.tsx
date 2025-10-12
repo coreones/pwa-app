@@ -2,11 +2,19 @@
 
 import Image from "next/image";
 import { Trophy, Medal, ChevronLeft } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useBack } from "@/hooks/useBack";
+import api from "@/lib/axios";
 
+type Leaderboard = {
+  name: string,
+  photo: string,
+  rank: string,
+  total_amount?: string
+}
 export default function LeaderboardPage() {
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = useState(true);
+  const [leaderboard, setLeaderboard] = useState<Leaderboard[] | [] | null>(null);
 
   const handleBack = useBack("/app");
 
@@ -15,16 +23,17 @@ export default function LeaderboardPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const positions = [
-    { name: "Tali", rank: "1st", icon: "/img/user.jpg" },
-    { name: "Jude", rank: "2nd", icon: "/img/user.jpg" },
-    { name: "Amaka", rank: "3rd", icon: "/img/user.jpg" },
-    { name: "Emeka", rank: "4th", icon: "/img/user.jpg" },
-    { name: "Chioma", rank: "5th", icon: "/img/user.jpg" },
-    { name: "Ada", rank: "6th", icon: "/img/user.jpg" },
-    { name: "Ife", rank: "7th", icon: "/img/user.jpg" },
-    { name: "Tunde", rank: "8th", icon: "/img/user.jpg" },
-  ];
+  useEffect(() => {
+    setLoading(true)
+    const getLeaderboard = async () => {
+      const res = await api.get("/transactions/leaderboards")
+      if (!res.data.error) {
+        setLeaderboard(res.data.data)
+      }
+      setLoading(false);
+    }
+    getLeaderboard();
+  }, []);
 
   const Skeleton = () => (
     <div className="animate-pulse flex flex-col items-center justify-center gap-4">
@@ -61,13 +70,13 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 relative rounded-full overflow-hidden border-4 border-stone-400">
                 <Image
-                  src="/img/user.jpg"
+                  src={leaderboard && leaderboard.length > 1 ? leaderboard[1]?.photo : "/default.png"}
                   alt="2nd place"
                   fill
                   className="object-cover"
                 />
               </div>
-              <span className="font-semibold text-stone-700">Jude</span>
+              <span className="font-semibold text-stone-700">{leaderboard && leaderboard.length > 1 ? leaderboard[1]?.name : "--"}</span>
               <span className="bg-stone-100 text-stone-700 text-xs px-3 py-1 rounded-full">
                 2nd
               </span>
@@ -77,14 +86,14 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2 scale-110">
               <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-yellow-400 shadow-md">
                 <Image
-                  src="/img/user.jpg"
+                  src={leaderboard && leaderboard.length > 0 ? leaderboard[0]?.photo : "/default.png"}
                   alt="1st place"
                   fill
                   className="object-cover"
                 />
                 <Trophy className="absolute -top-3 right-0 text-yellow-400 bg-white rounded-full p-1 w-6 h-6" />
               </div>
-              <span className="font-bold text-gray-800">Tali</span>
+              <span className="font-bold text-gray-800">{leaderboard && leaderboard.length > 0 ? leaderboard[0]?.name : "--"}</span>
               <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
                 1st
               </span>
@@ -94,13 +103,13 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-12 h-12 relative rounded-full overflow-hidden border-4 border-red-400">
                 <Image
-                  src="/img/user.jpg"
+                  src={leaderboard && leaderboard.length > 2 ? leaderboard[2]?.photo : "/default.png"}
                   alt="3rd place"
                   fill
                   className="object-cover"
                 />
               </div>
-              <span className="font-semibold text-red-700">Amaka</span>
+              <span className="font-semibold text-red-700">{leaderboard && leaderboard.length > 2 ? leaderboard[2]?.photo : "--"}</span>
               <span className="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full">
                 3rd
               </span>
@@ -115,7 +124,7 @@ export default function LeaderboardPage() {
           Other Rankings
         </h2>
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pb-4">
-          {positions.slice(3).map((pos, i) => (
+          {leaderboard && leaderboard.length > 3 ? leaderboard.slice(3).map((pos, i) => (
             <div
               key={i}
               className="flex items-center justify-between bg-white rounded-2xl shadow-sm hover:shadow-md transition-all p-3"
@@ -123,7 +132,7 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-3">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden">
                   <Image
-                    src={pos.icon}
+                    src={pos.photo}
                     alt={pos.name}
                     fill
                     className="object-cover"
@@ -139,7 +148,7 @@ export default function LeaderboardPage() {
                 {pos.rank}
               </div>
             </div>
-          ))}
+          )) : <></>}
         </div>
       </div>
     </div>
