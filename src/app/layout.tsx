@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import DeviceRestriction from "@/components/DeviceRestriction";
 const geist = localFont({
     src: [
         { path: "../../public/fonts/Geist/webfonts/Geist-Thin.woff2", weight: "200", style: "normal" },
@@ -38,10 +37,8 @@ export default function RootLayout({
                 <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
             </head>
             <body className="min-h-screen w-full overflow-x-hidden font-geist bg-white text-gray-900">
-                <DeviceRestriction>
-                    <Toaster />
-                    {children}
-                </DeviceRestriction>
+                <Toaster />
+                {children}
             </body>
         </html>
     );

@@ -1,3 +1,3 @@
-export const formatNGN = (amount: number = 0) => {
-  return `₦${Number(amount).toFixed(2) ?? 0.0}`;
+export const formatNGN = (amount: number | string = 0) => {
+  return `₦${parseInt(amount.toString()).toLocaleString() ?? 0.0}`;
 };

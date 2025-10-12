@@ -12,6 +12,8 @@ import {
 import Image from "next/image";
 import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
+import { useAuth } from "@/hooks/useAuth";
+import { formatNGN } from "@/utils/amount";
 
 interface PaymentPageProps {
   type: "airtime" | "data" | "betting" | "tv" | "electricity";
@@ -26,6 +28,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [saveBeneficiary, setSaveBeneficiary] = useState(false);
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,7 +41,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     variation_id: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
+  const [tvVariations, setTvVariations] = useState<null | []>(null);
+  const [dataVariations, setDataVariations] = useState<null | []>(null);
   const [selectedDuration, setSelectedDuration] = useState("Daily");
+  const { user } = useAuth();
 
   const handleBack = () => {
     if (step === 1) window.history.back();
@@ -61,15 +67,21 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     });
   };
 
+
+  useEffect(() => {
+    handleFormChange("phone", user?.phone ?? "")
+  }, [user]);
+
   const typeConfig = {
     airtime: { title: "Buy Airtime" },
     data: { title: "Purchase Data" },
     betting: { title: "Betting Top-Up" },
-    tv: { title: "Cable Subscription" },
-    electricity: { title: "Electricity Token" },
+    tv: { title: "Cable/TV Subscription" },
+    electricity: { title: " Electricity Token" },
   };
 
   useEffect(() => {
+    setLoading(true)
     const getProviders = async () => {
       const res = await api.get<ApiResponse>(`/general/bill/${type}-services`)
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
@@ -77,30 +89,42 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       } else {
         setProviders([])
       }
+      setLoading(false)
     }
     getProviders();
   }, [type])
 
-  const getProviderLogo = (provider: string) => {
-    const logos = {
-      mtn: "/svg/mtn.svg",
-      airtel: "/img/airtel.png",
-      glo: "/img/glo.png",
-      "9mobile": "/svg/9mobile.svg",
-      bet9ja: "/img/bulb.svg",
-      sportybet: "/img/bulb.svg",
-      "1xbet": "/img/1xbet.webp",
-      betking: "/img/betking.png",
-      dstv: "/img/dstv.png",
-      gotv: "/svg/gotv.svg",
-      startimes: "/img/startime.png",
-      ikedc: "/svg/bulb.svg",
-      eedc: "/svg/bulb.svg",
-      aedc: "/svg/bulb.svg",
-      kedco: "/svg/bulb.svg",
-    };
-    return logos[provider as keyof typeof logos] || "●";
-  };
+  const getTVVariations = async (service_id: string) => {
+    setLoading(true)
+    try {
+      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
+      if (!res.data.error && res.data.data && res.data.data.length > 0) {
+        setTvVariations(res.data.data)
+      } else {
+        setTvVariations([])
+      }
+    } catch (err) {
+      setDataVariations([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getDataVariations = async (service_id: string) => {
+    setLoading(true)
+    try {
+      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${service_id}`)
+      if (!res.data.error && res.data.data && res.data.data.length > 0) {
+        setDataVariations(res.data.data)
+      } else {
+        setDataVariations([])
+      }
+    } catch (err) {
+      setDataVariations([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const purchaceData = [
     {
@@ -179,6 +203,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
   const handleFormChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (type == "data" && field == "service_id") {
+      getDataVariations(value)
+    }
   };
 
   const isStep1Valid = () => {
@@ -211,7 +238,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-8 p-6"
+            className="space-y-8"
           >
             <div className="space-y-3">
               <h2 className="text-3xl font-bold text-stone-900">
@@ -223,8 +250,28 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             </div>
 
             <div className="space-y-6">
-              {!providers ?
-                <ProvidersSkeleton />
+              {loading || !providers ?
+                <div className="w-full flex flex-col gap-2">
+                  <p className="text-md font-normal text-stone-800">Select Provider</p>
+                  <div className="w-full animate-pulse grid grid-cols-4 gap-2">
+                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
+                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
+                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
+                    </div>
+                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
+                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
+                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
+                    </div>
+                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
+                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
+                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
+                    </div>
+                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
+                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
+                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
                 :
                 (providers.length === 0 ?
                   <p className="text-center py-4 font-normal text-stone-800">
@@ -242,7 +289,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 <>
                   <InputField
                     label="Recipient's Phone Number"
-                    placeholder="08012345678"
+                    placeholder="2348012345678"
                     value={formData.phone}
                     onChange={(e) => handleFormChange("phone", e.target.value)}
                   />
@@ -268,7 +315,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   />
                   <InputField
                     label="Phone Number"
-                    placeholder="08012345678"
+                    placeholder="2348012345678"
                     value={formData.phone}
                     onChange={(e) => handleFormChange("phone", e.target.value)}
                   />
@@ -278,8 +325,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
               {type === "betting" && (
                 <>
                   <InputField
-                    label="Account Number"
-                    placeholder="Enter your customer_id number"
+                    label="Account ID"
+                    placeholder="Enter  Account ID"
                     value={formData.customer_id}
                     onChange={(e) =>
                       handleFormChange("customer_id", e.target.value)
@@ -342,16 +389,11 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 </>
               )}
 
-<<<<<<< HEAD
               {/* <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
-=======
-              <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
->>>>>>> 90120afec1ea7ac1ef66b9fe5590e45422e747ce
                 <h1 className=" text-xl font-semibold text-black/70 ">
                   Save as Beneficiary
                 </h1>
                 <div
-<<<<<<< HEAD
                   className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${saveBeneficiary ? "justify-end " : "justify-start"
                     } `}
                 >
@@ -364,22 +406,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   ></div>
                 </div>
               </div> */}
-=======
-                  className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${
-                    saveBebeficiary ? "justify-end " : "justify-start"
-                  } `}
-                >
-                  <div
-                    onClick={handleSaveBeneficiary}
-                    className={`" w-8 h-8 rounded-full   ${
-                      saveBebeficiary
-                        ? "translate-x-0 bg-primary"
-                        : "translate-x-[-2px] bg-gray-500"
-                    }  transition-all duration-500 cursor-pointer `}
-                  ></div>
-                </div>
-              </div>
->>>>>>> 90120afec1ea7ac1ef66b9fe5590e45422e747ce
 
               <button
                 onClick={handleNext}
@@ -398,13 +424,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+              className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-stone-900">
@@ -447,10 +473,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   <div className="border-t border-teal-100" />
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-stone-600 font-medium">
-                      Total Amount
+                      Amount
                     </span>
                     <span className="text-2xl font-bold text-teal-600">
-                      ₦{parseInt(formData.amount).toLocaleString()}
+                      {formatNGN(formData.amount)}
                     </span>
                   </div>
                 </div>
@@ -478,14 +504,21 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl"
+              className="bg-white rounded-3xl px-6 pb-24 pt-8 w-full max-w-md shadow-2xl"
             >
+
+              <button
+                onClick={handleBack}
+                className="w-full text-left items-start justify-start text-stone-600 font-semibold py-3 hover:text-stone-700"
+              >
+                ← Back
+              </button>
               <div className="text-center space-y-8">
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold text-stone-900">
@@ -542,13 +575,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     disabled={!otp.every((d) => d)}
                     className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed transition-all"
                   >
-                    Confirm PIN
-                  </button>
-                  <button
-                    onClick={handleBack}
-                    className="w-full text-stone-600 font-semibold py-3 hover:text-stone-800"
-                  >
-                    ← Back
+                    Confirm
                   </button>
                 </div>
               </div>
@@ -562,13 +589,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
               initial={{ y: 100, opacity: 0, scale: 0.9 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 100, opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl text-center space-y-8"
+              className="bg-white rounded-3xl px-6 pb-24 pt-8 w-full max-w-md shadow-2xl text-center space-y-8"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -610,7 +637,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 onClick={handleReset}
                 className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg"
               >
-                {success ? "New Transaction" : "Try Again"}
+                {success ? "View Transaction" : "Try Again"}
               </button>
             </motion.div>
           </motion.div>
@@ -620,7 +647,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 flex flex-col">
-      <div className="p-6 flex items-center justify-between">
+      <div className="py-6 px-2 flex items-center justify-between">
         <button
           onClick={handleBack}
           className="text-white/70 hover:text-white hover:bg-white/10 p-2.5 rounded-full transition-all"
@@ -673,7 +700,7 @@ function ProviderSelect({
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        className=" grid grid-cols-2 sm:grid-cols-4 gap-6  py-1 mt-2 z-10 overflow-hidden"
+        className=" grid grid-cols-2 [@media(min-width:400px)]:grid-cols-4 gap-2 py-1 mt-2 z-10 overflow-hidden"
       >
         {providers.map((provider) => (
           <button
@@ -682,23 +709,12 @@ function ProviderSelect({
               onChange(provider.service_id);
               setIsOpen(false);
             }}
-            className="w-full shadow-lg relative rounded-xl bg-white flex flex-col items-center gap-3 px-4 py-3 hover:bg-teal-50 transition-colors text-left border-b border-stone-100 last:border-b-0"
+            className={`${provider.service_id == value ? 'border-2 border-primary bg-teal-50' : 'border border-stone-300 bg-white'} w-full shadow-lg relative rounded-lg flex flex-col items-center gap-1 px-4 py-4 hover:bg-teal-50/75`}
           >
-            <div className="w-12 h-12 rounded-full overflow-hidden relative ">
-<<<<<<< HEAD
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden relative ">
               <Image src={provider.logo} alt={provider.service_name} fill className="object-cover" />
             </div>
-            <span className="font-medium text-stone-800">{provider.service_name}</span>
-=======
-              <Image
-                src={getProviderLogo(provider.value)}
-                alt={provider.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <span className="font-medium text-gray-800">{provider.name}</span>
->>>>>>> 90120afec1ea7ac1ef66b9fe5590e45422e747ce
+            <span className="font-normal text-sm md:text-md text-stone-800">{provider.service_name}</span>
           </button>
         ))}
       </motion.div>
@@ -734,37 +750,16 @@ function PlanSelect({
         {label}
       </label>
 
-      <div className="w-full flex overflow-x-scroll  py-3 justify-start items-center gap-3">
-        {purchaceData?.map((item, index) => (
-          <div
-            key={index}
-            className={` relative w-fit px-2 text-primary flex flex-none border-3 transition-all duration-300 rounded-xl p-1 text-sm  ${selectedDuration === item.timeFrame
-              ? "bg-primary text-white"
-              : "border-primary/40"
-              }`}
-          >
-            <button
-              onClick={() => setSelectedDuration(item.timeFrame)}
-              className="w-full  flex flex-none "
-            >
-              {item.timeFrame}
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-5 w-full">
+      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6  gap-2 w-full">
         {mappedPlans.map((item, index) => (
           <button
             key={index}
             type="button"
-            className="w-full text-black text-sm  bg-alternate/10 text-center py-1 border-2 border-primary/60 hover:scale-105 transition-all duration-300 shadow-sm rounded-xl font-semibold "
+            className="w-full text-black text-sm  bg-alternate/10 gap-0 flex flex-col items-center justify-center text-center py-2 border-2 border-primary/60 hover:scale-105 transition-all duration-300 shadow-sm rounded-xl font-semibold "
           >
-            {item.data}
-            <br />
-            <span className="text-primary truncate ">{item.price}</span>
-            <br />
-            <span>{item.duration}</span>
+            <span>{item.data}</span>
+            <span className="text-primary truncate">{item.price}</span>
+            <span className="font-normal text-xs">{item.duration}</span>
           </button>
         ))}
       </div>
@@ -807,7 +802,7 @@ function AmountGrid({
         placeholder="Enter amount"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 font-semibold outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all"
+        className="w-full flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
       />
     </div>
   );
@@ -827,20 +822,23 @@ function InputField({
   verify?: boolean;
 }) {
   return (
-    <div className="space-y-3">
-      <label className="text-sm font-semibold text-stone-700 block">
+    <div className="space-y-2 w-full">
+      <label className="block text-gray-700 font-semibold text-sm">
         {label}
       </label>
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <input
           type="text"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="flex-1 border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all"
+          className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
         />
         {verify && (
-          <button className="text-teal-600 font-semibold text-sm hover:text-teal-700 px-4 py-3 rounded-xl hover:bg-teal-50 transition-all">
+          <button
+            className="px-4 py-3 bg-teal-500 text-white font-semibold text-sm rounded-xl hover:bg-teal-600 transition-colors duration-150 shadow-sm"
+            type="button"
+          >
             Verify
           </button>
         )}
@@ -868,7 +866,7 @@ function SelectField({
       <select
         value={value}
         onChange={onChange}
-        className="w-full border-2 border-stone-200 rounded-xl px-4 py-3 bg-white text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all appearance-none cursor-pointer"
+        className="w-full border-2 border-stone-200 rounded-lg px-4 py-4 bg-white text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all appearance-none cursor-pointer"
         style={{
           backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
           backgroundRepeat: "no-repeat",
@@ -887,12 +885,3 @@ function SelectField({
     </div>
   );
 }
-
-const ProvidersSkeleton = () => (
-  <div className="animate-pulse flex flex-col items-center justify-center gap-4">
-    <div className="w-[1/4] h-20 rounded-lg bg-gray-300" />
-    <div className="w-[1/4] h-20 rounded-lg bg-gray-300" />
-    <div className="w-[1/4] h-20 rounded-lg bg-gray-300" />
-    <div className="w-[1/4] h-20 rounded-lg bg-gray-300" />
-  </div>
-);
