@@ -1,8 +1,7 @@
 "use client";
 
 import TransactionHistory from "@/components/modal/history";
-import { MenuItem } from "@/components/ui/buttons";
-import { ArrowLeftIcon, User, NotebookPen } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import React from "react";
 
 export default function History() {
@@ -26,7 +25,7 @@ export default function History() {
         {/* Content Card */}
 
         <TransactionHistory
-          data={[
+          data ={[
             {
               id: 1,
               name: "Airtime Purchase",

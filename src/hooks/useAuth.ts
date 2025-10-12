@@ -10,7 +10,7 @@ export const useAuth = () => {
   useEffect(() => {
     const token = getClientCookie("accessToken");
     if (!token) {
-      router.push("/auth/login");
+      // router.push("/auth/login");
     } else {
       setAuthenticated(true);
     }

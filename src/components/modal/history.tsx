@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {
   Bus,
   Check,
+  ChevronRight,
   Lightbulb,
   Plane,
   Smartphone,
@@ -30,8 +31,13 @@ interface Props {
 }
 
 export default function TransactionHistory({ data }: Props) {
+  const [selectedTransaction, setSelectedTransaction] = useState<
+    number | string | null
+  >(null);
 
-    const [selectedTransaction, setSelectedTransaction] = useState<number| string| null>(null)
+  const handleSelectedtransaction = (id: number | string) => {
+    setSelectedTransaction(id);
+  };
   const statusColor = (status: string) => {
     switch (status) {
       case "Pending":
@@ -44,9 +50,7 @@ export default function TransactionHistory({ data }: Props) {
         return "bg-white";
     }
   };
-  const singleTransaction = data?.map(tx => tx.id === selectedTransaction )
-console.log(typeof(singleTransaction))
-  const status = "Successful";
+  const singleTransaction = data?.find((tx) => tx.id === selectedTransaction);
   return (
     <div className="">
       {data.map((item, idx) => {
@@ -61,6 +65,7 @@ console.log(typeof(singleTransaction))
         return (
           <div
             key={idx}
+            onClick={() => handleSelectedtransaction(item.id)}
             className="flex justify-between items-center bg-white  p-4 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-300"
           >
             <div className="flex items-center gap-3">
@@ -106,56 +111,111 @@ console.log(typeof(singleTransaction))
         );
       })}
 
-      <AnimatePresence>
-        {true && (
-          <motion.div
-            className="fixed inset-0 bg-black/40 w-full container backdrop-blur-sm flex items-end justify-center z-[99]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            //   onClick={() => setShowShareModal(false)}
-          >
+      {selectedTransaction && (
+        <AnimatePresence>
+          {true && (
             <motion.div
-              initial={{ y: 300 }}
-              animate={{ y: 0 }}
-              exit={{ y: 300 }}
-              transition={{ type: "spring", damping: 20, stiffness: 200 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full bg-white rounded-t-3xl p-6 shadow-lg"
+              className="fixed inset-0 bg-black/40 w-full container backdrop-blur-sm flex items-end justify-center z-[99]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedTransaction(null)}
             >
-              <div className="w-full max-w-lg mx-auto rounded-2xl bg-alternate/10 flex flex-col items-center justify-center gap-2 p-5">
-                <h1 className="text-xl font-semibold">Airtime Puschase</h1>
-                <h1 className="text-3xl font-black text-alternate">N100000</h1>
-                {status === "Successful" && (
-                  <div className="p-2 flex items-center gap-2">
-                    <span className="text-white rounded-full bg-alternate p-1 flex flex-none ">
-                      <Check size={20} />
-                    </span>
-                    <span className="text-teal-800">Successful</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="w-full max-w-lg mx-auto my-10 rounded-2xl bg-alternate/10 flex flex-col items-center justify-center gap-2 p-5">
-                <h1 className="text-xl text-start w-full font-black text-alternate">
-                  Transaction Details
-                </h1>
-
-                <div className=" flex flex-col gap-2 w-full ">
-                   <div className="w-full flex justify-between items-center">
-                        <div className="text-stone-700 w-ful">
-                            Credited To
-                        </div>
-                        <div className="text-alternate">
-                        </div>
-
-                   </div>
+              <motion.div
+                initial={{ y: 300 }}
+                animate={{ y: 0 }}
+                exit={{ y: 300 }}
+                transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full bg-white rounded-t-3xl p-6 shadow-lg"
+              >
+                <div className="w-full max-w-lg mx-auto rounded-2xl bg-alternate/10 flex flex-col items-center justify-center gap-2 p-5">
+                  <h1 className="text-xl font-semibold">
+                    {singleTransaction?.name}
+                  </h1>
+                  <h1
+                    className={` text-3xl font-black  ${
+                      singleTransaction?.status === "Successful"
+                        ? "text-alternate"
+                        : singleTransaction?.status === "Failed"
+                        ? "text-red-500"
+                        : "text-stont-800"
+                    }`}
+                  >
+                    {singleTransaction?.amount}
+                  </h1>
+                  {singleTransaction?.status === "Successful" && (
+                    <div className="p-2 flex items-center gap-2">
+                      <span className="text-white rounded-full bg-alternate p-1 flex flex-none ">
+                        <Check size={20} />
+                      </span>
+                      <span className="text-teal-800">Successful</span>
+                    </div>
+                  )}
+                  {singleTransaction?.status === "Failed" && (
+                    <div className="p-2 flex items-center gap-2">
+                      <span className="text-red-500 rounded-full bg-red-100 p-1 flex flex-none ">
+                        <Check size={20} />
+                      </span>
+                      <span className="text-red-500">Failed</span>
+                    </div>
+                  )}
+                  {singleTransaction?.status === "Pending" && (
+                    <div className="p-2 flex items-center gap-2">
+                      <span className="text-stone-800 w-4 h-4 border-stone-800 border-b-3 animate-spin rounded-full p-1 flex flex-none "></span>
+                      <span className="text-stone-800">Pending</span>
+                    </div>
+                  )}
                 </div>
-              </div>
+
+                <div className="w-full max-w-lg mx-auto my-10 rounded-2xl bg-alternate/10 flex flex-col items-center justify-center gap-2 p-5">
+                  <h1 className="text-xl text-start w-full font-black text-alternate">
+                    Transaction Details
+                  </h1>
+
+                  <div className=" flex flex-col gap-2 w-full ">
+                    <div className="w-full flex justify-between items-center">
+                      <div className="text-stone-700 w-ful">Credited To</div>
+                      <div className="text-alternate">
+                        {singleTransaction?.creditedTo}
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-between items-center">
+                      <div className="text-stone-700 w-ful">Transaction No</div>
+                      <div className="text-alternate">
+                        {singleTransaction?.transactionNo}
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-between items-center">
+                      <div className="text-stone-700 w-ful">
+                        Transaction Date
+                      </div>
+                      <div className="text-alternate">
+                        {singleTransaction?.date}
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-between items-center">
+                      <div className="text-stone-700 w-ful">Remark</div>
+                      <div className="text-alternate">
+                        {singleTransaction?.remark}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="w-full max-w-lg mx-auto my-10 rounded-2xl bg-alternate/10 flex  items-center justify-between gap-2 p-5">
+                  <button className="w-full flex justify-between cursor-pointer items-center">
+                    <div className="text-stone-700 w-ful">
+                      View Interest Details
+                    </div>
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

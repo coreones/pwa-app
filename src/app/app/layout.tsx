@@ -32,7 +32,7 @@ export default function AppLayout({
 
 
   if (loading) return <p>Loading...</p>;
-  if (!authenticated) return router.push("/auth/login");
+  // if (!authenticated) return router.push("/auth/login");
 
   return (
     <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
@@ -44,7 +44,7 @@ export default function AppLayout({
 
       {/* Floating Mobile Nav */}
       <div
-        className="max-w-3xl w-full mx-auto bg-white/95 fixed bottom-0 left-0 right-0
+        className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0
           pb-[env(safe-area-inset-bottom)]  /* Respect iPhone/Android nav bars */
           flex items-center justify-between w-full backdrop-blur-lg border-t border-gray-200
           shadow-[0_-2px_10px_rgba(0,0,0,0.08)]  p-4 rounded-t-2xl z-50
