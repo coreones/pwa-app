@@ -7,7 +7,7 @@ import ChangePin from "./modal/ChangePinModal";
 export default function Page() {
   const [activeModal, setActiveModal] = useState(false);
   const [otp, setOtp] = useState<string[]>(["", "", "", "", ""]);
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -16,7 +16,7 @@ export default function Page() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Move focus forward
+    // Move focus forward automatically
     if (value && index < otp.length - 1) {
       inputsRef.current[index + 1]?.focus();
     }
@@ -67,7 +67,9 @@ export default function Page() {
             {otp.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => (inputsRef.current[index] = el)}
+                ref={(el: HTMLInputElement | null) => {
+                  inputsRef.current[index] = el;
+                }}
                 id={`otp-${index}`}
                 type="text"
                 inputMode="numeric"

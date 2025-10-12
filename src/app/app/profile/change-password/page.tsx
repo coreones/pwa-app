@@ -29,7 +29,10 @@ export default function Page() {
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const pastedData = e.clipboardData.getData("Text").slice(0, otp.length).split("");
+    const pastedData = e.clipboardData
+      .getData("Text")
+      .slice(0, otp.length)
+      .split("");
     if (pastedData.every((char) => /^[0-9]$/.test(char))) {
       setOtp(pastedData);
     }
@@ -67,7 +70,9 @@ export default function Page() {
             {otp.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => (inputsRef.current[index] = el)}
+                ref={(el) => {
+                  inputsRef.current[index] = el; // ✅ fixed: now no implicit return
+                }}
                 id={`otp-${index}`}
                 type="text"
                 inputMode="numeric"

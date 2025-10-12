@@ -136,10 +136,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
         switch (step) {
             case 1:
                 return (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 p-6">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 py-6 px-3">
                         <div className="space-y-3">
-                            <h2 className="text-3xl font-bold text-gray-900">{typeConfig[type].title}</h2>
-                            <p className="text-gray-500 text-sm">Complete your transaction securely</p>
+                            <h2 className="text-3xl font-bold text-stone-900">{typeConfig[type].title}</h2>
+                            <p className="text-stone-500 text-sm">Complete your transaction securely</p>
                         </div>
 
                         <div className="space-y-6">
@@ -248,20 +248,20 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                                 </>
                             )}
 
-                            <label className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 cursor-pointer hover:border-blue-300 transition-all">
+                            <label className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-teal-50 to-indigo-50 border border-teal-100 cursor-pointer hover:border-teal-300 transition-all">
                                 <input
                                     type="checkbox"
                                     checked={saveBeneficiary}
                                     onChange={handleSaveBeneficiary}
-                                    className="w-5 h-5 text-blue-600 rounded-lg cursor-pointer accent-blue-600"
+                                    className="w-5 h-5 text-teal-600 rounded-lg cursor-pointer accent-teal-600"
                                 />
-                                <span className="text-sm font-medium text-gray-700">Save as beneficiary for quick access</span>
+                                <span className="text-sm font-medium text-stone-700">Save as beneficiary for quick access</span>
                             </label>
 
                             <button
                                 onClick={handleNext}
                                 disabled={!isStep1Valid()}
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl duration-300"
+                                className="w-full bg-gradient-to-r from-teal-600 to-teal-800 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl duration-300"
                             >
                                 Continue to Review
                             </button>
@@ -281,45 +281,45 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                             initial={{ y: 100, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 100, opacity: 0 }}
-                            className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+                            className="bg-white rounded-3xl py-6 px-3 w-full max-w-md shadow-2xl"
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Review Transaction</h2>
+                                <h2 className="text-2xl font-bold text-stone-900">Review Transaction</h2>
                                 <button
                                     onClick={handleBack}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    className="text-stone-400 hover:text-stone-600 transition-colors"
                                 >
                                     <X size={24} />
                                 </button>
                             </div>
 
                             <div className="space-y-4 mb-8">
-                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 space-y-4">
+                                <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl py-6 px-3 border border-teal-100 space-y-4">
                                     <ReviewItem label="Product" value={typeConfig[type].title} />
-                                    <div className="border-t border-blue-100" />
+                                    <div className="border-t border-teal-100" />
                                     <ReviewItem label="Provider" value={formData.provider.toUpperCase()} />
                                     {formData.phone && <ReviewItem label="Phone" value={formData.phone} />}
                                     {formData.account && <ReviewItem label={type === "tv" ? "Smart Card" : "Account"} value={formData.account} />}
                                     {formData.meter && <ReviewItem label="Meter" value={formData.meter} />}
                                     {formData.plan && <ReviewItem label="Plan" value={formData.plan} />}
                                     {formData.planType && <ReviewItem label="Type" value={formData.planType} />}
-                                    <div className="border-t border-blue-100" />
+                                    <div className="border-t border-teal-100" />
                                     <div className="flex justify-between items-center pt-2">
-                                        <span className="text-gray-600 font-medium">Total Amount</span>
-                                        <span className="text-2xl font-bold text-blue-600">₦{parseInt(formData.amount).toLocaleString()}</span>
+                                        <span className="text-stone-600 font-medium">Total Amount</span>
+                                        <span className="text-2xl font-bold text-teal-600">₦{parseInt(formData.amount).toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleNext}
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg mb-3"
+                                className="w-full bg-gradient-to-r from-teal-600 to-teal-800 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg mb-3"
                             >
                                 Confirm & Pay
                             </button>
                             <button
                                 onClick={handleBack}
-                                className="w-full border border-gray-200 text-gray-700 font-semibold py-4 rounded-xl hover:bg-gray-50 transition-all"
+                                className="w-full border border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
                             >
                                 Back
                             </button>
@@ -343,8 +343,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                         >
                             <div className="text-center space-y-8">
                                 <div className="space-y-2">
-                                    <h2 className="text-2xl font-bold text-gray-900">Enter PIN</h2>
-                                    <p className="text-gray-500 text-sm">Secure your transaction with your 4-digit PIN</p>
+                                    <h2 className="text-2xl font-bold text-stone-900">Enter PIN</h2>
+                                    <p className="text-stone-500 text-sm">Secure your transaction with your 4-digit PIN</p>
                                 </div>
 
                                 <div className="flex justify-center gap-3">
@@ -368,7 +368,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                                                 }
                                             }}
                                             id={`otp-${idx}`}
-                                            className="w-14 h-14 text-2xl font-bold text-center border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
+                                            className="w-14 h-14 text-stone-800 placeholder:text-stone-200 text-2xl font-bold text-center border-2 border-stone-200 rounded-xl focus:border-teal-600 focus:ring-2 focus:ring-teal-100 outline-none transition-all"
                                             placeholder="•"
                                         />
                                     ))}
@@ -376,7 +376,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
                                 <button
                                     onClick={() => setShowOTPFull(!showOTPFull)}
-                                    className="flex items-center justify-center gap-2 mx-auto text-sm text-gray-600 hover:text-gray-800"
+                                    className="flex items-center justify-center gap-2 mx-auto text-sm text-stone-600 hover:text-stone-800"
                                 >
                                     {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
                                     {showOTPFull ? "Hide" : "Show"}
@@ -391,13 +391,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                                             }
                                         }}
                                         disabled={!otp.every((d) => d)}
-                                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all"
+                                        className="w-full bg-gradient-to-r from-teal-600 to-teal-800 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed transition-all"
                                     >
                                         Confirm PIN
                                     </button>
                                     <button
                                         onClick={handleBack}
-                                        className="w-full text-gray-600 font-semibold py-3 hover:text-gray-800"
+                                        className="w-full text-stone-600 font-semibold py-3 hover:text-stone-800"
                                     >
                                         ← Back
                                     </button>
@@ -438,10 +438,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                             </motion.div>
 
                             <div className="space-y-3">
-                                <h2 className="text-2xl font-bold text-gray-900">
+                                <h2 className="text-2xl font-bold text-stone-900">
                                     {success ? "Payment Successful!" : "Payment Failed"}
                                 </h2>
-                                <p className="text-gray-500">
+                                <p className="text-stone-500">
                                     {success
                                         ? "Your transaction has been processed successfully. You'll receive a confirmation shortly."
                                         : "Something went wrong. Please check your details and try again."}
@@ -450,14 +450,14 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
                             {success && (
                                 <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
-                                    <p className="text-xs text-gray-600">Reference ID</p>
+                                    <p className="text-xs text-stone-600">Reference ID</p>
                                     <p className="font-mono font-semibold text-green-700">TRX{Math.random().toString().slice(2, 11)}</p>
                                 </div>
                             )}
 
                             <button
                                 onClick={handleReset}
-                                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                                className="w-full bg-gradient-to-r from-teal-600 to-teal-800 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg"
                             >
                                 {success ? "New Transaction" : "Try Again"}
                             </button>
@@ -469,7 +469,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 flex flex-col">
-            <div className="p-6 flex items-center justify-between">
+            <div className="py-6 px-3 flex items-center justify-between">
                 <button
                     onClick={handleBack}
                     className="text-white/70 hover:text-white hover:bg-white/10 p-2.5 rounded-full transition-all"
@@ -482,7 +482,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 <div className="w-10" />
             </div>
 
-            <div className="flex-1 bg-gradient-to-t from-white to-gray-50 rounded-t-3xl p-6 overflow-y-auto">
+            <div className="flex-1 bg-gradient-to-t from-white to-stone-50 rounded-t-3xl py-6 px-3 overflow-y-auto">
                 <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
             </div>
         </div>
@@ -492,8 +492,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 function ReviewItem({ label, value }: { label: string; value: string }) {
     return (
         <div className="flex justify-between items-center">
-            <span className="text-gray-600 text-sm font-medium">{label}</span>
-            <span className="text-gray-900 font-semibold capitalize">{value}</span>
+            <span className="text-stone-600 text-sm font-medium">{label}</span>
+            <span className="text-stone-900 font-semibold capitalize">{value}</span>
         </div>
     );
 }
@@ -516,24 +516,24 @@ function ProviderSelect({
 
     return (
         <div className="space-y-3 relative">
-            <label className="text-sm font-semibold text-gray-700 block">{label}</label>
+            <label className="text-sm font-semibold text-stone-700 block">{label}</label>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between border-2 border-gray-200 rounded-xl px-4 py-3 bg-white hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all text-left"
+                className="w-full flex items-center justify-between border-2 border-stone-200 rounded-xl px-4 py-3 bg-white hover:border-stone-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all text-left"
             >
                 <div className="flex items-center gap-3">
                     {selectedProvider ? (
                         <>
                             <span className="text-2xl">{getProviderLogo(selectedProvider.value)}</span>
-                            <span className="font-medium text-gray-800">{selectedProvider.name}</span>
+                            <span className="font-medium text-stone-800">{selectedProvider.name}</span>
                         </>
                     ) : (
-                        <span className="text-gray-500">Select Provider</span>
+                        <span className="text-stone-500">Select Provider</span>
                     )}
                 </div>
                 <ChevronDown
                     size={20}
-                    className={`text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    className={`text-stone-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
                 />
             </button>
 
@@ -542,7 +542,7 @@ function ProviderSelect({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-stone-200 rounded-xl shadow-lg z-10 overflow-hidden"
                 >
                     {providers.map((provider) => (
                         <button
@@ -551,10 +551,10 @@ function ProviderSelect({
                                 onChange(provider.value);
                                 setIsOpen(false);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-b-0"
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-teal-50 transition-colors text-left border-b border-stone-100 last:border-b-0"
                         >
                             <span className="text-2xl">{getProviderLogo(provider.value)}</span>
-                            <span className="font-medium text-gray-800">{provider.name}</span>
+                            <span className="font-medium text-stone-800">{provider.name}</span>
                         </button>
                     ))}
                 </motion.div>
@@ -579,17 +579,17 @@ function PlanSelect({
 
     return (
         <div className="space-y-3 relative">
-            <label className="text-sm font-semibold text-gray-700 block">{label}</label>
+            <label className="text-sm font-semibold text-stone-700 block">{label}</label>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between border-2 border-gray-200 rounded-xl px-4 py-3 bg-white hover:border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all text-left"
+                className="w-full flex items-center justify-between border-2 border-stone-200 rounded-xl px-4 py-3 bg-white hover:border-stone-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all text-left"
             >
-                <span className="font-medium text-gray-800">
+                <span className="font-medium text-stone-800">
                     {selectedPlan ? selectedPlan.label : "Select Plan"}
                 </span>
                 <ChevronDown
                     size={20}
-                    className={`text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    className={`text-stone-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
                 />
             </button>
 
@@ -598,7 +598,7 @@ function PlanSelect({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-stone-200 rounded-xl shadow-lg z-10 overflow-hidden"
                 >
                     {plans.map((plan) => (
                         <button
@@ -607,9 +607,9 @@ function PlanSelect({
                                 onSelect({ label: plan.label, amount: plan.amount });
                                 setIsOpen(false);
                             }}
-                            className="w-full px-4 py-3 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-b-0"
+                            className="w-full px-4 py-3 hover:bg-teal-50 transition-colors text-left border-b border-stone-100 last:border-b-0"
                         >
-                            <span className="font-medium text-gray-800">{plan.label}</span>
+                            <span className="font-medium text-stone-800">{plan.label}</span>
                         </button>
                     ))}
                 </motion.div>
@@ -629,17 +629,17 @@ function AmountGrid({
 }) {
     return (
         <div className="space-y-4">
-            <label className="text-sm font-semibold text-gray-700 block">Amount</label>
-            <div className="grid grid-cols-3 gap-2">
+            <label className="text-sm font-semibold text-stone-700 block">Amount</label>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                 {presetAmounts.map((amt) => (
                     <motion.button
                         key={amt}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => onChange(amt.toString())}
-                        className={`py-3 rounded-xl font-semibold transition-all duration-300 border-2 ${value === amt.toString()
-                            ? "border-blue-600 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 shadow-md"
-                            : "border-gray-200 text-gray-700 hover:border-gray-300"
+                        className={`py-3 rounded-3xl font-normal text-sm transition-all duration-300 border-2 ${value === amt.toString()
+                            ? "border-teal-600 bg-gradient-to-r from-teal-600 to-teal-800 text-stone-100 shadow-md"
+                            : "border-stone-200 text-stone-800 hover:border-stone-300"
                             }`}
                     >
                         ₦{amt.toLocaleString()}
@@ -651,7 +651,7 @@ function AmountGrid({
                 placeholder="Enter custom amount"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-semibold outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 font-semibold outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all"
             />
         </div>
     );
@@ -672,17 +672,17 @@ function InputField({
 }) {
     return (
         <div className="space-y-3">
-            <label className="text-sm font-semibold text-gray-700 block">{label}</label>
+            <label className="text-sm font-semibold text-stone-700 block">{label}</label>
             <div className="flex gap-2 items-center">
                 <input
                     type="text"
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}
-                    className="flex-1 border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-medium outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all"
+                    className="flex-1 border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all"
                 />
                 {verify && (
-                    <button className="text-blue-600 font-semibold text-sm hover:text-blue-700 px-4 py-3 rounded-xl hover:bg-blue-50 transition-all">
+                    <button className="text-teal-600 font-semibold text-sm hover:text-teal-700 px-4 py-3 rounded-xl hover:bg-teal-50 transition-all">
                         Verify
                     </button>
                 )}
@@ -704,11 +704,11 @@ function SelectField({
 }) {
     return (
         <div className="space-y-3">
-            <label className="text-sm font-semibold text-gray-700 block">{label}</label>
+            <label className="text-sm font-semibold text-stone-700 block">{label}</label>
             <select
                 value={value}
                 onChange={onChange}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-800 font-medium outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer"
+                className="w-full border-2 border-stone-200 rounded-xl px-4 py-3 bg-white text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all appearance-none cursor-pointer"
                 style={{
                     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
                     backgroundRepeat: "no-repeat",

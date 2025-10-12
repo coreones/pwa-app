@@ -32,7 +32,7 @@ export default function WelcomePage() {
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
     { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
     { name: "Flight", icon: Plane, tag: "5% off", link: "/app/payments/" },
-    { name: "Cable/TV", icon: Tv, link: "/app/payments/data" },
+    { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
     { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
     { name: "Gift Card", icon: Gift, tag: "Best rate", link: "/app/payments/" },
     { name: "Transport", icon: Bus, link: "/app/payments/" },
