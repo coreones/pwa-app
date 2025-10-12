@@ -33,7 +33,6 @@ export default function AppLayout({
     },
   };
 
-<<<<<<< HEAD
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white">
@@ -61,10 +60,6 @@ export default function AppLayout({
     router.push("/auth/login");
     return null;
   }
-=======
-  if (loading) return <p>Loading...</p>;
-  // if (!authenticated) return router.push("/auth/login");
->>>>>>> 433c5bc273d5920930cdec2b75b15828e614ea44
 
   return (
     <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
