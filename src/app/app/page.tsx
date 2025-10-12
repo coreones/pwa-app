@@ -20,16 +20,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import AddFunds from "@/components/modal/payments/add-funds";
 import { useAuth } from "@/hooks/useAuth";
+import ComingSoon from "@/components/coming-soon";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [showBalance, setShowBalance] = useState<boolean>(true);
   const [addFunds, setAddFunds] = useState(false);
-
+  const [isComing, setIsComing] = useState(false);
   const handleShowBalance = () => {
     setShowBalance(!showBalance);
   };
-
+  const router = useRouter();
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
@@ -37,8 +39,8 @@ export default function DashboardPage() {
     { name: "Flight", icon: Plane, tag: "5% off", link: "/app/payments/" },
     { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
     { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
-    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "/app/payments/" },
-    { name: "Transport", icon: Bus, link: "/app/payments/" },
+    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "" },
+    { name: "Transport", icon: Bus, link: "" },
     { name: "More", icon: LayoutDashboard, link: "#" },
   ];
 
@@ -138,9 +140,19 @@ export default function DashboardPage() {
             <div className="grid grid-cols-3 gap-3 sm:gap-5">
               {items.map((item, idx) => {
                 const Icon = item.icon;
+
                 return (
-                  <Link
-                    href={item.link}
+                  <button
+                    onClick={() => {
+                      const link = () => {
+                        if (item.link === "") {
+                          return setIsComing(true);
+                        } else {
+                          return router.push(item.link);
+                        }
+                      };
+                      return link()
+                    }}
                     key={idx}
                     className="relative flex flex-col items-center justify-center p-3 sm:p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all"
                   >
@@ -155,7 +167,7 @@ export default function DashboardPage() {
                         {item.tag}
                       </span>
                     )}
-                  </Link>
+                  </button>
                 );
               })}
             </div>
@@ -184,6 +196,7 @@ export default function DashboardPage() {
         </div>
 
         {addFunds && <AddFunds close={setAddFunds} />}
+        {isComing && <ComingSoon close={setIsComing} />}
       </div>
     </div>
   );
