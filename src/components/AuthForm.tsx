@@ -99,7 +99,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     router.push("/app");
                 }
             } else if (type === "register") {
-                const res = await api.post<ApiResponse>("/auth/register", {...data, referral_code: ref});
+                const res = await api.post<ApiResponse>("/auth/register", { ...data, referral_code: ref });
                 if (!res.data.error) {
                     toast.success("Account created successfully!");
                     router.push("/auth/login");
@@ -135,7 +135,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                                 className={inputClasses}
                             />
                             {errors.entity?.message && (
-                                <p className="text-red-500 text-sm mt-1">{errors.entity.message}</p>
+                                <p className="text-red-500 text-sm mt-1">{errors.entity.message.toString()}</p>
                             )}
                         </div>
                         <div>
@@ -188,8 +188,8 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     )}
                                 </button>
                             </div>
-                            {errors.password && (
-                                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                            {errors.password?.message && (
+                                <p className="text-red-500 text-sm mt-1">{errors.password.message.toString()}</p>
                             )}
                         </div>
                     </>
@@ -203,27 +203,27 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     First Name
                                 </label>
                                 <input type="text" placeholder="John" {...formRegister("firstname")} className={inputClasses} />
-                                {errors.firstname && <p className="text-red-500 text-sm mt-1">{errors.firstname.message}</p>}
+                                {errors.firstname?.message && <p className="text-red-500 text-sm mt-1">{errors.firstname.message.toString()}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Last Name
                                 </label>
                                 <input type="text" placeholder="Doe" {...formRegister("lastname")} className={inputClasses} />
-                                {errors.lastname && <p className="text-red-500 text-sm mt-1">{errors.lastname.message}</p>}
+                                {errors.lastname?.message && <p className="text-red-500 text-sm mt-1">{errors.lastname.message.toString()}</p>}
                             </div>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
                             <input type="text" placeholder="johndoe123" {...formRegister("username")} className={inputClasses} />
-                            {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>}
+                            {errors.username?.message && <p className="text-red-500 text-sm mt-1">{errors.username.message.toString()}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                             <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
-                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                            {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
                         </div>
 
                         <div>
@@ -254,8 +254,8 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     e.target.value = value;
                                 }}
                             />
-                            {errors.phone && (
-                                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                            {errors.phone?.message && (
+                                <p className="text-red-500 text-sm mt-1">{errors.phone.message.toString()}</p>
                             )}
                         </div>
 
@@ -276,7 +276,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     )}
                                 </button>
                             </div>
-                            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                            {errors.password?.message && <p className="text-red-500 text-sm mt-1">{errors.password.message.toString()}</p>}
                         </div>
                     </>
                 );
@@ -285,7 +285,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                         <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
-                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                        {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
                     </div>
                 );
         }
