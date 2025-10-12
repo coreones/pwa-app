@@ -11,7 +11,7 @@ export default function ReportsPage() {
   const handleBack = useBack("/app");
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 1500); // simulate loading
+    const timeout = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timeout);
   }, []);
 

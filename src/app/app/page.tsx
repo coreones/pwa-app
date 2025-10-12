@@ -2,7 +2,6 @@
 
 import {
   Bus,
-  CardSim,
   ChartNoAxesColumn,
   Eye,
   Gift,
@@ -19,9 +18,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import AddFunds from "@/components/modal/payments/add-funds";
 
 export default function WelcomePage() {
   const [showBalance, setShowBalance] = useState<boolean>(true);
+  const [addFunds, setAddFunds] = useState(false)
 
   const handleShowBalance = () => {
     setShowBalance(!showBalance)
@@ -111,7 +112,7 @@ export default function WelcomePage() {
 
           {/* CTA */}
           <div className="w-full text-center">
-            <button onClick={() => {}} className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
+            <button onClick={() => setAddFunds(true)} className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
               + Add Money
             </button>
           </div>
@@ -167,6 +168,8 @@ export default function WelcomePage() {
             </AnimatePresence>
           </div>
         </div>
+
+        {addFunds && <AddFunds close={setAddFunds} />}
       </div>
     </div>
   );
