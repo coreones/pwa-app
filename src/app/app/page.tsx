@@ -111,7 +111,7 @@ export default function WelcomePage() {
 
           {/* CTA */}
           <div className="w-full text-center">
-            <button className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
+            <button onClick={() => {}} className="bg-white text-[#21A29D] font-semibold py-3 px-8 rounded-2xl shadow-sm hover:shadow-md transition">
               + Add Money
             </button>
           </div>

@@ -9,6 +9,7 @@ import {
   EyeOff,
   ChevronDown,
 } from "lucide-react";
+import Image from "next/image";
 
 interface PaymentPageProps {
   type: "airtime" | "data" | "betting" | "tv" | "electricity";
@@ -63,10 +64,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
   const getProviderLogo = (provider: string) => {
     const logos = {
-      mtn: "🟡",
-      airtel: "🔴",
-      glo: "💚",
-      "9mobile": "🔵",
+      mtn: "/svg/mtn.svg",
+      airtel: "/img/airtel.png",
+      glo: "/img/glo.png",
+      "9mobile": "/svg/9mobile.svg",
       bet9ja: "🏆",
       sportybet: "🏆",
       "1xbet": "🏆",
@@ -673,9 +674,11 @@ function ProviderSelect({
               onChange(provider.value);
               setIsOpen(false);
             }}
-            className="w-full shadow-lg rounded-xl bg-white flex flex-col items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-b-0"
+            className="w-full shadow-lg relative rounded-xl bg-white flex flex-col items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors text-left border-b border-gray-100 last:border-b-0"
           >
-            <span className="text-2xl">{getProviderLogo(provider.value)}</span>
+                <div className="w-12 h-12 rounded-full overflow-hidden relative ">
+                    <Image src={getProviderLogo(provider.value)}  alt={provider.name} fill className="object-cover"  />
+                </div>
             <span className="font-medium text-gray-800">{provider.name}</span>
           </button>
         ))}
