@@ -1,6 +1,6 @@
-import {  Transaction, Wallet, BankAccount, SidebarItem } from '@/types/admin';
+import {  Transaction, BankAccount, SidebarItem } from '@/types/admin';
 import { Banknote, Users, Wallet as WalletIcon } from 'lucide-react';
-import { User } from '@/types/api';
+import { User,Wallet } from '@/types/api';
 
 export const mockUsers: User[] = [
   {
