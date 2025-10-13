@@ -55,7 +55,7 @@ export default function MyProfilePage() {
               <MenuItem
                 icon={<PencilSquareIcon className="w-5 h-5 text-[#21A29D]" />}
                 showBorder={false}
-                label="Set ETag"
+                label="Set BillNa Handle"
                 type="button"
                 onclick={() => setActiveModal("ETag")}
               />

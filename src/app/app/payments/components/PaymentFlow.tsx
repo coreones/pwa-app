@@ -52,7 +52,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [formData, setFormData] = useState<Purchase>({
     service_id: "",
     phone: "",
-    amount: 0,
+    amount: "",
     customer_id: "",
     variation: null,
     type: "",
@@ -111,10 +111,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   }, [type])
 
 
-  const getDataVariations = async (v: Variation) => {
+  const getDataVariations = async (service_id: string) => {
     setLoading(true)
     try {
-      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${v.service_id}`)
+      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${service_id}`)
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setDataVariations(res.data.data)
       } else {
@@ -127,10 +127,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     }
   }
 
-  const getTVVariations = async (v: Variation) => {
+  const getTVVariations = async (service_id: string) => {
     setLoading(true)
     try {
-      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${v.service_id}`)
+      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setTvVariations(res.data.data)
       } else {
@@ -151,19 +151,21 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "service_id" && value != null) {
+    if (field === "service_id" && typeof value === "string") {
       switch (type) {
         case "tv":
           setTvVariations(null);
-          getTVVariations(value as Variation);
+          getTVVariations(value);
           break;
+
         case "data":
           setDataVariations(null);
-          getDataVariations(value as Variation);
+          getDataVariations(value);
           break;
       }
     }
   };
+
 
 
   const isStep1Valid = () => {
@@ -198,8 +200,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-8"
           >
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold text-stone-900">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-bold text-stone-800">
                 {typeConfig[type].title}
               </h2>
               <p className="text-stone-500 text-sm">
@@ -232,6 +234,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     onChange={(e) => handleFormChange("phone", e.target.value)}
                   />
                   <AmountGrid
+                    type={type}
                     value={formData.amount}
                     onChange={(value) => handleFormChange("amount", value)}
                     presetAmounts={presetAmounts}
@@ -321,9 +324,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     label="Type"
                     options={["prepaid", "postpaid"]}
                     value={formData.type}
-                    onChange={(e) =>
-                      handleFormChange("type", e.target.value)
-                    }
+                    onChange={(value) => handleFormChange("type", value)}
                   />
                   <AmountGrid
                     value={formData.amount}
@@ -601,48 +602,80 @@ function ReviewItem({ label, value }: { label: string; value: string | number })
   );
 }
 
+type ProviderSelectProps = {
+  label: string;
+  providers: Provider[];
+  value: string;
+  onChange: (service_id: string) => void;
+}
+
 function ProviderSelect({
   label,
   providers,
   value,
   onChange,
-}: {
-  label: string;
-  providers: Provider[];
-  value: string;
-  onChange: (service_id: string) => void;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+}: ProviderSelectProps) {
   return (
-    <div className="space-y-3 relative">
+    <div className="space-y-3">
+      {/* Label */}
       <label className="text-sm font-semibold text-stone-700 block">
         {label}
       </label>
 
+      {/* Horizontal Scroll Section */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className=" grid grid-cols-2 [@media(min-width:400px)]:grid-cols-4 gap-2 py-1 mt-2 z-10 overflow-hidden"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="flex items-center gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent"
       >
-        {providers.map((provider) => (
-          <button
-            key={provider.service_id}
-            onClick={() => {
-              onChange(provider.service_id);
-              setIsOpen(false);
-            }}
-            className={`${provider.service_id == value ? 'border-2 border-primary bg-teal-50' : 'border border-stone-300 bg-white'} w-full shadow-lg relative rounded-lg flex flex-col items-center gap-1 px-4 py-4 hover:bg-teal-50/75`}
-          >
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden relative ">
-              <Image src={provider.logo} alt={provider.service_name} fill className="object-cover" />
-            </div>
-            <span className="font-normal text-sm md:text-md text-stone-800">{provider.service_name}</span>
-          </button>
-        ))}
+        {providers.map((provider) => {
+          const isSelected = provider.service_id === value;
+          return (
+            <motion.button
+              key={provider.service_id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => onChange(provider.service_id)}
+              className={`flex flex-col items-center justify-center shrink-0 min-w-[90px] md:min-w-[100px] p-4 rounded-2xl transition-all duration-300
+                ${isSelected
+                  ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
+                  : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
+                }`}
+            >
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden ring-1 ring-stone-200 mb-2">
+                <Image
+                  src={provider.logo}
+                  alt={provider.service_name}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span
+                className={`text-xs md:text-sm font-medium ${isSelected ? "text-teal-700" : "text-stone-700"
+                  } text-center truncate w-full`}
+              >
+                {provider.service_name}
+              </span>
+            </motion.button>
+          );
+        })}
       </motion.div>
+
+      {/* Optional hint */}
+      <p className="w-full text-right text-xs text-stone-500 mt-0">
+        Scroll sideways to see more providers →
+      </p>
     </div>
   );
+}
+
+type PlanSelectProps = {
+  label: string;
+  value: Variation | null;
+  onSelect: (variation: Variation) => void;
+  variations: Variation[] | null;
+  type: string;
 }
 
 function PlanSelect({
@@ -651,80 +684,130 @@ function PlanSelect({
   onSelect,
   variations,
   type,
-}: {
-  label: string;
-  value: Variation | null;
-  onSelect: (variation: Variation) => void;
-  variations: Variation[] | null;
-  type: string;
-}) {
+}: PlanSelectProps) {
   return (
     <div className="space-y-3 relative">
-      <label className="text-sm font-semibold text-stone-700 block">{label}</label>
+      {/* Label */}
+      <label className="text-sm font-semibold text-stone-700 block">
+        {label}
+      </label>
 
-      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
+      {/* Plan Grid / Scroll */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent py-1"
+      >
         {variations?.map((item, index) => {
-          const planStr = type === "data" ? item.data_plan : item.package_bouquet;
-          const [planTitle, planSubtitle] = planStr ? stringArray(planStr) : ["--", "--"];
+          const planStr =
+            type === "data" ? item.data_plan : item.package_bouquet;
+          const [planTitle, planSubtitle] = planStr
+            ? stringArray(planStr, " - ")
+            : ["--", "--"];
+
+          const isSelected = value && value.variation_id === item.variation_id;
 
           return (
-            <button
+            <motion.button
               key={index}
               type="button"
               onClick={() => onSelect(item)}
-              className={`w-full flex flex-col items-center justify-center text-center gap-0 py-2 border-2 border-primary/60 ${value && value.variation_id == item.variation_id ? 'bg-primary text-stone-100' : 'bg-alternate/10 text-primary'} text-sm font-semibold rounded-xl shadow-sm hover:scale-105 transition-all duration-300`}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${isSelected
+                ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
+                : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
+                }`}
             >
-              <span>{planTitle}</span>
-              <span className="text-lg truncate">{formatNGN(item.price)}</span>
-              <span className="font-normal text-xs">{planSubtitle}</span>
-            </button>
+              <span className="font-semibold text-sm">{planTitle}</span>
+              <span
+                className={`text-base md:text-lg font-bold ${isSelected ? "text-teal-600" : "text-primary"
+                  }`}
+              >
+                {formatNGN(item.price)}
+              </span>
+              <span className="font-normal text-xs text-stone-500">
+                {planSubtitle}
+              </span>
+            </motion.button>
           );
         })}
+      </motion.div>
+    </div>
+  );
+}
+
+type AmountGridProps = {
+  type: string,
+  value: string | number;
+  onChange: (value: string) => void;
+  presetAmounts: number[];
+};
+
+function AmountGrid({
+  type,
+  value,
+  onChange,
+  presetAmounts,
+}: AmountGridProps) {
+  return (
+    <div className="space-y-4">
+      {/* Label */}
+      <label className="text-sm font-semibold text-stone-700 block tracking-wide">
+        Amount
+      </label>
+
+      {/* Preset Amount Buttons */}
+      {type == "airtime" && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+          {presetAmounts.map((amt) => {
+            const isSelected = value === amt.toString();
+
+            return (
+              <motion.button
+                key={amt}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onChange(amt.toString())}
+                className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 border text-sm
+                ${isSelected
+                    ? "border-teal-500 bg-gradient-to-r from-teal-500/10 to-teal-200 text-teal-700 shadow-[0_3px_8px_rgba(13,148,136,0.25)]"
+                    : "border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300"
+                  }`}
+              >
+                ₦{amt.toLocaleString()}
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Custom Amount Input */}
+      <div className="relative mt-3">
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-900 font-medium 
+            placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 
+            focus:border-teal-400 transition-all duration-150"
+        />
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 font-semibold">
+          ₦
+        </span>
       </div>
     </div>
   );
 }
 
-
-function AmountGrid({
-  value,
-  onChange,
-  presetAmounts,
-}: {
+type InputFieldProps = {
+  label: string;
+  placeholder: string;
   value: string | number;
-  onChange: (value: string) => void;
-  presetAmounts: number[];
-}) {
-  return (
-    <div className="space-y-4">
-      <label className="text-sm font-semibold text-stone-700 block">
-        Amount
-      </label>
-      <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6">
-        {presetAmounts.map((amt) => (
-          <motion.button
-            key={amt}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onChange(amt.toString())}
-            className={`w-auto mb-2 mr-2 py-3 rounded-full font-semibold transition-all duration-300 border-[1.5px] ${value === amt.toString()
-              ? "border-teal-600 bg-gradient-to-r from-teal-100 to-teal-300 text-teal-700 shadow-md"
-              : "border-stone-200 text-stone-700 hover:border-stone-300"
-              }`}
-          >
-            ₦{amt.toLocaleString()}
-          </motion.button>
-        ))}
-      </div>
-      <input
-        type="number"
-        placeholder="Enter amount"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
-      />
-    </div>
-  );
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  verify?: boolean;
 }
 
 function InputField({
@@ -733,74 +816,113 @@ function InputField({
   value,
   onChange,
   verify = false,
-}: {
-  label: string;
-  placeholder: string;
-  value: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  verify?: boolean;
-}) {
+}: InputFieldProps) {
   return (
-    <div className="space-y-2 w-full">
-      <label className="block text-gray-700 font-semibold text-sm">
+    <div className="w-full space-y-2">
+      {/* Label */}
+      <label className="text-sm font-semibold text-gray-700 tracking-wide">
         {label}
       </label>
+
+      {/* Input Container */}
       <div className="flex items-center gap-2">
-        <input
+        <motion.input
           type="text"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
+          whileFocus={{ scale: 1.01 }}
+          transition={{ type: "spring", stiffness: 250, damping: 18 }}
+          className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 
+          text-gray-900 font-medium placeholder:text-gray-400 shadow-sm
+          focus:outline-none focus:ring-2 focus:ring-teal-400/70 focus:border-teal-500
+          transition-all duration-200"
         />
+
         {verify && (
-          <button
-            className="px-4 py-3 bg-teal-500 text-white font-semibold text-sm rounded-xl hover:bg-teal-600 transition-colors duration-150 shadow-sm"
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            whileHover={{ scale: 1.03 }}
+            className="px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white 
+            font-semibold text-sm rounded-2xl shadow-md hover:shadow-lg
+            focus:outline-none focus:ring-2 focus:ring-teal-300/50 transition-all duration-200"
             type="button"
           >
             Verify
-          </button>
+          </motion.button>
         )}
       </div>
     </div>
   );
 }
 
+type SelectFieldProps = {
+  label: string;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+};
+
 function SelectField({
   label,
   options,
   value,
   onChange,
-}: {
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-}) {
+}: SelectFieldProps) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (val: string) => {
+    onChange(val);
+    setOpen(false);
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 relative">
       <label className="text-sm font-semibold text-stone-700 block">
         {label}
       </label>
-      <select
-        value={value}
-        onChange={onChange}
-        className="w-full border-2 border-stone-200 rounded-lg px-4 py-4 bg-white text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all appearance-none cursor-pointer"
-        style={{
-          backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 12px center",
-          backgroundSize: "20px",
-          paddingRight: "40px",
-        }}
+
+      <div
+        className="relative border-2 border-stone-200 rounded-lg px-4 py-4 bg-white text-stone-800 font-medium cursor-pointer 
+        focus-within:border-teal-600 focus-within:ring-2 focus-within:ring-teal-100 transition-all select-none"
+        onClick={() => setOpen(!open)}
       >
-        <option value="">Select an option</option>
-        {options.map((opt, i) => (
-          <option key={i} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+        <div className="flex justify-between items-center">
+          <span>{value || "Select an option"}</span>
+          <ChevronDown
+            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"
+              }`}
+          />
+        </div>
+
+        {/* Dropdown List */}
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="absolute z-20 left-0 top-[110%] w-full bg-white border-2 border-teal-100 rounded-xl shadow-lg overflow-hidden"
+            >
+              {options.length > 0 ? (
+                options.map((opt, i) => (
+                  <li
+                    key={i}
+                    onClick={() => handleSelect(opt)}
+                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${value === opt ? "bg-teal-50 text-teal-700" : ""
+                      }`}
+                  >
+                    {opt}
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-3 text-stone-400">No options available</li>
+              )}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -825,11 +947,10 @@ const ProviderSkeletonCard = () => (
   </div>
 );
 
-
 const PlanSkeleton = () => {
   return (
     <div className="w-full flex flex-col gap-2">
-      <p className="text-md font-normal text-stone-800">Select Data Plan</p>
+      {/* <p className="text-md font-normal text-stone-800">Select Data Plan</p> */}
       <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
         {Array.from({ length: 6 }).map((_, idx) => (
           <PlanSkeletonCard key={idx} />
@@ -838,6 +959,7 @@ const PlanSkeleton = () => {
     </div>
   );
 }
+
 const PlanSkeletonCard = () => (
   <div className="w-full flex flex-col items-center justify-center gap-2 py-2 border-2 border-primary/50 rounded-xl bg-primary/5 shadow-sm animate-pulse">
     <div className="w-3/4 h-4 bg-primary/25 rounded-md" />

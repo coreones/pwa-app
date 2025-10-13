@@ -2,10 +2,8 @@
 
 import {
   Bus,
-  ChartNoAxesColumn,
   Eye,
   Gift,
-  LayoutDashboard,
   Lightbulb,
   Plane,
   Smartphone,
@@ -15,7 +13,6 @@ import {
   Wifi,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import AddFunds from "@/components/modal/payments/add-funds";
@@ -28,39 +25,45 @@ import { formatNGN } from "@/utils/amount";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [showBalance, setShowBalance] = useState<boolean>(true);
+  const [showBalance, setShowBalance] = useState(true);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
   const [isComing, setIsComing] = useState(false);
-  const handleShowBalance = () => {
-    setShowBalance(!showBalance);
-  };
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  const router = useRouter();
+
+  const handleShowBalance = () => setShowBalance(!showBalance);
 
   useEffect(() => {
     const getWalletBalance = async () => {
-      const res = await api.get("/user/wallet")
-      if (!res.data.error) {
-        setWallet(res.data.data)
-      }
-    }
+      const res = await api.get("/user/wallet");
+      if (!res.data.error) setWallet(res.data.data);
+    };
+
+    const getRecentTransactions = async () => {
+      const res = await api.get("/transactions/recent");
+      if (!res.data.error) setTransactions(res.data.data);
+    };
+
     getWalletBalance();
+    getRecentTransactions();
   }, []);
-  const router = useRouter();
+
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
     { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
-    { name: "Flight", icon: Plane, tag: "5% off", link: "/app/payments/" },
     { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
     { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
-    { name: "Gift Card", icon: Gift, tag: "Best rate", link: "" },
+    { name: "Flight", icon: Plane, link: "/app/payments/" },
+    { name: "Gift Card", icon: Gift, link: "" },
     { name: "Transport", icon: Bus, link: "" },
-    { name: "More", icon: LayoutDashboard, link: "" },
   ];
 
   const slides = [
     {
-      bg: "bg-gradient-to-r from-[#21A29D] to-teal-600",
+      bg: "bg-gradient-to-r from-sky-600 to-cyan-600",
       textColor: "text-white",
       title: `Welcome back, ${user?.username ?? "User"} 👋`,
       desc: "Earn 5% cashback on your first flight booking.",
@@ -80,7 +83,6 @@ export default function DashboardPage() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(
       () => setCurrentIndex((prev) => (prev + 1) % slides.length),
@@ -91,31 +93,33 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen container">
-      <div className="flex flex-col w-full mx-auto h-screen overflow-y-auto pb-28">
+      <div className="flex flex-col w-full mx-auto h-screen overflow-y-auto pb-16">
         {/* HEADER */}
-        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-10 pb-8 relative shadow-sm">
-          {/* Profile Row */}
-          <div className="flex items-center justify-between mb-8">
+        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-6 pb-4 relative shadow-sm z-[99]">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
-                <Image src={user?.photo ?? "/default.png"} alt="Profile" fill className="object-cover" />
+                <Image
+                  src={user?.photo ?? "/default.png"}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">{user?.firstname ?? "unknown"} {user?.lastname ?? "user"}</h2>
-                <p className="text-sm text-white/80">{user?.email ?? "*****@gmail.com"}</p>
+                <h2 className="font-semibold text-lg">
+                  {user?.firstname ?? "unknown"} {user?.lastname ?? "user"}
+                </h2>
+                <p className="text-sm text-white/80">
+                  {user?.email ?? "*****@gmail.com"}
+                </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {/* <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
-                <ChartNoAxesColumn size={20} />
-              </button> */}
-              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
-                <Sun size={20} />
-              </button>
-            </div>
+            <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+              <Sun size={20} />
+            </button>
           </div>
 
-          {/* Balance */}
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-2">
               <h3 className="text-3xl font-bold tracking-tight">
@@ -132,71 +136,97 @@ export default function DashboardPage() {
               + Add Money
             </button>
           </div>
-
         </div>
 
-        {/* MAIN CONTENT */}
-        <div className="flex-1 px-6 py-8 space-y-8">
-          {/* Services Grid */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-3 gap-3 sm:gap-5">
-              {items.map((item, idx) => {
-                const Icon = item.icon;
+        {/* Promo Slider */}
+        <div className="overflow-hidden bg-transparent -mt-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className={`p-6 rounded-b-[50px] pt-20 -z-0 ${slides[currentIndex].bg} ${slides[currentIndex].textColor}`}
+            >
+              <h2 className="text-2xl font-bold mb-2">
+                {slides[currentIndex].title}
+              </h2>
+              <p className="text-sm opacity-90">
+                {slides[currentIndex].desc}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-                return (
-                  <button
-                    onClick={() => {
-                      const link = () => {
-                        if (item.link === "") {
-                          return setIsComing(true);
-                        } else {
-                          return router.push(item.link);
-                        }
-                      };
-                      return link()
-                    }}
-                    key={idx}
-                    className="relative flex flex-col items-center justify-center p-3 sm:p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all"
-                  >
-                    <div className="bg-[#21A29D]/10 p-3 rounded-full mb-2">
-                      <Icon className="text-[#21A29D]" size={22} />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">
-                      {item.name}
-                    </span>
-                    {item.tag && (
-                      <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] px-2 py-[2px] rounded-full">
-                        {item.tag}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+        {/* Quick Actions */}
+        <div className="flex-1 px-6 py-6 space-y-6">
+          <h3 className="text-base font-semibold text-gray-700">
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-4">
+            {items.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  key={idx}
+                  onClick={() =>
+                    item.link ? router.push(item.link) : setIsComing(true)
+                  }
+                  className="relative flex flex-col items-center justify-center p-4 bg-white/80 backdrop-blur-lg rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
+                >
+                  <div className="bg-[#1FBFAE]/10 p-3 rounded-full mb-2">
+                    <Icon className="text-[#1FBFAE]" size={22} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">
+                    {item.name}
+                  </span>
+                </motion.button>
+              );
+            })}
           </div>
 
-          {/* Promo Slider */}
-          <div className="overflow-hidden rounded-2xl shadow-md">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 100 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className={`p-6 ${slides[currentIndex].bg} ${slides[currentIndex].textColor}`}
-              >
-                <h2 className="text-2xl font-bold mb-2">
-                  {slides[currentIndex].title}
-                </h2>
-                <p className="text-sm opacity-90">
-                  {slides[currentIndex].desc}
-                </p>
-              </motion.div>
-            </AnimatePresence>
+          {/* 🧾 Recent Transactions */}
+          <div className="mt-8 space-y-4">
+            <h3 className="text-base font-semibold text-gray-700">
+              Recent Transactions
+            </h3>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              {transactions.length === 0 ? (
+                <div className="p-6 text-center text-gray-500 text-sm">
+                  No recent transactions
+                </div>
+              ) : (
+                <ul>
+                  {transactions.map((txn, i) => (
+                    <li
+                      key={i}
+                      className="flex justify-between items-center px-5 py-4 border-b border-gray-100 last:border-none hover:bg-gray-50 transition"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-800 capitalize">
+                          {txn.description || txn.type}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(txn.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                      <span
+                        className={`font-semibold ${txn.amount < 0
+                            ? "text-red-500"
+                            : "text-green-600"
+                          }`}
+                      >
+                        {txn.amount < 0 ? "-" : "+"}
+                        {formatNGN(Math.abs(txn.amount))}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
 
