@@ -63,44 +63,45 @@ export default function AppLayout({
   // }
 
   return (
-    <DeviceRestriction>
-      <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
-        {/* Main content area */}
-        <main className="flex-1 overflow-y-auto pb-[120px]">{children}</main>
+    authenticated ? (
+      <DeviceRestriction>
+        <div className="container relative w-full mx-auto flex flex-col min-h-screen bg-white">
+          {/* Main content area */}
+          <main className="flex-1 overflow-y-auto pb-[120px]">{children}</main>
 
-        {/* Floating Mobile Nav */}
-        <div
-          className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0
+          {/* Floating Mobile Nav */}
+          <div
+            className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0
           pb-[env(safe-area-inset-bottom)] flex items-center justify-between w-full
           backdrop-blur-lg border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] p-4
           rounded-t-2xl z-50"
-        >
-          {navItems.map((item, id) => {
-            const Icon = item.icon;
-            const active = isActive(item.link);
-            return (
-              <Link
-                key={id}
-                href={item.link}
-                className="flex-1 flex flex-col items-center justify-center gap-1 pb-2 text-sm font-medium"
-              >
-                <motion.div
-                  animate={{
-                    scale: active ? 1.2 : 1,
-                    y: active ? -4 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  className={`flex flex-col items-center justify-center ${active ? "text-[#21A29D]" : "text-gray-400"
-                    }`}
+          >
+            {navItems.map((item, id) => {
+              const Icon = item.icon;
+              const active = isActive(item.link);
+              return (
+                <Link
+                  key={id}
+                  href={item.link}
+                  className="flex-1 flex flex-col items-center justify-center gap-1 pb-2 text-sm font-medium"
                 >
-                  <Icon size={22} strokeWidth={2} />
-                  <span className="text-[11px]">{item.name}</span>
-                </motion.div>
-              </Link>
-            );
-          })}
+                  <motion.div
+                    animate={{
+                      scale: active ? 1.2 : 1,
+                      y: active ? -4 : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    className={`flex flex-col items-center justify-center ${active ? "text-[#21A29D]" : "text-gray-400"
+                      }`}
+                  >
+                    <Icon size={22} strokeWidth={2} />
+                    <span className="text-[11px]">{item.name}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </DeviceRestriction>
+      </DeviceRestriction>) : (<></>)
   );
 }

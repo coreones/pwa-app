@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import PaymentFlow from "../components/PaymentFlow";
+import PaymentFlow from "../../components/PaymentFlow";
 
 export default function page() {
   return (

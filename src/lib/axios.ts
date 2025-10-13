@@ -37,8 +37,8 @@ api.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => response,
   async (error: AxiosError<ApiResponse>) => {
     if (error.response?.status === 401) {
-      // deleteClientCookie("accessToken");
-      // return window.location.assign("/auth/login");
+      deleteClientCookie("accessToken");
+      return window.location.assign("/auth/login");
     }
     return Promise.reject(error);
   }

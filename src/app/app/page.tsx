@@ -252,7 +252,7 @@ export default function DashboardPage() {
             }}
           />
         )} */}
-        {!userHasPin && (
+        {!userHasPin && authenticated && (
           <SetPin
             close={setUserHasPin}
             onSuccess={() => {
