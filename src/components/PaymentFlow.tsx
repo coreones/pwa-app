@@ -701,7 +701,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   );
 }
 
-function ReviewItem({
+export function ReviewItem({
   label,
   value,
 }: {

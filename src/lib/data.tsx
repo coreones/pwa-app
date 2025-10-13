@@ -1,6 +1,6 @@
-import {  Transaction, BankAccount, SidebarItem } from '@/types/admin';
+import {   BankAccount, SidebarItem } from '@/types/admin';
 import { Banknote, Users, Wallet as WalletIcon } from 'lucide-react';
-import { User,Wallet } from '@/types/api';
+import { User , Wallet , Transaction} from '@/types/api';
 
 export const mockUsers: User[] = [
   {
@@ -218,126 +218,116 @@ export const mockUsers: User[] = [
 export const mockTransactions: Transaction[] = [
   {
     id: '1',
-    userId: '1',
+    user_id: '1',
     reference: 'REF-001',
     type: 'credit',
-    action: 'deposit',
+    action: 'wallet_topup',
     amount: 50000,
     fee: 50,
-    balanceBefore: 100000,
-    balanceAfter: 149950,
+    balance_before: 100000,
+    balance_after: 149950,
     status: 'completed',
     wallet: 'main',
     description: 'Bank Transfer Deposit',
-    createdAt: '2024-01-15T10:30:00Z'
+    created_at: '2024-01-15T10:30:00Z'
   },
   {
     id: '2',
-    userId: '2',
+    user_id: '2',
     reference: 'REF-002',
     type: 'debit',
-    action: 'withdrawal',
+    action: 'bank_transfer',
     amount: 20000,
     fee: 100,
-    balanceBefore: 95000,
-    balanceAfter: 74900,
+    balance_before: 95000,
+    balance_after: 74900,
     status: 'completed',
     wallet: 'main',
     description: 'ATM Withdrawal',
-    createdAt: '2024-01-16T14:45:00Z'
+    created_at: '2024-01-16T14:45:00Z'
   },
   {
     id: '3',
-    userId: '3',
+    user_id: '3',
     reference: 'REF-003',
     type: 'credit',
-    action: 'transfer',
+    action: 'fund_sent',
     amount: 15000,
     fee: 10,
-    balanceBefore: 10000,
-    balanceAfter: 24990,
+    balance_before: 10000,
+    balance_after: 24990,
     status: 'pending',
     wallet: 'main',
     description: 'Peer-to-Peer Transfer',
-    createdAt: '2024-01-17T09:15:00Z'
+    created_at: '2024-01-17T09:15:00Z'
   },
   {
     id: '4',
-    userId: '1',
+    user_id: '1',
     reference: 'REF-004',
     type: 'debit',
-    action: 'payment',
+    action: 'electricity',
     amount: 25000,
     fee: 25,
-    balanceBefore: 149950,
-    balanceAfter: 124925,
+    balance_before: 149950,
+    balance_after: 124925,
     status: 'failed',
     wallet: 'main',
     description: 'Bill Payment - Electricity',
-    createdAt: '2024-01-18T16:20:00Z'
+    created_at: '2024-01-18T16:20:00Z'
   },
   {
     id: '5',
-    userId: '4',
+    user_id: '4',
     reference: 'REF-005',
     type: 'credit',
-    action: 'deposit',
+    action: 'wallet_topup',
     amount: 75000,
     fee: 75,
-    balanceBefore: 0,
-    balanceAfter: 74925,
+    balance_before: 0,
+    balance_after: 74925,
     status: 'completed',
     wallet: 'main',
     description: 'Mobile Money Deposit',
-    createdAt: '2024-01-19T11:10:00Z'
+    created_at: '2024-01-19T11:10:00Z'
   }
 ];
 
 export const mockWallets: Wallet[] = [
   {
-    id: '1',
-    userId: '1',
+    id: 1,
+    user_id: 1,
     balance: 124925,
     locked: 5000,
-    totalBalance: 129925,
-    user: mockUsers[0],
-    createdAt: '2024-01-15'
+    created_at: '2024-01-15'
   },
   {
-    id: '2',
-    userId: '2',
+    id: 2,
+    user_id: 2,
     balance: 74900,
     locked: 2000,
-    totalBalance: 76900,
-    user: mockUsers[1],
-    createdAt: '2024-01-16'
+    created_at: '2024-01-16'
   },
   {
-    id: '3',
-    userId: '3',
+    id: 3,
+    user_id: 3,
     balance: 24990,
     locked: 1000,
-    totalBalance: 25990,
-    user: mockUsers[2],
-    createdAt: '2024-01-17'
+    created_at: '2024-01-17'
   },
   {
-    id: '4',
-    userId: '4',
+    id: 4,
+    user_id: 4,
     balance: 74925,
     locked: 3000,
-    totalBalance: 77925,
-    user: mockUsers[3],
-    createdAt: '2024-01-18'
+    created_at: '2024-01-18'
   },
   {
-    id: '5',
-    userId: '5',
+    id: 5,
+    user_id: 5,
     balance: 0,
     locked: 0,
-    totalBalance: 0,
-    user: mockUsers[4],
-    createdAt: '2024-01-19'
+    created_at: '2024-01-19'
   }
 ];
 
@@ -450,7 +440,8 @@ export const transactionService = {
 export const walletService = {
   getAll: () => mockWallets,
   update: (id: string, updates: Partial<Wallet>) => {
-    const index = mockWallets.findIndex(wallet => wallet.id === id);
+    const numericId = Number(id);
+    const index = mockWallets.findIndex(wallet => wallet.id === numericId);
     if (index !== -1) {
       mockWallets[index] = { ...mockWallets[index], ...updates };
       return mockWallets[index];
@@ -458,7 +449,8 @@ export const walletService = {
     return null;
   },
   delete: (id: string) => {
-    const index = mockWallets.findIndex(wallet => wallet.id === id);
+    const numericId = Number(id);
+    const index = mockWallets.findIndex(wallet => wallet.id === numericId);
     if (index !== -1) {
       return mockWallets.splice(index, 1)[0];
     }

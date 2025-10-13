@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useBack } from "@/hooks/useBack";
 import BankTransfer from "./component/bank-transfer";
+import WalletTransfer from "./component/wallet-transfer";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("Transfer to Bank");
@@ -75,7 +76,7 @@ export default function ReportsPage() {
         ) : activeTab === "Transfer to Bank" ? (
             <BankTransfer />
         ) : (
-          <div>Wallet</div>
+          <WalletTransfer />
         )}
       </div>
     </div>

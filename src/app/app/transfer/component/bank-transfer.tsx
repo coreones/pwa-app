@@ -1,11 +1,13 @@
-import React, { useCallback, useState } from "react";
-import { AmountGrid, InputField } from "@/components/PaymentFlow";
+import React, { use, useCallback, useEffect, useState } from "react";
+import { AmountGrid, InputField, ReviewItem } from "@/components/PaymentFlow";
 import { Card, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Keypad } from "@/components/SetPin";
 import { AnimatePresence, motion } from "framer-motion";
 import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
+import { formatNGN } from "@/utils/amount";
+import { type } from "os";
 
 export default function BankTransfer() {
   const [formData, setFormData] = useState({
@@ -23,7 +25,17 @@ export default function BankTransfer() {
     else setStep((prev) => prev - 1);
   };
 
-  const handleNext = () => setStep((prev) => prev + 1);
+  const handleNext = () => {
+    setStep((prev) => prev + 1);
+
+  };
+
+  useEffect(() => {
+    if (formData.tag.length > 4 && step === 1) {
+      handleNext();
+    }
+  }, [formData.tag, step]);
+
 
   const handleInputChange = useCallback(
     (field: keyof typeof formData, value: string) => {
@@ -49,7 +61,6 @@ export default function BankTransfer() {
               placeholder="@User"
               value={formData.tag}
               onChange={(e) => handleInputChange("tag", e.target.value)}
-              verify
             />
           </div>
         );
@@ -87,6 +98,73 @@ export default function BankTransfer() {
           </div>
         );
       case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
+          >
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-stone-900">
+                  Review Transaction
+                </h2>
+                <button
+                  onClick={handleBack}
+                  className="text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
+                  <ReviewItem label="Tansfer" value={`Send`} />
+                  <div className="border-t border-teal-100" />
+                  <ReviewItem
+                    label="Amount"
+                    value={formData.amount.toUpperCase().replaceAll("-", " ")}
+                  />
+                  {formData.tag && (
+                    <ReviewItem label="Tag" value={formData.tag} />
+                  )}
+                  {formData.remark && (
+                    <ReviewItem label={"Remark"} value={formData.remark} />
+                  )}
+
+                  <div className="border-t border-teal-100" />
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-stone-600 font-medium">Amount</span>
+                    <span className="text-2xl font-bold text-teal-600">
+                      {formatNGN(formData.amount)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleNext}
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg mb-3"
+              >
+                Confirm & Pay
+              </button>
+              <button
+                onClick={handleBack}
+                className="w-full border border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
+              >
+                Back
+              </button>
+            </motion.div>
+          </motion.div>
+        );
+
+      case 4:
         return (
           <AnimatePresence>
             <motion.div
