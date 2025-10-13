@@ -1,10 +1,6 @@
 import {
   XMarkIcon,
   ClipboardDocumentIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-  GlobeAltIcon,
-  ChatBubbleBottomCenterTextIcon,
-  PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion } from "framer-motion";
 import { Landmark, User, X } from "lucide-react";
