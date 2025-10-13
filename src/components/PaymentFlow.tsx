@@ -181,7 +181,10 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       let payload = {
         service_id: formData.service_id, pin: pinExtractor(otp),
         ...(["airtime", "data"].includes(type) && formData.amount) && { amount: formData.amount },
-        ...(["airtime", "data"].includes(type) && formData.customer_id) && { phone: formData.customer_id },
+        ...(formData.customer_id) && { phone: ["airtime", "data"].includes(type) ? formData.customer_id : (user?.phone ?? null) },
+        ...(["betting", "tv", "data"].includes(type) && formData.variation) && { variation_id: formData.variation.variation_id },
+        ...(["betting", "tv", "electricity"].includes(type) && formData.customer_id) && { customer_id: formData.customer_id },
+        ...(["tv"].includes(type) && formData.type) && { type: formData.type },
 
       }
       const url = `/transactions/buy-${type}`;
@@ -807,9 +810,9 @@ function PlanSelect({
   return (
     <div className="space-y-3 relative">
       {/* Label */}
-      <label className="text-sm font-semibold text-stone-700 block">
+      {variations && <label className="text-sm font-semibold text-stone-700 block">
         {label}
-      </label>
+      </label>}
 
       {/* Plan Grid / Scroll */}
       <motion.div
@@ -1061,7 +1064,7 @@ const ProviderSkeletonCard = () => (
 const PlanSkeleton = () => {
   return (
     <div className="w-full flex flex-col gap-2">
-      {/* <p className="text-md font-normal text-stone-800">Select Data Plan</p> */}
+      <p className="text-md font-normal text-stone-800">Select Data Plan</p>
       <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
         {Array.from({ length: 6 }).map((_, idx) => (
           <PlanSkeletonCard key={idx} />
