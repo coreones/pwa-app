@@ -107,7 +107,7 @@ export default function ProfilePage() {
         {/* Section: More */}
         <Section title="More" description="Legal, account and app actions" delay={0.36}>
           <MenuItem icon={<Scale size={18} />} label="Legal" type="link" link="/app/profile/legal" />
-          <MenuItem icon={<Trash size={18} />} label="Deactivate / Delete Account" type="link" link="/app/profile/deactivate-delete-account" />
+          <MenuItem icon={<Trash size={18} />} label="Deactivate Account" type="link" link="/app/profile/deactivate-delete-account" />
           <div className="mt-2">
             {/* logout as a clear CTA */}
             <button

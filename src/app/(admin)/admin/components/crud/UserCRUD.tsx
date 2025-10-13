@@ -60,6 +60,22 @@ export default function UserCRUD({ searchQuery }: UserCRUDProps) {
       user.phone?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleInputChange = useCallback((field: keyof User, value: string) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
+
+  // For select fields
+  const handleSelectChange = useCallback((field: keyof User, value: string) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }, []);
+
+  
 // Calculate user statistics based on actual fields
 const userStats = {
   totalUsers: users.length,
@@ -269,7 +285,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="First Name"
             value={editFormData.firstname || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, firstname: e.target.value })}
+            onChange={(e) => handleInputChange('firstname', e.target.value)}
             required
           />
         </div>
@@ -278,7 +294,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Last Name"
             value={editFormData.lastname || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, lastname: e.target.value })}
+            onChange={(e) => handleInputChange('lastname', e.target.value)}
             required
           />
         </div>
@@ -287,7 +303,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Middle Name"
             value={editFormData.middlename || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, middlename: e.target.value })}
+            onChange={(e) => handleInputChange('middlename', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -296,14 +312,14 @@ const CreateUserForm = () => (
             type="date"
             placeholder="Date of Birth"
             value={editFormData.dob || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, dob: e.target.value })}
+            onChange={(e) => handleInputChange('dob', e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Gender</label>
           <Select
             value={editFormData.gender || "male"}
-            onValueChange={(value: "male" | "female") => setEditFormData({ ...editFormData, gender: value })}
+            onValueChange={(value: "male" | "female") => handleSelectChange('gender', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select gender" />
@@ -318,7 +334,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">User Type *</label>
           <Select
             value={editFormData.type || "user"}
-            onValueChange={(value: "user" | "admin") => setEditFormData({ ...editFormData, type: value })}
+            onValueChange={(value: "user" | "admin") => handleSelectChange('type', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
@@ -341,7 +357,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Username"
             value={editFormData.username || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, username: e.target.value })}
+            onChange={(e) => handleInputChange('username', e.target.value)}
             required
           />
         </div>
@@ -351,7 +367,7 @@ const CreateUserForm = () => (
             type="email"
             placeholder="Email"
             value={editFormData.email || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             required
           />
         </div>
@@ -361,7 +377,7 @@ const CreateUserForm = () => (
             type="tel"
             placeholder="Phone"
             value={editFormData.phone || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
             required
           />
         </div>
@@ -371,7 +387,7 @@ const CreateUserForm = () => (
             type="password"
             placeholder="Password"
             value={editFormData.password || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
+            onChange={(e) => handleInputChange('password', e.target.value)}
             required
           />
         </div>
@@ -381,7 +397,7 @@ const CreateUserForm = () => (
             type="password"
             placeholder="PIN"
             value={editFormData.pin || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, pin: e.target.value })}
+            onChange={(e) => handleInputChange('pin', e.target.value)}
             maxLength={4}
           />
         </div>
@@ -389,7 +405,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">User Level</label>
           <Select
             value={editFormData.level || "1"}
-            onValueChange={(value: "0" | "1" | "2" | "3" | "4" | "5") => setEditFormData({ ...editFormData, level: value })}
+            onValueChange={(value: "0" | "1" | "2" | "3" | "4" | "5") => handleSelectChange('level', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select level" />
@@ -416,7 +432,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="House Number"
             value={editFormData.house_number || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, house_number: e.target.value })}
+            onChange={(e) => handleInputChange('house_number', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -424,7 +440,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Street"
             value={editFormData.street || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, street: e.target.value })}
+            onChange={(e) => handleInputChange('street', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -432,7 +448,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="City"
             value={editFormData.city || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+            onChange={(e) => handleInputChange('city', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -440,7 +456,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="State"
             value={editFormData.state || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, state: e.target.value })}
+            onChange={(e) => handleInputChange('state', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -448,7 +464,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Country"
             value={editFormData.country || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, country: e.target.value })}
+            onChange={(e) => handleInputChange('country', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -456,7 +472,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Zipcode"
             value={editFormData.zipcode || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, zipcode: e.target.value })}
+            onChange={(e) => handleInputChange('zipcode', e.target.value)}
           />
         </div>
       </div>
@@ -465,7 +481,7 @@ const CreateUserForm = () => (
         <Textarea
           placeholder="Full Address"
           value={editFormData.address || ""}
-          onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+          onChange={(e) => handleInputChange('address', e.target.value)}
         />
       </div>
     </div>
@@ -479,7 +495,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="BVN Number"
             value={editFormData.bvn || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, bvn: e.target.value })}
+            onChange={(e) => handleInputChange('bvn', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -487,7 +503,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="NIN Number"
             value={editFormData.nin || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, nin: e.target.value })}
+            onChange={(e) => handleInputChange('nin', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -495,7 +511,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Bank Provider ID"
             value={editFormData.bank_provider_id || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, bank_provider_id: e.target.value })}
+            onChange={(e) => handleInputChange('bank_provider_id', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -503,7 +519,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Device Code"
             value={editFormData.device_code || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, device_code: e.target.value })}
+            onChange={(e) => handleInputChange('device_code', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -511,7 +527,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Referral Code"
             value={editFormData.referral_code || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, referral_code: e.target.value })}
+            onChange={(e) => handleInputChange('referral_code', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -520,7 +536,7 @@ const CreateUserForm = () => (
             type="number"
             placeholder="Referrer ID"
             value={editFormData.referrer_id || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, referrer_id: parseInt(e.target.value) || undefined })}
+            onChange={(e) => handleInputChange('referrer_id', e.target.value)}
           />
         </div>
       </div>
@@ -534,7 +550,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">PND Status</label>
           <Select
             value={editFormData.pnd ? "true" : "false"}
-            onValueChange={(value: string) => setEditFormData({ ...editFormData, pnd: value === "true" })}
+            onValueChange={(value: string) => handleSelectChange('pnd', value === "true" ? "true" : "false")}
           >
             <SelectTrigger>
               <SelectValue placeholder="PND Status" />
@@ -549,7 +565,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">Phone Verified</label>
           <Select
             value={editFormData.phone_verified || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, phone_verified: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('phone_verified', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Phone Verified" />
@@ -564,7 +580,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">Email Verified</label>
           <Select
             value={editFormData.email_verified || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, email_verified: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('email_verified', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Email Verified" />
@@ -579,7 +595,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">BVN Verification Status</label>
           <Select
             value={editFormData.bvn_verification_status || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, bvn_verification_status: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('bvn_verification_status', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="BVN Status" />
@@ -594,7 +610,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">NIN Verification Status</label>
           <Select
             value={editFormData.nin_verification_status || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, nin_verification_status: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('nin_verification_status', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="NIN Status" />
@@ -621,7 +637,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="First Name"
             value={editFormData.firstname || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, firstname: e.target.value })}
+            onChange={(e) => handleInputChange('firstname', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -629,7 +645,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Last Name"
             value={editFormData.lastname || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, lastname: e.target.value })}
+            onChange={(e) => handleInputChange('lastname', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -637,7 +653,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Middle Name"
             value={editFormData.middlename || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, middlename: e.target.value })}
+            onChange={(e) => handleInputChange('middlename', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -646,14 +662,14 @@ const CreateUserForm = () => (
             type="date"
             placeholder="Date of Birth"
             value={editFormData.dob || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, dob: e.target.value })}
+            onChange={(e) => handleInputChange('dob', e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Gender</label>
           <Select
             value={editFormData.gender || "male"}
-            onValueChange={(value: "male" | "female") => setEditFormData({ ...editFormData, gender: value })}
+            onValueChange={(value: "male" | "female") => handleSelectChange('gender', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select gender" />
@@ -668,7 +684,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">User Type</label>
           <Select
             value={editFormData.type || "user"}
-            onValueChange={(value: "user" | "admin") => setEditFormData({ ...editFormData, type: value })}
+            onValueChange={(value: "user" | "admin") => handleSelectChange('type', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
@@ -691,7 +707,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Username"
             value={editFormData.username || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, username: e.target.value })}
+            onChange={(e) => handleInputChange('username', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -700,7 +716,7 @@ const CreateUserForm = () => (
             type="email"
             placeholder="Email"
             value={editFormData.email || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+            onChange={(e) => handleInputChange('email', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -709,7 +725,7 @@ const CreateUserForm = () => (
             type="tel"
             placeholder="Phone"
             value={editFormData.phone || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+            onChange={(e) => handleInputChange('phone', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -717,7 +733,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Device Code"
             value={editFormData.device_code || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, device_code: e.target.value })}
+            onChange={(e) => handleInputChange('device_code', e.target.value)}
           />
         </div>
       </div>
@@ -732,7 +748,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="House Number"
             value={editFormData.house_number || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, house_number: e.target.value })}
+            onChange={(e) => handleInputChange('house_number', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -740,7 +756,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Street"
             value={editFormData.street || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, street: e.target.value })}
+            onChange={(e) => handleInputChange('street', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -748,7 +764,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="City"
             value={editFormData.city || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+            onChange={(e) => handleInputChange('city', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -756,7 +772,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="State"
             value={editFormData.state || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, state: e.target.value })}
+            onChange={(e) => handleInputChange('state', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -764,7 +780,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Country"
             value={editFormData.country || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, country: e.target.value })}
+            onChange={(e) => handleInputChange('country', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -772,7 +788,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Zipcode"
             value={editFormData.zipcode || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, zipcode: e.target.value })}
+            onChange={(e) => handleInputChange('zipcode', e.target.value)}
           />
         </div>
       </div>
@@ -781,7 +797,7 @@ const CreateUserForm = () => (
         <Textarea
           placeholder="Full Address"
           value={editFormData.address || ""}
-          onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+          onChange={(e) => handleInputChange('address', e.target.value)}
         />
       </div>
     </div>
@@ -795,14 +811,14 @@ const CreateUserForm = () => (
           <Input
             placeholder="BVN Number"
             value={editFormData.bvn || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, bvn: e.target.value })}
+            onChange={(e) => handleInputChange('bvn', e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">BVN Verification Status</label>
           <Select
             value={editFormData.bvn_verification_status || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, bvn_verification_status: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('bvn_verification_status', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="BVN Status" />
@@ -818,14 +834,14 @@ const CreateUserForm = () => (
           <Input
             placeholder="NIN Number"
             value={editFormData.nin || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, nin: e.target.value })}
+            onChange={(e) => handleInputChange('nin', e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">NIN Verification Status</label>
           <Select
             value={editFormData.nin_verification_status || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, nin_verification_status: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('nin_verification_status', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="NIN Status" />
@@ -840,7 +856,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">Phone Verification</label>
           <Select
             value={editFormData.phone_verified || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, phone_verified: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('phone_verified', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Phone Verified" />
@@ -855,7 +871,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">Email Verification</label>
           <Select
             value={editFormData.email_verified || "0"}
-            onValueChange={(value: "0" | "1") => setEditFormData({ ...editFormData, email_verified: value })}
+            onValueChange={(value: "0" | "1") => handleSelectChange('email_verified', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Email Verified" />
@@ -878,7 +894,7 @@ const CreateUserForm = () => (
           <Input
             placeholder="Referral Code"
             value={editFormData.referral_code || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, referral_code: e.target.value })}
+            onChange={(e) => handleInputChange('referral_code', e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -886,14 +902,14 @@ const CreateUserForm = () => (
           <Input
             placeholder="Bank Provider ID"
             value={editFormData.bank_provider_id || ""}
-            onChange={(e) => setEditFormData({ ...editFormData, bank_provider_id: e.target.value })}
+            onChange={(e) => handleInputChange('bank_provider_id', e.target.value)}
           />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">User Level</label>
           <Select
             value={editFormData.level || "1"}
-            onValueChange={(value: "0" | "1" | "2" | "3" | "4" | "5") => setEditFormData({ ...editFormData, level: value })}
+            onValueChange={(value: "0" | "1" | "2" | "3" | "4" | "5") => handleSelectChange('level', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="User Level" />
@@ -912,7 +928,7 @@ const CreateUserForm = () => (
           <label className="text-sm font-medium">PND Status</label>
           <Select
             value={editFormData.pnd ? "true" : "false"}
-            onValueChange={(value: string) => setEditFormData({ ...editFormData, pnd: value === "true" })}
+            onValueChange={(value: string) => handleSelectChange('pnd', value === "true" ? "true" : "false")}
           >
             <SelectTrigger>
               <SelectValue placeholder="PND Status" />

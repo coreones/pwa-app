@@ -14,6 +14,7 @@ import {
   Wifi,
   NotepadText,
   Ticket,
+  Bus,
 } from "lucide-react";
 
 export default function ExpensesPage() {
@@ -84,34 +85,7 @@ export default function ExpensesPage() {
           </div>
         </div>
 
-        {/* Lifestyle */}
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
-          <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
-            <Gift className="w-5 h-5 text-[#21A29D]" />
-            Lifestyle
-          </h3>
-          <div className="divide-y divide-stone-100">
-            <MenuItem
-              icon={<Gift size={20} color="#21A29D" />}
-              label="Gift Cards"
-              showBorder={false}
-              type="data"
-            />
-            <MenuItem
-              icon={<ShoppingBag size={20} color="#21A29D" />}
-              label="eSIMs"
-              showBorder={false}
-              type="data"
-            />
-            <MenuItem
-              icon={<Gift size={20} color="#21A29D" />}
-              label="Gift a User"
-              showBorder={false}
-              type="data"
-            />
-          </div>
-        </div>
-
+      
         {/* Digital */}
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
           <h3 className="text-stone-800 text-lg font-semibold mb-4 flex items-center gap-2">
@@ -148,8 +122,8 @@ export default function ExpensesPage() {
           </h3>
           <div className="divide-y divide-stone-100">
             <MenuItem
-              icon={<NotepadText size={20} color="#21A29D" />}
-              label="Education"
+              icon={<Bus size={20} color="#21A29D" />}
+              label="Transportation"
               showBorder={false}
               type="data"
             />

@@ -15,6 +15,7 @@ import { ApiResponse } from "@/types/api";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNGN } from "@/utils/amount";
 import { stringArray } from "@/utils/string";
+import { Keypad } from "@/components/SetPin";
 
 interface PaymentPageProps {
   type:
@@ -27,10 +28,10 @@ interface PaymentPageProps {
     | "bankTransaction";
 }
 type Provider = {
-  service_id: string,
-  service_name: string,
-  logo: string,
-}
+  service_id: string;
+  service_name: string;
+  logo: string;
+};
 
 type Variation = {
   variation_id: string;
@@ -38,19 +39,19 @@ type Variation = {
   service_id: string;
   price: string;
 } & (
-    | { data_plan: string; package_bouquet?: never }
-    | { package_bouquet: string; data_plan?: never }
-  );
+  | { data_plan: string; package_bouquet?: never }
+  | { package_bouquet: string; data_plan?: never }
+);
 
 type Purchase = {
-  service_id: string,
-  phone: string | number,
-  amount: string | number,
-  account: string | number,
-  customer_id: string | number,
-  variation: null | Variation,
-  type: string,
-}
+  service_id: string;
+  phone: string | number;
+  amount: string | number;
+  account: string | number;
+  customer_id: string | number;
+  variation: null | Variation;
+  type: string;
+};
 export default function PaymentPage({ type }: PaymentPageProps) {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
@@ -68,8 +69,12 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     type: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
-  const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(null);
-  const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(null);
+  const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(
+    null
+  );
+  const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(
+    null
+  );
 
   const handleBack = () => {
     if (step === 1) window.history.back();
@@ -89,13 +94,12 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       amount: "",
       customer_id: "",
       variation: null,
-      type: ""
+      type: "",
     });
   };
 
-
   useEffect(() => {
-    handleFormChange("phone", user?.phone ?? "")
+    handleFormChange("phone", user?.phone ?? "");
   }, [user]);
 
   const typeConfig = {
@@ -106,55 +110,57 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     electricity: { title: "Electricity Token" },
     billNaTransaction: { title: "In App Transaction" },
     bankTransaction: { title: "Transfer to other bank" },
-   
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     const getProviders = async () => {
-      const res = await api.get<ApiResponse>(`/general/bill/${type}-services`)
+      const res = await api.get<ApiResponse>(`/general/bill/${type}-services`);
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setProviders(res.data.data)
+        setProviders(res.data.data);
       } else {
-        setProviders([])
+        setProviders([]);
       }
-      setLoading(false)
-    }
+      setLoading(false);
+    };
     getProviders();
-  }, [type])
-
+  }, [type]);
 
   const getDataVariations = async (service_id: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${service_id}`)
+      const res = await api.get<ApiResponse>(
+        `/general/bill/data-variations?service=${service_id}`
+      );
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setDataVariations(res.data.data)
+        setDataVariations(res.data.data);
       } else {
-        setDataVariations([])
+        setDataVariations([]);
       }
     } catch (err) {
-      setDataVariations([])
+      setDataVariations([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getTVVariations = async (service_id: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
+      const res = await api.get<ApiResponse>(
+        `/general/bill/tv-variations?service=${service_id}`
+      );
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setTvVariations(res.data.data)
+        setTvVariations(res.data.data);
       } else {
-        setTvVariations([])
+        setTvVariations([]);
       }
     } catch (err) {
-      setDataVariations([])
+      setDataVariations([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const presetAmounts = [100, 200, 500, 1000, 2000, 5000];
 
@@ -179,8 +185,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     }
   };
 
-
-
   const isStep1Valid = () => {
     const baseCheck = !!formData.service_id;
     switch (type) {
@@ -191,7 +195,12 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       case "betting":
         return baseCheck && !!formData.customer_id && !!formData.amount;
       case "tv":
-        return baseCheck && !!formData.customer_id && !!formData.variation && !!formData.type;
+        return (
+          baseCheck &&
+          !!formData.customer_id &&
+          !!formData.variation &&
+          !!formData.type
+        );
       case "electricity":
         return (
           baseCheck &&
@@ -227,20 +236,20 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             </div>
 
             <div className="space-y-6">
-              {!providers ?
+              {!providers ? (
                 <ProviderSkeleton />
-                :
-                (providers.length === 0 ?
-                  <p className="text-center py-4 font-normal text-stone-800">
-                    Service not available at the moment
-                  </p> :
-                  <ProviderSelect
-                    label="Select Provider"
-                    providers={providers}
-                    value={formData.service_id}
-                    onChange={(value) => handleFormChange("service_id", value)}
-                  />
-                )}
+              ) : providers.length === 0 ? (
+                <p className="text-center py-4 font-normal text-stone-800">
+                  Service not available at the moment
+                </p>
+              ) : (
+                <ProviderSelect
+                  label="Select Provider"
+                  providers={providers}
+                  value={formData.service_id}
+                  onChange={(value) => handleFormChange("service_id", value)}
+                />
+              )}
 
               {type === "airtime" && (
                 <>
@@ -261,10 +270,11 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
               {type === "data" && (
                 <>
-                  {dataVariations?.length === 0 ?
+                  {dataVariations?.length === 0 ? (
                     <p className="text-center py-4 font-normal text-stone-800">
                       No Plan available at the moment
-                    </p> :
+                    </p>
+                  ) : (
                     <PlanSelect
                       label="Select Data Plan"
                       value={formData.variation}
@@ -275,7 +285,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       variations={dataVariations}
                       type={type}
                     />
-                  }
+                  )}
                   {loading && <PlanSkeleton />}
                   <InputField
                     label="Phone Number"
@@ -336,7 +346,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     label="Meter Number"
                     placeholder="Enter meter number"
                     value={formData.customer_id}
-                    onChange={(e) => handleFormChange("customer_id", e.target.value)}
+                    onChange={(e) =>
+                      handleFormChange("customer_id", e.target.value)
+                    }
                     verify
                   />
                   <SelectField
@@ -397,7 +409,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   <div className="border-t border-teal-100" />
                   <ReviewItem
                     label="Provider"
-                    value={formData.service_id.toUpperCase().replaceAll("-", " ")}
+                    value={formData.service_id
+                      .toUpperCase()
+                      .replaceAll("-", " ")}
                   />
                   {formData.phone && (
                     <ReviewItem label="Phone" value={formData.phone} />
@@ -409,16 +423,24 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     />
                   )}
                   {formData.customer_id && (
-                    <ReviewItem label="Meter Number" value={formData.customer_id} />
+                    <ReviewItem
+                      label="Meter Number"
+                      value={formData.customer_id}
+                    />
                   )}
                   {formData.variation && (
-                    <ReviewItem label="Plan" value={type == "tv" ? formData.variation.package_bouquet ?? "" : formData.variation.data_plan ?? ""} />
+                    <ReviewItem
+                      label="Plan"
+                      value={
+                        type == "tv"
+                          ? formData.variation.package_bouquet ?? ""
+                          : formData.variation.data_plan ?? ""
+                      }
+                    />
                   )}
                   <div className="border-t border-teal-100" />
                   <div className="flex justify-between items-center pt-2">
-                    <span className="text-stone-600 font-medium">
-                      Amount
-                    </span>
+                    <span className="text-stone-600 font-medium">Amount</span>
                     <span className="text-2xl font-bold text-teal-600">
                       {formatNGN(formData.amount)}
                     </span>
@@ -455,7 +477,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 80, opacity: 0 }}
               transition={{ type: "spring", stiffness: 120, damping: 15 }}
-              className="relative bg-white rounded-3xl w-full px-6 pb-20 sm:pb-6 sm:px-8 shadow-2xl border border-stone-100"
+              className="relative bg-white rounded-3xl w-full px-6 pb-20 max-w-md sm:pb-6 sm:px-8 shadow-2xl border border-stone-100"
             >
               {/* Close Button */}
               <button
@@ -478,42 +500,100 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 </p>
               </div>
 
-              {/* OTP Input Fields */}
-              <div className="flex justify-center gap-4 mt-8">
-                {otp.map((digit, idx) => (
-                  <motion.input
-                    key={idx}
-                    type={showOTPFull ? "text" : "password"}
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => {
-                      const newOtp = [...otp];
-                      newOtp[idx] = e.target.value.slice(-1);
-                      setOtp(newOtp);
-                      if (e.target.value && idx < 3) {
-                        document.getElementById(`otp-${idx + 1}`)?.focus();
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Backspace" && !otp[idx] && idx > 0) {
-                        document.getElementById(`otp-${idx - 1}`)?.focus();
-                      }
-                    }}
-                    id={`otp-${idx}`}
-                    className="w-14 h-14 sm:w-16 sm:h-16 text-2xl sm:text-3xl font-semibold text-center border-2 border-stone-200 rounded-2xl focus:border-teal-600 focus:ring-2 focus:ring-teal-100 outline-none transition-all placeholder:text-stone-300"
-                    placeholder="•"
-                  />
-                ))}
-              </div>
+              {/* PIN Keypad Component */}
+              <div className="mt-8">
+                <div className="flex justify-center  gap-6 mb-6">
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ scale: otp[i] ? 1.1 : 1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
+                        showOTPFull
+                          ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
+                          : otp[i]
+                          ? "bg-teal-600 text-white"
+                          : "bg-stone-200 border border-stone-300"
+                      }`}
+                    >
+                      {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
+                    </motion.div>
+                  ))}
+                </div>
 
-              {/* Show/Hide Toggle */}
-              <button
-                onClick={() => setShowOTPFull(!showOTPFull)}
-                className="flex items-center justify-center gap-2 mx-auto mt-4 text-sm text-stone-600 hover:text-stone-800"
-              >
-                {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
-                {showOTPFull ? "Hide" : "Show"} PIN
-              </button>
+                {/* Show/Hide Toggle */}
+                <button
+                  onClick={() => setShowOTPFull(!showOTPFull)}
+                  className="flex items-center justify-center gap-2 mx-auto mb-6 text-sm text-stone-600 hover:text-stone-800"
+                >
+                  {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showOTPFull ? "Hide" : "Show"} PIN
+                </button>
+
+                <Keypad
+                  numbers={[
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "←",
+                    "0",
+                    "✓",
+                  ]}
+                  onNumberClick={(num) => {
+                    if (num === "←") {
+                      // Handle delete
+                      const lastFilledIndex = otp.reduce(
+                        (acc, digit, idx) => (digit ? idx : acc),
+                        -1
+                      );
+                      if (lastFilledIndex >= 0) {
+                        const newOtp = [...otp];
+                        newOtp[lastFilledIndex] = "";
+                        setOtp(newOtp);
+                      }
+                    } else if (num === "✓") {
+                      // Handle confirm
+                      if (otp.every((d) => d)) {
+                        setSuccess(Math.random() > 0.4);
+                        handleNext();
+                      }
+                    } else {
+                      // Handle number input
+                      const emptyIndex = otp.findIndex((digit) => !digit);
+                      if (emptyIndex !== -1) {
+                        const newOtp = [...otp];
+                        newOtp[emptyIndex] = num;
+                        setOtp(newOtp);
+                      }
+                    }
+                  }}
+                  onDelete={() => {
+                    const lastFilledIndex = otp.reduce(
+                      (acc, digit, idx) => (digit ? idx : acc),
+                      -1
+                    );
+                    if (lastFilledIndex >= 0) {
+                      const newOtp = [...otp];
+                      newOtp[lastFilledIndex] = "";
+                      setOtp(newOtp);
+                    }
+                  }}
+                  onConfirm={() => {
+                    if (otp.every((d) => d)) {
+                      setSuccess(Math.random() > 0.4);
+                      handleNext();
+                    }
+                  }}
+                  disableConfirm={!otp.every((d) => d)}
+                  loading={false}
+                />
+              </div>
 
               {/* Confirm Button */}
               <div className="mt-8">
@@ -621,7 +701,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   );
 }
 
-function ReviewItem({ label, value }: { label: string; value: string | number }) {
+function ReviewItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) {
   return (
     <div className="flex justify-between items-center">
       <span className="text-stone-600 text-sm font-medium">{label}</span>
@@ -635,7 +721,7 @@ type ProviderSelectProps = {
   providers: Provider[];
   value: string;
   onChange: (service_id: string) => void;
-}
+};
 
 function ProviderSelect({
   label,
@@ -666,9 +752,10 @@ function ProviderSelect({
               whileTap={{ scale: 0.97 }}
               onClick={() => onChange(provider.service_id)}
               className={`flex flex-col items-center justify-center shrink-0 min-w-[90px] md:min-w-[100px] p-4 rounded-2xl transition-all duration-300
-                ${isSelected
-                  ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
-                  : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
+                ${
+                  isSelected
+                    ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
+                    : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
                 }`}
             >
               <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden ring-1 ring-stone-200 mb-2">
@@ -680,8 +767,9 @@ function ProviderSelect({
                 />
               </div>
               <span
-                className={`text-xs md:text-sm font-medium ${isSelected ? "text-teal-700" : "text-stone-700"
-                  } text-center truncate w-full`}
+                className={`text-xs md:text-sm font-medium ${
+                  isSelected ? "text-teal-700" : "text-stone-700"
+                } text-center truncate w-full`}
               >
                 {provider.service_name}
               </span>
@@ -704,7 +792,7 @@ type PlanSelectProps = {
   onSelect: (variation: Variation) => void;
   variations: Variation[] | null;
   type: string;
-}
+};
 
 function PlanSelect({
   label,
@@ -743,15 +831,17 @@ function PlanSelect({
               onClick={() => onSelect(item)}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${isSelected
-                ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
-                : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
-                }`}
+              className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${
+                isSelected
+                  ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
+                  : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
+              }`}
             >
               <span className="font-semibold text-sm">{planTitle}</span>
               <span
-                className={`text-base md:text-lg font-bold ${isSelected ? "text-teal-600" : "text-primary"
-                  }`}
+                className={`text-base md:text-lg font-bold ${
+                  isSelected ? "text-teal-600" : "text-primary"
+                }`}
               >
                 {formatNGN(item.price)}
               </span>
@@ -767,18 +857,13 @@ function PlanSelect({
 }
 
 type AmountGridProps = {
-  type: string,
+  type: string;
   value: string | number;
   onChange: (value: string) => void;
   presetAmounts: number[];
 };
 
-function AmountGrid({
-  type,
-  value,
-  onChange,
-  presetAmounts,
-}: AmountGridProps) {
+function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridProps) {
   return (
     <div className="space-y-4">
       {/* Label */}
@@ -799,10 +884,11 @@ function AmountGrid({
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onChange(amt.toString())}
                 className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 border text-sm
-                ${isSelected
+                ${
+                  isSelected
                     ? "border-teal-500 bg-gradient-to-r from-teal-500/10 to-teal-200 text-teal-700 shadow-[0_3px_8px_rgba(13,148,136,0.25)]"
                     : "border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300"
-                  }`}
+                }`}
               >
                 ₦{amt.toLocaleString()}
               </motion.button>
@@ -836,7 +922,7 @@ type InputFieldProps = {
   value: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   verify?: boolean;
-}
+};
 
 function InputField({
   label,
@@ -891,12 +977,7 @@ type SelectFieldProps = {
   onChange: (value: string) => void;
 };
 
-function SelectField({
-  label,
-  options,
-  value,
-  onChange,
-}: SelectFieldProps) {
+function SelectField({ label, options, value, onChange }: SelectFieldProps) {
   const [open, setOpen] = useState(false);
 
   const handleSelect = (val: string) => {
@@ -918,8 +999,9 @@ function SelectField({
         <div className="flex justify-between items-center">
           <span>{value || "Select an option"}</span>
           <ChevronDown
-            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"
-              }`}
+            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${
+              open ? "rotate-180" : "rotate-0"
+            }`}
           />
         </div>
 
@@ -938,14 +1020,17 @@ function SelectField({
                   <li
                     key={i}
                     onClick={() => handleSelect(opt)}
-                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${value === opt ? "bg-teal-50 text-teal-700" : ""
-                      }`}
+                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${
+                      value === opt ? "bg-teal-50 text-teal-700" : ""
+                    }`}
                   >
                     {opt}
                   </li>
                 ))
               ) : (
-                <li className="px-4 py-3 text-stone-400">No options available</li>
+                <li className="px-4 py-3 text-stone-400">
+                  No options available
+                </li>
               )}
             </motion.ul>
           )}
@@ -966,7 +1051,7 @@ const ProviderSkeleton = () => {
       </div>
     </div>
   );
-}
+};
 
 const ProviderSkeletonCard = () => (
   <div className="w-full h-24 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md animate-pulse">
@@ -986,7 +1071,7 @@ const PlanSkeleton = () => {
       </div>
     </div>
   );
-}
+};
 
 const PlanSkeletonCard = () => (
   <div className="w-full flex flex-col items-center justify-center gap-2 py-4 border-2 border-stone-100/50 rounded-xl bg-stone-100/5 shadow-sm animate-pulse">

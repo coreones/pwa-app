@@ -212,7 +212,7 @@ export default function SetPin({
     );
 }
 
-function Keypad({
+export function Keypad({
     numbers,
     onNumberClick,
     onDelete,
