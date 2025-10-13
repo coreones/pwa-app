@@ -1,13 +1,10 @@
-import React, { use, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AmountGrid, InputField, ReviewItem } from "@/components/PaymentFlow";
-import { Card, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Keypad } from "@/components/SetPin";
 import { AnimatePresence, motion } from "framer-motion";
 import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
 import { formatNGN } from "@/utils/amount";
-import { type } from "os";
 
 export default function BankTransfer() {
   const [formData, setFormData] = useState({
@@ -19,23 +16,42 @@ export default function BankTransfer() {
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>("");
+  const [tag, setTag] = useState("");
 
   const handleBack = () => {
+    setTag("");
     if (step === 1) window.history.back();
     else setStep((prev) => prev - 1);
   };
 
   const handleNext = () => {
     setStep((prev) => prev + 1);
-
   };
 
-  useEffect(() => {
-    if (formData.tag.length > 4 && step === 1) {
-      handleNext();
-    }
-  }, [formData.tag, step]);
+  const tags = ["@tali", "@ljtwp", "@barnny"];
 
+  const verify = () => {
+    const tag = formData.tag;
+    let found = false;
+
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i] === tag) {
+        setTag(tags[i]);
+        found = true;
+        setError(null);
+        setTimeout(() => {
+          handleNext();
+        }, 1000);
+        break;
+      }
+    }
+
+    if (!found) {
+      setError("no match found");
+      setTag("");
+    }
+  };
 
   const handleInputChange = useCallback(
     (field: keyof typeof formData, value: string) => {
@@ -62,6 +78,14 @@ export default function BankTransfer() {
               value={formData.tag}
               onChange={(e) => handleInputChange("tag", e.target.value)}
             />
+            {tag && <p className="text-teal-500"> found: {tag}</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            <button
+              onClick={verify}
+              className="bg-gradient-to-r from-teal-500 font-black text-white to-teal-600 py-3 rounded-2xl w-full max-w-xs"
+            >
+              Verify
+            </button>
           </div>
         );
       case 2:
@@ -79,7 +103,7 @@ export default function BankTransfer() {
                 </div>
                 <div>
                   <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
+                  <div className="text-stone-500">{tag}</div>
                 </div>
               </div>
               <AmountGrid
@@ -291,12 +315,23 @@ export default function BankTransfer() {
       {renderStep()}
       <div className="flex flex-col items-center space-y py-4">
         {step > 1 && (
-          <button
-            onClick={handleNext}
-            className="py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 max-w-50 w-full rounded-2xl"
-          >
-            Continue
-          </button>
+          <div className="w-full flex items-center justify-between">
+            {step < 3 && (
+              <button
+                onClick={handleBack}
+                className="py-2 bg-gradient-to-r from-stone-200 to-stone-100 text-white px-3 max-w-50 w-full rounded-2xl"
+              >
+                Cancel
+              </button>
+            )}
+
+            <button
+              onClick={handleNext}
+              className="py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 max-w-50 w-full rounded-2xl"
+            >
+              Continue
+            </button>
+          </div>
         )}
       </div>
     </div>

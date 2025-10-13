@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { AmountGrid, InputField, ReviewItem } from "@/components/PaymentFlow";
-import { Card, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Keypad } from "@/components/SetPin";
 import { AnimatePresence, motion } from "framer-motion";
 import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
