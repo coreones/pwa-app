@@ -863,7 +863,7 @@ type AmountGridProps = {
   presetAmounts: number[];
 };
 
-function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridProps) {
+export function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridProps) {
   return (
     <div className="space-y-4">
       {/* Label */}
@@ -872,8 +872,8 @@ function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridProps) {
       </label>
 
       {/* Preset Amount Buttons */}
-      {["betting", "airtime"].includes(type) && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+      {["betting", "airtime", "transfer"].includes(type) && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 w-full gap-3">
           {presetAmounts.map((amt) => {
             const isSelected = value === amt.toString();
 
@@ -924,7 +924,7 @@ type InputFieldProps = {
   verify?: boolean;
 };
 
-function InputField({
+export function InputField({
   label,
   placeholder,
   value,

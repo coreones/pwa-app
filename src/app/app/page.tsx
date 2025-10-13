@@ -26,7 +26,7 @@ import { usePin } from "@/hooks/usePin";
 import SetPin from "@/components/SetPin";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, authenticated } = useAuth();
   const { hasPin, pinConfirmationLoading } = usePin();
   const [showBalance, setShowBalance] = useState(true);
   const [wallet, setWallet] = useState<Wallet | null>(null);
