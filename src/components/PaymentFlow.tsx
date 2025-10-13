@@ -182,7 +182,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
         service_id: formData.service_id, pin: pinExtractor(otp),
         ...(["airtime", "data"].includes(type) && formData.amount) && { amount: formData.amount },
         ...(formData.customer_id) && { phone: ["airtime", "data"].includes(type) ? formData.customer_id : (user?.phone ?? null) },
-        ...(["betting", "tv", "data"].includes(type) && formData.variation) && { variation_id: formData.variation.variation_id },
+        ...(["betting", "tv", "data"].includes(type) && formData.variation) && { variation_id: formData.variation.variation_id.toString() },
         ...(["betting", "tv", "electricity"].includes(type) && formData.customer_id) && { customer_id: formData.customer_id },
         ...(["tv"].includes(type) && formData.type) && { type: formData.type },
 
