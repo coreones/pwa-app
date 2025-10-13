@@ -36,7 +36,12 @@ export type Notification = {
   updated_at?: string;
   deleted_at?: string | null;
 };
-
+export type PurchaseAction =
+  | "airtime"
+  | "data"
+  | "betting"
+  | "tv"
+  | "electricity";
 export type TransactionStatus = "pending" | "completed" | "failed" | "reversed";
 export type TransactionAction =
   | "airtime"
