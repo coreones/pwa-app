@@ -1,6 +1,6 @@
 "use client";
 
-import { Headset, HomeIcon, Send, Settings } from "lucide-react";
+import { Home, List, Receipt, Send, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -19,9 +19,9 @@ export default function AppLayout({
   const isActive = (linkPath: string) => pathname === linkPath;
 
   const navItems = [
-    { icon: HomeIcon, name: "Home", link: "/app" },
-    { icon: Send, name: "Referral", link: "/app/profile/referral" },
-    { icon: Headset, name: "Help", link: "/app/profile/help-and-support" },
+    { icon: Home, name: "Home", link: "/app" },
+    { icon: Send, name: "Send", link: "/app/transfer" },
+    { icon: List, name: "History", link: "/app/history" },
     { icon: Settings, name: "Settings", link: "/app/profile" },
   ];
 

@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Trophy, Medal, ChevronLeft } from "lucide-react";
+import { Trophy, Medal } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useBack } from "@/hooks/useBack";
 import api from "@/lib/axios";
+import ProfileHeader from "@/components/ProfileHeader";
 
 type Leaderboard = {
   name: string,
@@ -15,8 +15,6 @@ type Leaderboard = {
 export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState<Leaderboard[] | [] | null>(null);
-
-  const handleBack = useBack("/app");
 
   React.useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
@@ -43,23 +41,14 @@ export default function LeaderboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="container">
       {/* Header */}
-      <div className="relative bg-[#21A29D] text-white p-6 rounded-b-3xl shadow-md">
-        <button
-          onClick={handleBack}
-          className="absolute top-5 left-5 bg-white/10 hover:bg-white/20 p-2 rounded-full"
-        >
-          <ChevronLeft className="w-6 h-6 text-white" />
-        </button>
-        <h1 className="text-2xl font-bold text-center">Leaderboard</h1>
-        <p className="text-center text-white/80 text-sm mt-1">
-          Top performers of the week 🏆
-        </p>
-      </div>
-
+      <ProfileHeader title="Leaderboard" />
+      <p className="text-center text-stone-600 text-sm w-full py-4 px-4">
+        Top performers of the week 🏆
+      </p>
       {/* Top 3 section */}
-      <div className="flex justify-center items-end gap-6 p-6 mt-8 z-10">
+      <div className="w-full flex justify-center items-end gap-6 p-4 z-10">
         {loading ? (
           <>
             <Skeleton /> <Skeleton /> <Skeleton />
@@ -119,10 +108,10 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Leaderboard List */}
-      <div className="bg-gray-50 flex-1 rounded-t-3xl -mt-2 p-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-3">
+      <div className="w-full flex-1 rounded-t-3xl -mt-2 p-4">
+        <p className="w-full p-4 text-lg font-semibold text-gray-600">
           Other Rankings
-        </h2>
+        </p>
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pb-4">
           {leaderboard && leaderboard.length > 3 ? leaderboard.slice(3).map((pos, i) => (
             <div

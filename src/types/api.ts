@@ -37,18 +37,31 @@ export type Notification = {
   deleted_at?: string | null;
 };
 
+export type TransactionStatus = "pending" | "completed" | "failed" | "reversed";
+export type TransactionAction =
+  | "airtime"
+  | "data"
+  | "electricity"
+  | "betting"
+  | "fund_sent"
+  | "fund_eceived"
+  | "wallet_topup"
+  | "bank_transfer"
+  | "tv"
+  | "flight_booking";
+
 export type Transaction = {
   id?: number;
   user_id?: number;
   reference?: string;
   session_id?: string | null;
   type?: "credit" | "debit";
-  action?: string;
+  action?: TransactionAction;
   amount?: number;
   fee?: number;
   balance_before?: number;
   balance_after?: number;
-  status?: "pending" | "completed" | "failed" | "reversed";
+  status?: TransactionStatus;
   wallet?: string;
   description?: string | null;
   extra?: Record<string, any> | null;
@@ -109,3 +122,22 @@ export type Wallet = {
   updated_at?: string;
   deleted_at?: string | null;
 };
+
+export function formatTransactionLabel(
+  value: TransactionStatus | TransactionAction
+): string {
+  const map: Record<string, string> = {
+    fund_received: "Fund Received",
+    fund_sent: "Fund Sent",
+    wallet_topup: "Wallet Top-Up",
+    bank_transfer: "Bank Transfer",
+    flight_booking: "Flight Booking",
+  };
+
+  if (map[value]) return map[value];
+
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}

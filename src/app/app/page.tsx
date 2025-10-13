@@ -5,10 +5,14 @@ import {
   Eye,
   Gift,
   Lightbulb,
+  List,
   Plane,
+  Plus,
+  Receipt,
+  Send,
   Smartphone,
   Sun,
-  Trophy,
+  Star,
   Tv,
   Wifi,
 } from "lucide-react";
@@ -24,6 +28,7 @@ import api from "@/lib/axios";
 import { formatNGN } from "@/utils/amount";
 import { usePin } from "@/hooks/usePin";
 import SetPin from "@/components/SetPin";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -65,14 +70,17 @@ export default function DashboardPage() {
     getRecentTransactions();
   }, []);
   const items = [
+    { name: "Receive", icon: Plus, link: "/app/receive" },
+    { name: "Send", icon: Send, link: "/app/transfer" },
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
     { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
     { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
-    { name: "Bet Topup", icon: Trophy, link: "/app/payments/betting" },
-    { name: "Flight", icon: Plane, link: "/app/payments/" },
-    { name: "Gift Card", icon: Gift, link: "" },
-    { name: "Transport", icon: Bus, link: "" },
+    { name: "Bet Topup", icon: Star, link: "/app/payments/betting" },
+    { name: "Transactions", icon: List, link: "app/history" },
+    { name: "Flight", icon: Plane, link: "" },
+    // { name: "Gift Card", icon: Gift, link: "" },
+    // { name: "Transport", icon: Bus, link: "" },
   ];
 
   const slides = [
@@ -143,12 +151,22 @@ export default function DashboardPage() {
                 <Eye size={20} />
               </button>
             </div>
-            <button
-              onClick={() => setAddFunds(true)}
-              className="bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
-            >
-              + Add Money
-            </button>
+            <div className="flex flex-row items-center gap-2">
+              <button
+                onClick={() => setAddFunds(true)}
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+              >
+                <Send size={12} />
+                <span>Send</span>
+              </button>
+              <button
+                onClick={() => setAddFunds(true)}
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+              >
+                <Plus size={12} />
+                <span>Receive</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -252,7 +270,7 @@ export default function DashboardPage() {
             }}
           />
         )} */}
-        {!userHasPin && authenticated && (
+        {!userHasPin && (
           <SetPin
             close={setUserHasPin}
             onSuccess={() => {

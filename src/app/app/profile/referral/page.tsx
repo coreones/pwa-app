@@ -18,9 +18,9 @@ import {
 } from "@heroicons/react/24/solid";
 
 import toast from "react-hot-toast";
-import { useBack } from "@/hooks/useBack";
 import { useAuth } from "@/hooks/useAuth";
 import api from "@/lib/axios";
+import ProfileHeader from "@/components/ProfileHeader";
 
 type ReferralsList = {
   name: string,
@@ -29,7 +29,6 @@ type ReferralsList = {
 }
 export default function ReferralPage() {
   const { user } = useAuth();
-  const handleBack = useBack("/app");
   const [referralCode, setReferralCode] = useState("XXXXXX");
   const referralLink = `${window.location.host}/auth/register?ref=${referralCode}`;
   const [showShareModal, setShowShareModal] = useState(false);
@@ -63,37 +62,27 @@ export default function ReferralPage() {
 
 
   return (
-    <div className="min-h-screen w-full bg-[#21A29D] flex flex-col relative overflow-hidden">
+    <div className="container">
       {/* Header */}
-      <header className="relative flex items-center justify-between px-6 pt-6">
-        <button
-          onClick={handleBack}
-          className="w-10 text-white bg-white/10 hover:bg-white/20 p-2 rounded-2xl transition"
-        >
-          <ArrowLeftIcon className="w-5 h-5" />
-        </button>
-        <h1 className="text-white font-semibold text-lg">Referrals</h1>
-        <div className="w-10" /> {/* Spacer */}
-      </header>
-
+      <ProfileHeader title="Referrals" />
       {/* Banner Section */}
       <motion.section
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="flex-1 flex flex-col justify-center items-center px-6"
+        className="w-full flex-1 flex flex-col justify-center items-center px-4 py-12"
       >
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-          className="relative w-full max-w-xs rounded-3xl bg-white/10 backdrop-blur-md p-4 shadow-lg flex justify-center items-center"
+          className="relative w-full max-w-xs rounded-3xl bg-[#21A29D] backdrop-blur-md p-4 shadow-lg flex justify-center items-center"
         >
           <Image
             src="/img/refer.png"
             alt="Referral Illustration"
-            width={240}
-            height={240}
+            width={200}
+            height={200}
             className="rounded-2xl object-contain"
           />
         </motion.div>
@@ -102,7 +91,7 @@ export default function ReferralPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.7 }}
-          className="text-white text-3xl font-bold mt-4 text-center"
+          className="text-stone-800 text-3xl font-bold mt-4 text-center"
         >
           Invite & Earn Instantly 💸
         </motion.h2>
@@ -111,34 +100,26 @@ export default function ReferralPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.7 }}
-          className="text-white/90 text-center mt-2 text-base max-w-sm leading-relaxed"
+          className="text-stone-800/75 text-center mt-2 text-base max-w-sm leading-relaxed"
         >
           Refer your friends to{" "}
           <span className="font-semibold">BillNa</span> and earn{" "}
           <span className="font-bold">₦10</span> when they make their first
           transaction.
         </motion.p>
-      </motion.section>
 
-      {/* Bottom Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0, duration: 0.8, ease: "easeOut" }}
-        className="w-full bg-white rounded-t-[50px] p-6 shadow-inner flex flex-col gap-4"
-      >
-        <div className="text-center flex flex-col w-full max-w-md items-center justify-start space-y-4 mx-auto">
-          <h3 className="text-2xl font-bold text-[#21A29D]">
+        <div className="text-center flex flex-col w-full max-w-md items-center justify-start space-y-2 mx-auto pt-12">
+          {/* <h3 className="text-xl font-semibold text-[#21A29D]">
             Your Referral Code
-          </h3>
+          </h3> */}
 
           <motion.div
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.2 }}
             className="w-full flex items-center justify-center"
           >
-            <div className="bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-between w-full max-w-sm px-4 py-3">
-              <span className="text-gray-700 font-semibold">
+            <div className="bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between w-full max-w-sm px-4 py-4">
+              <span className="text-stone-700  text-3xl text-center font-black">
                 {referralCode}
               </span>
               <button
@@ -155,7 +136,7 @@ export default function ReferralPage() {
             whileHover={{ scale: 1.02 }}
             onClick={() => setShowShareModal(true)}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-sm mt-4 flex items-center justify-center gap-2 bg-[#21A29D] hover:bg-[#1b8a88] text-white font-semibold py-4 px-6 rounded-xl shadow-md transition"
+            className="w-full max-w-sm mt-2 flex items-center justify-center gap-2 bg-stone-800 hover:bg-stone-700 text-white font-medium py-4 px-6 rounded-xl shadow-md transition"
           >
             <ShareIcon className="w-5 h-5" />
             Share Referral Code
@@ -163,7 +144,7 @@ export default function ReferralPage() {
 
           <button
             onClick={() => setShowHistoryModal(true)}
-            className="text-[#21A29D] font-bold hover:underline mt-1"
+            className="text-stone-800 font-medium hover:underline mt-2"
           >
             View Referral History
           </button>

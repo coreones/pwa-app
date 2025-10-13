@@ -3,34 +3,23 @@
 import DeactivateAccount from "@/components/modal/deactivate-account";
 import DeleteAccount from "@/components/modal/delete-account";
 import { MenuItem } from "@/components/ui/buttons";
-import { useBack } from "@/hooks/useBack";
-import { ArrowLeftIcon, Lock, Trash2 } from "lucide-react";
+import { Lock, Trash2 } from "lucide-react";
 import React, { useState } from "react";
+import ProfileHeader from "@/components/ProfileHeader";
 
 export default function DeactivateDeleteAccountPage() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
-  const handleBack = useBack("/app");
-
   return (
-    <div className="min-h-screen bg-white text-stone-800">
+    <div className="container">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
-        <button
-          onClick={handleBack}
-          className="p-2 rounded-full hover:bg-white/20 transition"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-white" />
-        </button>
-        <h1 className="text-lg font-semibold text-white">Deactivate/Delete Account</h1>
-        <div className="w-8" /> {/* Spacer */}
-      </header>
+      <ProfileHeader title="Deactivate/Delete Account" />
 
-      {/* Profile Actions */}
-      <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl shadow-sm">
-        <p className="text-stone-600 mb-4 text-sm text-center">
-          Manage your account status. You can deactivate or permanently delete your profile.
-        </p>
+      {/* Content */}
+      <div className="w-full p-4">
+        <div className="w-full p-4 text-stone-400 text-sm">
+          Deactivate or permanently delete your account.
+        </div>
 
         <div className="flex flex-col divide-y divide-stone-200">
           <MenuItem
