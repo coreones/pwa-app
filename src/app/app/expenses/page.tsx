@@ -2,17 +2,12 @@
 
 import { MenuItem } from "@/components/ui/buttons";
 import {
-  Smartphone,
-  ChartNoAxesColumn,
   Lightbulb,
   Tv,
   Plane,
   Volleyball,
   Wifi,
-  NotepadText,
-  Ticket,
-  Bus,
-  Star,
+  PhoneCall,
 } from "lucide-react";
 import ProfileHeader from "@/components/ProfileHeader";
 
@@ -31,7 +26,7 @@ export default function ExpensesPage() {
 
         <div className="flex flex-col divide-y divide-stone-200">
           <MenuItem
-            icon={<Smartphone size={20} color="#21A29D" />}
+            icon={<PhoneCall size={20} color="#21A29D" />}
             label="Airtime"
             showBorder={false}
             type="data"
@@ -55,7 +50,7 @@ export default function ExpensesPage() {
             type="data"
           />
           <MenuItem
-            icon={<Star size={20} color="#21A29D" />}
+            icon={<Volleyball size={20} color="#21A29D" />}
             label="Betting"
             showBorder={false}
             type="data"

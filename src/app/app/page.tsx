@@ -15,6 +15,11 @@ import {
   Star,
   Tv,
   Wifi,
+  Settings,
+  LogOut,
+  PhoneCall,
+  Volleyball,
+  ArrowRightLeft,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +33,8 @@ import api from "@/lib/axios";
 import { formatNGN } from "@/utils/amount";
 import { usePin } from "@/hooks/usePin";
 import SetPin from "@/components/SetPin";
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { logoutModal } from "@/lib/logout-modal";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -72,12 +78,12 @@ export default function DashboardPage() {
   const items = [
     { name: "Receive", icon: Plus, link: "/app/receive" },
     { name: "Send", icon: Send, link: "/app/transfer" },
-    { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
+    { name: "Airtime", icon: PhoneCall, link: "/app/payments/airtime" },
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
     { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
     { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
-    { name: "Bet Topup", icon: Star, link: "/app/payments/betting" },
-    { name: "Transactions", icon: List, link: "app/history" },
+    { name: "Beting", icon: Volleyball, link: "/app/payments/betting" },
+    { name: "Transactions", icon: ArrowRightLeft, link: "app/history" },
     { name: "Flight", icon: Plane, link: "" },
     // { name: "Gift Card", icon: Gift, link: "" },
     // { name: "Transport", icon: Bus, link: "" },
@@ -119,7 +125,7 @@ export default function DashboardPage() {
         {/* HEADER */}
         <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-6 pb-4 relative shadow-sm z-1">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
+            <Link href="/app/profile" className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
                 <Image
                   src={user?.photo ?? "/default.png"}
@@ -136,10 +142,18 @@ export default function DashboardPage() {
                   {user?.email ?? "*****@gmail.com"}
                 </p>
               </div>
+            </Link>
+            <div className="flex flex-row gap-3 items-center">
+              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+                <Sun size={20} />
+              </button>
+              <Link href="/app/profile/edit" className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+                <Settings size={20} />
+              </Link>
+              <button onClick={() => logoutModal.open()} className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+                <LogOut size={20} />
+              </button>
             </div>
-            <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
-              <Sun size={20} />
-            </button>
           </div>
 
           <div className="flex justify-between items-center mb-2">
