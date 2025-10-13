@@ -1,22 +1,17 @@
 import React, { useCallback, useState } from "react";
-import { AmountGrid, InputField } from "../../payments/components/PaymentFlow";
+import { AmountGrid, InputField } from "@/components/PaymentFlow";
 import { Card, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Keypad } from "@/components/SetPin";
 import { AnimatePresence, motion } from "framer-motion";
-import { EyeOff, Eye } from "lucide-react";
-
-type Data = {
-  accountNumber: number;
-  amount: number;
-  bankName: string;
-};
+import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
 
 export default function BankTransfer() {
   const [formData, setFormData] = useState({
     tag: "",
     amount: "",
+    remark: "",
   });
   const [step, setStep] = useState(1);
   const [showOTPFull, setShowOTPFull] = useState(false);
@@ -45,7 +40,7 @@ export default function BankTransfer() {
     switch (step) {
       case 1:
         return (
-          <div className=" flex flex-col items-center  space-y-4">
+          <div className=" flex flex-col items-center  justify-center space-y-4">
             <h1 className="w-full text-teal-600 font-bold">
               Enter user tag for in-app Transfer
             </h1>
@@ -56,21 +51,39 @@ export default function BankTransfer() {
               onChange={(e) => handleInputChange("tag", e.target.value)}
               verify
             />
-            <h1 className="text-sm">
-              Don't know the person account number?{" "}
-              <span className="text-teal-500 font-semibold">Ask Them</span>
-            </h1>
           </div>
         );
       case 2:
         return (
-          <div className="flex flex-col items-center space-y-4">
-            <AmountGrid
-              type="transfer"
-              value={formData.amount}
-              onChange={(value) => handleInputChange("amount", value)}
-              presetAmounts={presetAmounts}
-            />
+          <div className="flex flex-col items-center justify-center min-h-70 w-full space-y-4">
+            <div className=" space-y-6 bg-alternate/10 p-4 rounded-2xl w-full">
+              <div className="flex gap-2 py-4 items-center px-5 rounded-2xl bg-alternate/10">
+                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
+                  <Image
+                    src={"/img/user.jpg"}
+                    alt="user"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <div>Tali Nanzing</div>
+                  <div className="text-stone-500">@tali</div>
+                </div>
+              </div>
+              <AmountGrid
+                type="transfer"
+                value={formData.amount}
+                onChange={(value) => handleInputChange("amount", value)}
+                presetAmounts={presetAmounts}
+              />
+              <InputField
+                label="Remark"
+                placeholder="School fee"
+                onChange={(e) => handleInputChange("remark", e.target.value)}
+                value={formData.remark}
+              />
+            </div>
           </div>
         );
       case 3:
@@ -190,97 +203,22 @@ export default function BankTransfer() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto min-h-full">
+    <div className="w-full max-w-2xl mx-auto min-h-full space-y-4">
+      <button
+        onClick={handleBack}
+        className="p-2 rounded-full hover:bg-alternate/10 hover:text-red-500 transition-all duration-300"
+      >
+        <ChevronLeft size={14} />
+      </button>
       {renderStep()}
       <div className="flex flex-col items-center space-y py-4">
-        {step < 3 && (
+        {step > 1 && (
           <button
             onClick={handleNext}
             className="py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 max-w-50 w-full rounded-2xl"
           >
             Continue
           </button>
-        )}
-
-        {step === 1 && (
-          <div className="mt-6 w-full">
-            <CardHeader className="text-teal-800 text-xl flex justify-between font-semibold">
-              <button className="cursor-pointer">Recent</button>
-              <button className="cursor-pointer">Favourite</button>
-            </CardHeader>
-            <Card className="gap-0 py-0 max-h-110 overflow-y-scroll">
-              <div className="flex gap-2 py-4 items-center px-5 hover:bg-alternate/10">
-                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
-                  <Image
-                    src={"/img/user.jpg"}
-                    alt="user"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
-                </div>
-              </div>
-              <div className="flex gap-2 py-4 items-center px-5 hover:bg-alternate/10">
-                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
-                  <Image
-                    src={"/img/user.jpg"}
-                    alt="user"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
-                </div>
-              </div>
-              <div className="flex gap-2 py-4 items-center px-5 hover:bg-alternate/10">
-                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
-                  <Image
-                    src={"/img/user.jpg"}
-                    alt="user"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
-                </div>
-              </div>
-              <div className="flex gap-2 py-4 items-center px-5 hover:bg-alternate/10">
-                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
-                  <Image
-                    src={"/img/user.jpg"}
-                    alt="user"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
-                </div>
-              </div>
-              <div className="flex gap-2 py-4 items-center px-5 hover:bg-alternate/10">
-                <div className="rounded-full font-bold text-2xl w-14 h-14 overflow-hidden bg-stone-100 relative">
-                  <Image
-                    src={"/img/user.jpg"}
-                    alt="user"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <div>Tali Nanzing</div>
-                  <div className="text-stone-500">@tali</div>
-                </div>
-              </div>
-            </Card>
-          </div>
         )}
       </div>
     </div>
