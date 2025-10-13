@@ -14,6 +14,7 @@ import { ApiResponse } from "@/types/api";
 import { deleteClientCookie, setClientCookie } from "@/lib/cookies";
 import { setClientLocalStorage } from "@/lib/local-storage";
 import { useSearchParams } from "next/navigation";
+
 // Zod schemas
 const loginSchema = z.object({
     entity: z.string().min(4, "Email or username is required"),
@@ -283,11 +284,13 @@ export default function AuthForm({ type }: AuthFormProps) {
                 );
             case "forgot-password":
                 return (
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
-                        {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
-                    </div>
+                    <>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
+                            {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
+                        </div>
+                    </>
                 );
         }
     };

@@ -14,6 +14,7 @@ import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNGN } from "@/utils/amount";
+import { stringArray } from "@/utils/string";
 
 interface PaymentPageProps {
   type: "airtime" | "data" | "betting" | "tv" | "electricity";
@@ -24,25 +25,41 @@ type Provider = {
   logo: string,
 }
 
+type Variation = {
+  variation_id: string;
+  service_name: string;
+  service_id: string;
+  price: string;
+} & (
+    | { data_plan: string; package_bouquet?: never }
+    | { package_bouquet: string; data_plan?: never }
+  );
+
+type Purchase = {
+  service_id: string,
+  phone: string | number,
+  amount: string | number,
+  customer_id: string | number,
+  variation: null | Variation,
+  type: string,
+}
 export default function PaymentPage({ type }: PaymentPageProps) {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [saveBeneficiary, setSaveBeneficiary] = useState(false);
   const [showOTPFull, setShowOTPFull] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Purchase>({
     service_id: "",
     phone: "",
-    amount: "",
-    plan: "",
+    amount: 0,
     customer_id: "",
-    meter: "",
-    variation_id: "",
+    variation: null,
+    type: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
-  const [tvVariations, setTvVariations] = useState<null | []>(null);
-  const [dataVariations, setDataVariations] = useState<null | []>(null);
+  const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(null);
+  const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(null);
   const [selectedDuration, setSelectedDuration] = useState("Daily");
   const { user } = useAuth();
 
@@ -60,10 +77,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       service_id: "",
       phone: "",
       amount: "",
-      plan: "",
       customer_id: "",
-      meter: "",
-      variation_id: "",
+      variation: null,
+      type: ""
     });
   };
 
@@ -94,26 +110,11 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     getProviders();
   }, [type])
 
-  const getTVVariations = async (service_id: string) => {
-    setLoading(true)
-    try {
-      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
-      if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setTvVariations(res.data.data)
-      } else {
-        setTvVariations([])
-      }
-    } catch (err) {
-      setDataVariations([])
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  const getDataVariations = async (service_id: string) => {
+  const getDataVariations = async (v: Variation) => {
     setLoading(true)
     try {
-      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${service_id}`)
+      const res = await api.get<ApiResponse>(`/general/bill/data-variations?service=${v.service_id}`)
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setDataVariations(res.data.data)
       } else {
@@ -126,87 +127,44 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     }
   }
 
-  const purchaceData = [
-    {
-      timeFrame: "Daily",
-      plans: [
-        { data: "1GB", price: "₦100", duration: "1day" },
-        { data: "2GB", price: "₦200", duration: "1day" },
-        { data: "5GB", price: "₦500", duration: "1day" },
-        { data: "10GB", price: "₦1000", duration: "1day" },
-        { data: "20GB", price: "₦2000", duration: "1day" },
-        { data: "50GB", price: "₦5000", duration: "1day" },
-      ],
-    },
-    {
-      timeFrame: "2 days",
-      plans: [
-        { data: "1GB", price: "₦150", duration: "2days" },
-        { data: "2GB", price: "₦300", duration: "2days" },
-        { data: "5GB", price: "₦750", duration: "2days" },
-        { data: "10GB", price: "₦1500", duration: "2days" },
-        { data: "20GB", price: "₦3000", duration: "2days" },
-        { data: "50GB", price: "₦7500", duration: "2days" },
-      ],
-    },
-    {
-      timeFrame: "Weekly",
-      plans: [
-        { data: "1GB", price: "₦300", duration: "7days" },
-        { data: "2GB", price: "₦600", duration: "7days" },
-        { data: "5GB", price: "₦1500", duration: "7days" },
-        { data: "10GB", price: "₦3000", duration: "7days" },
-        { data: "20GB", price: "₦6000", duration: "7days" },
-        { data: "50GB", price: "₦15000", duration: "7days" },
-      ],
-    },
-    {
-      timeFrame: "Monthly",
-      plans: [
-        { data: "1GB", price: "₦1000", duration: "30days" },
-        { data: "2GB", price: "₦2000", duration: "30days" },
-        { data: "5GB", price: "₦5000", duration: "30days" },
-        { data: "10GB", price: "₦10000", duration: "30days" },
-        { data: "20GB", price: "₦20000", duration: "30days" },
-        { data: "50GB", price: "₦50000", duration: "30days" },
-      ],
-    },
-    {
-      timeFrame: "Yearly",
-      plans: [
-        { data: "1GB", price: "₦10000", duration: "365days" },
-        { data: "2GB", price: "₦20000", duration: "365days" },
-        { data: "5GB", price: "₦50000", duration: "365days" },
-        { data: "10GB", price: "₦100000", duration: "365days" },
-        { data: "20GB", price: "₦200000", duration: "365days" },
-        { data: "50GB", price: "₦500000", duration: "365days" },
-      ],
-    },
-    {
-      timeFrame: "Unlimited",
-      plans: [{ data: "Unlimited", price: "₦1000000", duration: "365days" }],
-    },
-  ];
-
-  const dataPlans = [
-    { value: "500mb", label: "500MB - ₦200", amount: "200" },
-    { value: "1gb", label: "1GB - ₦350", amount: "350" },
-    { value: "2gb", label: "2GB - ₦700", amount: "700" },
-  ];
-
-  const tvPlans = [
-    { value: "dstv_padi", label: "DSTV Padi - ₦2,500", amount: "2500" },
-    { value: "gotv_max", label: "GOTV Max - ₦4,800", amount: "4800" },
-  ];
+  const getTVVariations = async (v: Variation) => {
+    setLoading(true)
+    try {
+      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${v.service_id}`)
+      if (!res.data.error && res.data.data && res.data.data.length > 0) {
+        setTvVariations(res.data.data)
+      } else {
+        setTvVariations([])
+      }
+    } catch (err) {
+      setDataVariations([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const presetAmounts = [100, 200, 500, 1000, 2000, 5000];
 
-  const handleFormChange = (field: string, value: string) => {
+  const handleFormChange = (
+    field: string,
+    value: string | number | null | Variation
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (type == "data" && field == "service_id") {
-      getDataVariations(value)
+
+    if (field === "service_id" && value != null) {
+      switch (type) {
+        case "tv":
+          setTvVariations(null);
+          getTVVariations(value as Variation);
+          break;
+        case "data":
+          setDataVariations(null);
+          getDataVariations(value as Variation);
+          break;
+      }
     }
   };
+
 
   const isStep1Valid = () => {
     const baseCheck = !!formData.service_id;
@@ -214,16 +172,16 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       case "airtime":
         return baseCheck && !!formData.phone && !!formData.amount;
       case "data":
-        return baseCheck && !!formData.phone && !!formData.plan;
+        return baseCheck && !!formData.phone && !!formData.variation;
       case "betting":
         return baseCheck && !!formData.customer_id && !!formData.amount;
       case "tv":
-        return baseCheck && !!formData.customer_id && !!formData.plan;
+        return baseCheck && !!formData.customer_id && !!formData.variation && !!formData.type;
       case "electricity":
         return (
           baseCheck &&
           !!formData.customer_id &&
-          !!formData.variation_id &&
+          !!formData.variation &&
           !!formData.amount
         );
       default:
@@ -250,28 +208,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             </div>
 
             <div className="space-y-6">
-              {loading || !providers ?
-                <div className="w-full flex flex-col gap-2">
-                  <p className="text-md font-normal text-stone-800">Select Provider</p>
-                  <div className="w-full animate-pulse grid grid-cols-4 gap-2">
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                  </div>
-                </div>
+              {!providers ?
+                <ProviderSkeleton />
                 :
                 (providers.length === 0 ?
                   <p className="text-center py-4 font-normal text-stone-800">
@@ -302,17 +240,22 @@ export default function PaymentPage({ type }: PaymentPageProps) {
               )}
 
               {type === "data" && (
-                <>
-                  <PlanSelect
-                    label="Select Data Plan"
-                    plans={dataPlans}
-                    value={formData.plan}
-                    onSelect={(plan) => {
-                      handleFormChange("plan", plan.label);
-                      handleFormChange("amount", plan.amount);
-                    }}
-                    purchaceData={purchaceData}
-                  />
+                <> {loading && <PlanSkeleton />}
+                  {dataVariations?.length === 0 ?
+                    <p className="text-center py-4 font-normal text-stone-800">
+                      No Plan available at the moment
+                    </p> :
+                    <PlanSelect
+                      label="Select Data Plan"
+                      value={formData.variation}
+                      onSelect={(plan) => {
+                        handleFormChange("variation", plan);
+                        handleFormChange("amount", plan.price);
+                      }}
+                      variations={dataVariations}
+                      type={type}
+                    />
+                  }
                   <InputField
                     label="Phone Number"
                     placeholder="2348012345678"
@@ -345,7 +288,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 <>
                   <InputField
                     label="Smart Card Number"
-                    placeholder="Enter smart card number"
+                    placeholder="Enter Smart card number"
                     value={formData.customer_id}
                     onChange={(e) =>
                       handleFormChange("customer_id", e.target.value)
@@ -353,13 +296,14 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     verify
                   />
                   <PlanSelect
-                    label="Select Plan"
-                    plans={tvPlans}
-                    value={formData.plan}
+                    label="Select Package"
+                    value={formData.variation}
+                    variations={tvVariations}
                     onSelect={(plan) => {
-                      handleFormChange("plan", plan.label);
-                      handleFormChange("amount", plan.amount);
+                      handleFormChange("variation", plan);
+                      handleFormChange("amount", plan.price);
                     }}
+                    type={type}
                   />
                 </>
               )}
@@ -369,16 +313,16 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   <InputField
                     label="Meter Number"
                     placeholder="Enter meter number"
-                    value={formData.meter}
-                    onChange={(e) => handleFormChange("meter", e.target.value)}
+                    value={formData.customer_id}
+                    onChange={(e) => handleFormChange("customer_id", e.target.value)}
                     verify
                   />
                   <SelectField
-                    label="Payment Type"
-                    options={["Prepaid", "Postpaid"]}
-                    value={formData.variation_id}
+                    label="Type"
+                    options={["prepaid", "postpaid"]}
+                    value={formData.type}
                     onChange={(e) =>
-                      handleFormChange("variation_id", e.target.value)
+                      handleFormChange("type", e.target.value)
                     }
                   />
                   <AmountGrid
@@ -388,24 +332,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   />
                 </>
               )}
-
-              {/* <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
-                <h1 className=" text-xl font-semibold text-black/70 ">
-                  Save as Beneficiary
-                </h1>
-                <div
-                  className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${saveBeneficiary ? "justify-end " : "justify-start"
-                    } `}
-                >
-                  <div
-                    onClick={handleSaveBeneficiary}
-                    className={`" w-8 h-8 rounded-full   ${saveBeneficiary
-                        ? "translate-x-0 bg-primary"
-                        : "translate-x-[-2px] bg-stone-500"
-                      }  transition-all duration-500 cursor-pointer `}
-                  ></div>
-                </div>
-              </div> */}
 
               <button
                 onClick={handleNext}
@@ -446,7 +372,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
               <div className="space-y-4 mb-8">
                 <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
-                  <ReviewItem label="Product" value={typeConfig[type].title} />
+                  <ReviewItem label="Product" value={`${type.toUpperCase()}`} />
                   <div className="border-t border-teal-100" />
                   <ReviewItem
                     label="Provider"
@@ -457,18 +383,15 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   )}
                   {formData.customer_id && (
                     <ReviewItem
-                      label={type === "tv" ? "Smart Card" : "Account"}
+                      label={type === "tv" ? "Smartcardd Number" : "Account ID"}
                       value={formData.customer_id}
                     />
                   )}
-                  {formData.meter && (
-                    <ReviewItem label="Meter" value={formData.meter} />
+                  {formData.customer_id && (
+                    <ReviewItem label="Meter Number" value={formData.customer_id} />
                   )}
-                  {formData.plan && (
-                    <ReviewItem label="Plan" value={formData.plan} />
-                  )}
-                  {formData.variation_id && (
-                    <ReviewItem label="Type" value={formData.variation_id} />
+                  {formData.variation && (
+                    <ReviewItem label="Plan" value={type == "tv" ? formData.variation.package_bouquet ?? "" : formData.variation.data_plan ?? ""} />
                   )}
                   <div className="border-t border-teal-100" />
                   <div className="flex justify-between items-center pt-2">
@@ -669,7 +592,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   );
 }
 
-function ReviewItem({ label, value }: { label: string; value: string }) {
+function ReviewItem({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex justify-between items-center">
       <span className="text-stone-600 text-sm font-medium">{label}</span>
@@ -724,55 +647,51 @@ function ProviderSelect({
 
 function PlanSelect({
   label,
-  plans,
   value,
   onSelect,
-  purchaceData,
+  variations,
+  type,
 }: {
   label: string;
-  plans: { value: string; label: string; amount: string }[];
-  value: string;
-  onSelect: (plan: { label: string; amount: string }) => void;
-  purchaceData?: {
-    timeFrame: string;
-    plans: { data: string; price: string; duration: string }[];
-  }[];
+  value: Variation | null;
+  onSelect: (variation: Variation) => void;
+  variations: Variation[] | null;
+  type: string;
 }) {
-  const [selectedDuration, setSelectedDuration] = useState("Daily");
-
-  const mappedPlans =
-    purchaceData?.find((plan) => plan.timeFrame === selectedDuration)?.plans ||
-    [];
-
   return (
     <div className="space-y-3 relative">
-      <label className="text-sm font-semibold text-stone-700 block">
-        {label}
-      </label>
+      <label className="text-sm font-semibold text-stone-700 block">{label}</label>
 
-      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6  gap-2 w-full">
-        {mappedPlans.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            className="w-full text-black text-sm  bg-alternate/10 gap-0 flex flex-col items-center justify-center text-center py-2 border-2 border-primary/60 hover:scale-105 transition-all duration-300 shadow-sm rounded-xl font-semibold "
-          >
-            <span>{item.data}</span>
-            <span className="text-primary truncate">{item.price}</span>
-            <span className="font-normal text-xs">{item.duration}</span>
-          </button>
-        ))}
+      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
+        {variations?.map((item, index) => {
+          const planStr = type === "data" ? item.data_plan : item.package_bouquet;
+          const [planTitle, planSubtitle] = planStr ? stringArray(planStr) : ["--", "--"];
+
+          return (
+            <button
+              key={index}
+              type="button"
+              onClick={() => onSelect(item)}
+              className={`w-full flex flex-col items-center justify-center text-center gap-0 py-2 border-2 border-primary/60 ${value && value.variation_id == item.variation_id ? 'bg-primary text-stone-100' : 'bg-alternate/10 text-primary'} text-sm font-semibold rounded-xl shadow-sm hover:scale-105 transition-all duration-300`}
+            >
+              <span>{planTitle}</span>
+              <span className="text-lg truncate">{formatNGN(item.price)}</span>
+              <span className="font-normal text-xs">{planSubtitle}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
+
 
 function AmountGrid({
   value,
   onChange,
   presetAmounts,
 }: {
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   presetAmounts: number[];
 }) {
@@ -817,7 +736,7 @@ function InputField({
 }: {
   label: string;
   placeholder: string;
-  value: string;
+  value: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   verify?: boolean;
 }) {
@@ -885,3 +804,44 @@ function SelectField({
     </div>
   );
 }
+
+const ProviderSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <p className="text-md font-normal text-stone-800">Select Provider</p>
+      <div className="w-full grid grid-cols-4 gap-2">
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <ProviderSkeletonCard key={idx} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const ProviderSkeletonCard = () => (
+  <div className="w-full h-24 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md animate-pulse">
+    <div className="w-16 h-16 rounded-full bg-stone-200" />
+    <div className="w-[60%] h-2 rounded-xl bg-stone-200" />
+  </div>
+);
+
+
+const PlanSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <p className="text-md font-normal text-stone-800">Select Data Plan</p>
+      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
+        {Array.from({ length: 6 }).map((_, idx) => (
+          <PlanSkeletonCard key={idx} />
+        ))}
+      </div>
+    </div>
+  );
+}
+const PlanSkeletonCard = () => (
+  <div className="w-full flex flex-col items-center justify-center gap-2 py-2 border-2 border-primary/50 rounded-xl bg-primary/5 shadow-sm animate-pulse">
+    <div className="w-3/4 h-4 bg-primary/25 rounded-md" />
+    <div className="w-1/2 h-4 bg-primary/25 rounded-md" />
+    <div className="w-1/3 h-3 bg-primary/25 rounded-md" />
+  </div>
+);
