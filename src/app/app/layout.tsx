@@ -1,11 +1,12 @@
 "use client";
 
-import { Home, List, Receipt, Send, Settings } from "lucide-react";
+import { LayoutGrid, Home, List, Send } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import DeviceRestriction from "@/components/DeviceRestriction";
+import LogoutModal from "@/components/Logout";
 
 export default function AppLayout({
   children,
@@ -22,7 +23,7 @@ export default function AppLayout({
     { icon: Home, name: "Home", link: "/app" },
     { icon: Send, name: "Send", link: "/app/transfer" },
     { icon: List, name: "History", link: "/app/history" },
-    { icon: Settings, name: "Settings", link: "/app/profile" },
+    { icon: LayoutGrid, name: "More", link: "/app/profile" },
   ];
 
   // Bounce animation for loader dots
@@ -69,6 +70,7 @@ export default function AppLayout({
           {/* Main content area */}
           <main className="flex-1 overflow-y-auto pb-[120px]">{children}</main>
 
+          <LogoutModal />
           {/* Floating Mobile Nav */}
           <div
             className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0

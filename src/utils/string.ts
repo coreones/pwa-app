@@ -1,3 +1,5 @@
+import { PurchaseAction } from "@/types/api";
+
 export const stringArray = (value: string, splitter: string = "-") => {
   let array = value.trim().toString().split(splitter);
   if (array.length == 0) {
@@ -17,4 +19,25 @@ export const stringArray = (value: string, splitter: string = "-") => {
     ];
   }
   return array;
+};
+
+export const customerLabel = (type: PurchaseAction) => {
+  if (["airtime", "data"].includes(type)) {
+    return "Phone Number";
+  } else if (["tv"].includes(type)) {
+    return "Smartcard Number";
+  } else if (["electricity"].includes(type)) {
+    return "Meter Number";
+  } else if (["betting"].includes(type)) {
+    return "Account ID";
+  } else {
+    return "";
+  }
+};
+
+export const pinExtractor = (otp: string[]) => {
+  if (Array.isArray(otp)) {
+    return otp.join().replaceAll(" ", "").replaceAll(",", "").trim();
+  }
+  return "";
 };

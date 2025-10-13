@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {
   Banknote,
   ChevronRight,
+  Landmark,
   Lightbulb,
   Plane,
   PlusCircle,
@@ -55,7 +56,7 @@ export default function TransactionHistory({ data }: Props) {
       case "wallet_topup":
         return <PlusCircle size={22} />;
       case "bank_transfer":
-        return <Banknote size={22} />;
+        return <Landmark size={22} />;
       case "tv":
         return <Tv size={22} />;
       // case "Transportation":

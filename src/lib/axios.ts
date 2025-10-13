@@ -14,7 +14,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: attach access token
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getClientCookie("accessToken");
@@ -32,15 +31,21 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: handle 401 and refresh token
 api.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => response,
   async (error: AxiosError<ApiResponse>) => {
-    if (error.response?.status === 401) {
-      deleteClientCookie("accessToken");
-      return window.location.assign("/auth/login");
+    const status = error.response?.status || 200;
+    const response = error.response || null;
+    if (status >= 200 && status <= 400) {
+      return response;
+    } else if (status === 401) {
+      // deleteClientCookie("accessToken");
+      // return window.location.assign("/auth/login");
+    } else if (status > 401 && status < 500) {
+      return response;
+    } else {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
   }
 );
 

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import TransactionHistory from "./components/TransactionHistory";
-import WalletHistory from "./components/WalletHistory";
+import TransactionHistory from "@/components/reports/TransactionHistory";
+import WalletHistory from "@/components/reports/WalletHistory";
 import ProfileHeader from "@/components/ProfileHeader";
 
 export default function ReportsPage() {

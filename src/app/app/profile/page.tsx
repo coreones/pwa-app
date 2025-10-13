@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ChartNoAxesColumn,
@@ -14,42 +12,38 @@ import {
   NotebookPen,
   NotebookText,
   Scale,
-  Send,
   ShieldEllipsis,
   Trash,
   User,
-  Wallet,
+  Users,
 } from "lucide-react";
 import { MenuItem, ToggleItem } from "@/components/ui/buttons";
-import api from "@/lib/axios";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { logoutModal } from "@/lib/logout-modal";
 
 export default function ProfilePage() {
+  const { user } = useAuth();
   const router = useRouter();
-  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
-
-  const handleLogout = async () => {
-    const res = await api.post("/auth/logout")
-    toast.success("Logged out");
-    router.push("/auth/login")
-    setShowConfirmLogout(false);
-  };
 
   return (
     <div className="container">
       {/* Top header */}
       <div className="w-full bg-[#21A29D] px-6 pb-6 pt-10 rounded-b-3xl">
         <div className="flex items-center justify-between">
-          <h1 className="text-white text-2xl font-extrabold tracking-tight">
+          <h1 className="text-white text-2xl font-bold tracking-tight">
             Account Settings
           </h1>
-          <Link href="/app/profile/edit" className="text-white/90 text-sm font-medium hover:underline">
-            Edit
-          </Link>
+          <button
+            onClick={() => logoutModal.open()}
+            className="text-left px-4 py-2 rounded-xl bg-stone-300/50 hover:bg-stone-400/50 border border-stone-400/75 text-red-600 font-normal flex items-center gap-2"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
         </div>
 
-        <p className="mt-2 text-white/90 text-sm">
+        <p className="text-white/90 text-sm">
           Manage your account, security and preferences
         </p>
       </div>
@@ -64,14 +58,14 @@ export default function ProfilePage() {
           className="bg-white border border-stone-100 rounded-2xl shadow-sm p-4 flex items-center gap-4"
         >
           <div className="relative w-16 h-16 rounded-full overflow-hidden bg-stone-100">
-            <Image src="/img/user.png" alt="profile" fill className="object-cover" />
+            <Image src={user?.photo ?? "/default.png"} alt="profile" fill className="object-cover" />
           </div>
 
           <div className="flex-1">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-stone-900">Tali Nanzing</h2>
-                <p className="text-stone-500 text-sm">talinanzing111@gmail.com</p>
+                <h2 className="text-lg font-semibold text-stone-900">{user?.firstname ?? "unknown"} {user?.lastname ?? "user"}</h2>
+                <p className="text-stone-500 text-sm">{user?.email ?? "--"}</p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs px-2 py-1 rounded-lg bg-[#E6FFFB] text-[#0f9c95] font-semibold">Verified</span>
@@ -82,72 +76,36 @@ export default function ProfilePage() {
 
         {/* Section: Account */}
         <Section title="Account" description="Personal and account-related pages" delay={0.12}>
-          <MenuItem icon={<User size={18} />} label="My Profile" type="link" link="/app/profile/edit" />
-          <MenuItem icon={<NotebookPen size={18} />} label="Reports" type="link" link="/app/profile/reports" />
-          <MenuItem icon={<Send size={18} />} label="Referrals" type="link" link="/app/profile/referral" />
-          <MenuItem icon={<Headphones size={18} />} label="Help & Support" type="link" link="/app/profile/help-and-support" />
-          <MenuItem icon={<NotebookText size={18} />} label="Expenses" type="link" link="/app/profile/expenses" />
-          <MenuItem icon={<ChartNoAxesColumn size={18} />} label="Leaderboard" type="link" link="/app/profile/leaderboard" />
+          <MenuItem icon={<User size={18} />} label="Edit Profile" type="link" link="/app/profile/edit" />
+          <MenuItem icon={<NotebookPen size={18} />} label="My Reports" type="link" link="/app/reports" />
+          <MenuItem icon={<NotebookText size={18} />} label="My Expenses" type="link" link="/app/expenses" />
+          <MenuItem icon={<Users size={18} />} label="Referrals" type="link" link="/app/referrals" />
+          <MenuItem icon={<ChartNoAxesColumn size={18} />} label="Leaderboard" type="link" link="/app/leaderboard" />
         </Section>
 
         {/* Section: Preferences */}
         <Section title="Preferences" description="Control appearance & quick settings" delay={0.20}>
           <ToggleItem icon={<Moon size={18} />} label="Dark Mode" />
           <ToggleItem icon={<Fingerprint size={18} />} label="Biometrics" />
-          <ToggleItem icon={<Wallet size={18} />} label="Show Wallet Balance" />
+          {/* <ToggleItem icon={<Wallet size={18} />} label="Show Wallet Balance" /> */}
         </Section>
 
         {/* Section: Privacy & Security */}
         <Section title="Privacy & Security" description="Keep your account safe" delay={0.28}>
           <MenuItem icon={<LockKeyhole size={18} />} label="Change Password" type="link" link="/app/profile/change-password" />
           <MenuItem icon={<ShieldEllipsis size={18} />} label="Change PIN" type="link" link="/app/profile/change-pin" />
-          <MenuItem icon={<ShieldEllipsis size={18} />} label="Verify NIN" type="link" link="/app/profile/verify-nin" />
+          {/* <MenuItem icon={<ShieldEllipsis size={18} />} label="Verify NIN" type="link" link="/app/profile/verify-nin" /> */}
         </Section>
 
         {/* Section: More */}
         <Section title="More" description="Legal, account and app actions" delay={0.36}>
-          <MenuItem icon={<Scale size={18} />} label="Legal" type="link" link="/app/profile/legal" />
+          <MenuItem icon={<Scale size={18} />} label="Legal" type="link" link="/app/legal" />
+          <MenuItem icon={<Headphones size={18} />} label="Help & Support" type="link" link="/app/help-and-support" />
           <MenuItem icon={<Trash size={18} />} label="Deactivate Account" type="link" link="/app/profile/deactivate-delete-account" />
-          <div className="mt-2">
-            {/* logout as a clear CTA */}
-            <button
-              onClick={() => setShowConfirmLogout(true)}
-              className="w-full text-left px-4 py-3 rounded-xl border border-stone-100 bg-white hover:bg-stone-50 text-red-600 font-semibold flex items-center gap-3"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
         </Section>
 
-        {/* Version */}
-        <div className="py-6 text-center">
-          <p className="text-sm text-stone-400">Version 1.6.5 (56)</p>
-        </div>
       </main>
 
-      {/* Confirm logout modal */}
-      <AnimateModal show={showConfirmLogout} onClose={() => setShowConfirmLogout(false)}>
-        <div className="text-center pb-8">
-          <h3 className="text-lg font-semibold text-stone-900">Confirm Logout</h3>
-          <p className="mt-2 text-sm text-stone-500">Are you sure you want to log out? You can always sign back in.</p>
-
-          <div className="mt-5 flex gap-3">
-            <button
-              onClick={() => setShowConfirmLogout(false)}
-              className="flex-1 py-3 rounded-xl border border-stone-200 bg-white text-stone-700"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleLogout}
-              className="flex-1 py-3 rounded-xl bg-red-600 text-white font-semibold cursor-pointer"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </AnimateModal>
     </div>
   );
 }
@@ -173,35 +131,5 @@ function Section({ title, description, children, delay = 0.15 }: { title: string
         <div className="py-1">{children}</div>
       </div>
     </motion.section>
-  );
-}
-
-/* Simple animated modal for confirm actions */
-function AnimateModal({ show, onClose, children }: { show: boolean; onClose: () => void; children: React.ReactNode }) {
-  return (
-    <motion.div>
-      {show && (
-        <motion.div
-          className="fixed inset-0 z-40 flex items-end justify-center px-4 pb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        >
-          <div className="absolute inset-0 bg-black/30" />
-
-          <motion.div
-            className="relative w-full max-w-md bg-white rounded-2xl p-5 shadow-lg"
-            initial={{ y: 200 }}
-            animate={{ y: 0 }}
-            exit={{ y: 200 }}
-            transition={{ type: "spring", stiffness: 200, damping: 18 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {children}
-          </motion.div>
-        </motion.div>
-      )}
-    </motion.div>
   );
 }
