@@ -1,37 +1,25 @@
 "use client";
 
-import TransactionHistory from "@/components/modal/history";
-import { ArrowLeftIcon } from "lucide-react";
 import React from "react";
+import ProfileHeader from "@/components/ProfileHeader";
+import TransactionHistory from "@/components/TransactionHistory";
 
 export default function History() {
-  //   const handleBack = () => window.history.back();
-
   return (
     <div className="container">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
-        <button
-            onClick={() => window.history.back()}
-          className="p-2 rounded-full hover:bg-white/20 transition"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-white" />
-        </button>
-        <h1 className="text-lg font-semibold text-white">History</h1>
-        <div className="w-8" /> {/* Spacer */}
-      </header>
+      <ProfileHeader title="Transaction History" />
 
-      <div className="">
+      <div className="w-full">
         {/* Content Card */}
-
         <TransactionHistory
-          data ={[
+          data={[
             {
               id: 1,
-              name: "Airtime Purchase",
+              action: "airtime",
               date: "Oct 10, 2025",
               amount: "-₦500",
-              status: "Pending",
+              status: "pending",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -39,10 +27,10 @@ export default function History() {
             },
             {
               id: 2,
-              name: "Electricity Bill",
+              action: "electricity",
               date: "Oct 8, 2025",
               amount: "-₦8,200",
-              status: "Successful",
+              status: "completed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -50,10 +38,10 @@ export default function History() {
             },
             {
               id: 3,
-              name: "Bet9ja Top-up",
+              action: "betting",
               date: "Oct 6, 2025",
               amount: "-₦2,000",
-              status: "Failed",
+              status: "failed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -61,10 +49,10 @@ export default function History() {
             },
             {
               id: 4,
-              name: "Wallet Funding",
+              action: "wallet_topup",
               date: "Oct 3, 2025",
               amount: "+₦50,000",
-              status: "Successful",
+              status: "completed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -72,10 +60,10 @@ export default function History() {
             },
             {
               id: 5,
-              name: "TV Subscription",
+              action: "tv",
               date: "Oct 8, 2025",
               amount: "-₦8,200",
-              status: "Successful",
+              status: "completed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -83,10 +71,10 @@ export default function History() {
             },
             {
               id: 6,
-              name: "Transportation",
+              action: "flight_booking",
               date: "Oct 6, 2025",
               amount: "-₦2,000",
-              status: "Failed",
+              status: "failed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",
@@ -94,10 +82,10 @@ export default function History() {
             },
             {
               id: 7,
-              name: "Data Purchase",
+              action: "data",
               date: "Oct 3, 2025",
               amount: "+₦50,000",
-              status: "Successful",
+              status: "completed",
               creditedTo: "09123456789",
               transactionNo: "o09r93nc90jf9ufcf9f9339d93",
               transactionDate: "Oct 12th, 2025 02:12:15",

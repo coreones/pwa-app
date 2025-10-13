@@ -12,14 +12,12 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
-import { useBack } from "@/hooks/useBack";
+import ProfileHeader from "@/components/ProfileHeader";
 
 export default function HelpAndSupportPage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [issue, setIssue] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const handleBack = useBack("/app");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,22 +34,13 @@ export default function HelpAndSupportPage() {
   return (
     <div className="container flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
-        <button
-          onClick={handleBack}
-          className="p-2 rounded-full hover:bg-white/20 transition"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-white" />
-        </button>
-        <h1 className="text-lg font-semibold text-white">Help & Support</h1>
-        <div className="w-8" /> {/* Spacer */}
-      </header>
+      <ProfileHeader title="Help & Support" />
 
       {/* Content */}
-      <main className="flex-1 p-5 space-y-6 w-full">
+      <div className="w-full px-4 pt-4">
         {/* Contact Section */}
-        <section className="bg-gray-50 border border-gray-100 rounded-2xl shadow-sm p-5 space-y-4">
-          <h2 className="text-gray-800 font-semibold text-lg">
+        <section className="bg-stone-50 w-full mb-4 border border-stone-100 rounded-2xl shadow-sm p-5 space-y-4">
+          <h2 className="text-stone-800 font-semibold text-lg">
             Contact Support
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -64,10 +53,10 @@ export default function HelpAndSupportPage() {
             ].map((item) => (
               <button
                 key={item.label}
-                className="flex items-center gap-2 bg-white hover:bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 transition"
+                className="flex items-center gap-2 bg-white hover:bg-stone-100 border border-stone-200 rounded-xl px-4 py-3 transition"
               >
                 <item.icon className="w-5 h-5 text-[#21A29D]" />
-                <span className="font-medium text-gray-700 text-sm">
+                <span className="font-medium text-stone-700 text-sm">
                   {item.label}
                 </span>
               </button>
@@ -76,8 +65,8 @@ export default function HelpAndSupportPage() {
         </section>
 
         {/* Report Section */}
-        <section className="bg-gray-50 border border-gray-100 rounded-2xl shadow-sm p-5 space-y-4">
-          <h2 className="text-gray-800 font-semibold text-lg">
+        <section className="bg-stone-50 w-full mb-4 border border-stone-100 rounded-2xl shadow-sm p-5 space-y-4">
+          <h2 className="text-stone-800 font-semibold text-lg">
             Report an Issue
           </h2>
           <button
@@ -90,8 +79,8 @@ export default function HelpAndSupportPage() {
         </section>
 
         {/* Social Links */}
-        <section className="bg-gray-50 border border-gray-100 rounded-2xl shadow-sm p-5">
-          <h2 className="text-gray-800 font-semibold text-lg mb-3 text-center">
+        <section className="bg-stone-50 w-full mb-4 border border-stone-100 rounded-2xl shadow-sm p-5">
+          <h2 className="text-stone-800 font-semibold text-lg mb-3 text-center">
             Follow Us
           </h2>
           <div className="flex items-center justify-center gap-6">
@@ -124,7 +113,7 @@ export default function HelpAndSupportPage() {
             </Link>
           </div>
         </section>
-      </main>
+      </div>
 
       {/* Report Modal */}
       <AnimatePresence>
@@ -146,12 +135,12 @@ export default function HelpAndSupportPage() {
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-semibold text-gray-800">
+                <h4 className="text-lg font-semibold text-stone-800">
                   Report an Issue
                 </h4>
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="text-gray-500 hover:text-gray-700 transition"
+                  className="text-stone-500 hover:text-stone-700 transition"
                 >
                   <XMarkIcon className="w-6 h-6" />
                 </button>
@@ -164,14 +153,14 @@ export default function HelpAndSupportPage() {
                     value={issue}
                     onChange={(e) => setIssue(e.target.value)}
                     placeholder="Describe the issue or feedback..."
-                    className="w-full h-32 border border-gray-300 rounded-xl p-3 text-gray-700 text-sm resize-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"
+                    className="w-full h-32 border border-stone-300 rounded-xl p-3 text-stone-700 text-sm resize-none focus:ring-2 focus:ring-[#21A29D] focus:border-transparent"
                   />
                   <button
                     type="submit"
                     disabled={!issue.trim()}
                     className={`w-full flex items-center justify-center gap-2 font-semibold py-3 rounded-xl transition ${issue.trim()
                       ? "bg-[#21A29D] hover:bg-[#1c8c87] text-white"
-                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-stone-200 text-stone-400 cursor-not-allowed"
                       }`}
                   >
                     <PaperAirplaneIcon className="w-5 h-5" />
@@ -188,7 +177,7 @@ export default function HelpAndSupportPage() {
                   >
                     <PaperAirplaneIcon className="w-8 h-8 text-[#21A29D]" />
                   </motion.div>
-                  <h3 className="font-semibold text-gray-800 text-lg">
+                  <h3 className="font-semibold text-stone-800 text-lg">
                     Submitting your report...
                   </h3>
                 </div>

@@ -3,55 +3,35 @@
 import { MenuItem } from "@/components/ui/buttons";
 import { NotebookPen, User } from "lucide-react";
 import React from "react";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useBack } from "@/hooks/useBack";
+import ProfileHeader from "@/components/ProfileHeader";
 
 export default function LegalPage() {
-
-  const handleBack = useBack("/app");
 
   return (
     <div className="container">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#21A29D] px-6 py-5 flex items-center justify-between shadow-sm">
-        <button
-          onClick={handleBack}
-          className="p-2 rounded-full hover:bg-white/20 transition"
-        >
-          <ArrowLeftIcon className="w-6 h-6 text-white" />
-        </button>
-        <h1 className="text-lg font-semibold text-white">Legal</h1>
-        <div className="w-8" /> {/* Spacer */}
-      </header>
+      <ProfileHeader title="Legal" />
 
-      <div className="py-8">
-        {/* Content Card */}
-        <div className="bg-stone-50 border border-stone-200 rounded-3xl p-4 sm:p-6 shadow-sm">
-          <p className="text-stone-600 text-center mb-6">
-            Review our legal documents and policies below.
-          </p>
-
-          <div className="flex flex-col ">
-            <MenuItem
-              icon={<User size={20} className="text-[#21A29D]" />}
-              showBorder={false}
-              label="Privacy Policy"
-              type="link"
-              link="#"
-            />
-            <MenuItem
-              icon={<NotebookPen size={20} className="text-[#21A29D]" />}
-              showBorder={false}
-              label="Terms of Service"
-              type="link"
-              link="#"
-            />
-          </div>
+      {/* Content */}
+      <div className="w-full p-4">
+        <div className="w-full p-4 text-stone-400 text-sm">
+          Review our legal documents and policies below.
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-10 text-sm text-stone-500">
-          © {new Date().getFullYear()} BillNa Inc. All rights reserved.
+        <div className="flex flex-col  divide-y divide-stone-200">
+          <MenuItem
+            icon={<User size={20} className="text-[#21A29D]" />}
+            showBorder={false}
+            label="Privacy Policy"
+            type="link"
+            link="#"
+          />
+          <MenuItem
+            icon={<NotebookPen size={20} className="text-[#21A29D]" />}
+            showBorder={false}
+            label="Terms of Service"
+            type="link"
+            link="#"
+          />
         </div>
       </div>
     </div>

@@ -42,9 +42,9 @@ export default function ProfilePage() {
       <div className="w-full bg-[#21A29D] px-6 pb-6 pt-10 rounded-b-3xl">
         <div className="flex items-center justify-between">
           <h1 className="text-white text-2xl font-extrabold tracking-tight">
-            Profile
+            Account Settings
           </h1>
-          <Link href="/app/profile/my-profile" className="text-white/90 text-sm font-medium hover:underline">
+          <Link href="/app/profile/edit" className="text-white/90 text-sm font-medium hover:underline">
             Edit
           </Link>
         </div>
@@ -82,7 +82,7 @@ export default function ProfilePage() {
 
         {/* Section: Account */}
         <Section title="Account" description="Personal and account-related pages" delay={0.12}>
-          <MenuItem icon={<User size={18} />} label="My Profile" type="link" link="/app/profile/my-profile" />
+          <MenuItem icon={<User size={18} />} label="My Profile" type="link" link="/app/profile/edit" />
           <MenuItem icon={<NotebookPen size={18} />} label="Reports" type="link" link="/app/profile/reports" />
           <MenuItem icon={<Send size={18} />} label="Referrals" type="link" link="/app/profile/referral" />
           <MenuItem icon={<Headphones size={18} />} label="Help & Support" type="link" link="/app/profile/help-and-support" />
