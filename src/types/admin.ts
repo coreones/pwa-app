@@ -39,7 +39,7 @@ export interface User {
   id: string;
   firstName: string;
   lastName: string;
-  fullName?: string;
+  fullName: string;
   email: string;
   role: string;
   status: "active" | "inactive";

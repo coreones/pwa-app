@@ -1,6 +1,6 @@
 'use client';
 
-import { EntityType } from '@/types/admin';
+import { EntityType
 import { sidebarItems } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';

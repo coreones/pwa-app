@@ -14,6 +14,7 @@ import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
 import { useAuth } from "@/hooks/useAuth";
 import { formatNGN } from "@/utils/amount";
+import { stringArray } from "@/utils/string";
 
 interface PaymentPageProps {
   type:
@@ -31,27 +32,43 @@ type Provider = {
   logo: string,
 }
 
+type Variation = {
+  variation_id: string;
+  service_name: string;
+  service_id: string;
+  price: string;
+} & (
+    | { data_plan: string; package_bouquet?: never }
+    | { package_bouquet: string; data_plan?: never }
+  );
+
+type Purchase = {
+  service_id: string,
+  phone: string | number,
+  amount: string | number,
+  account: string | number,
+  customer_id: string | number,
+  variation: null | Variation,
+  type: string,
+}
 export default function PaymentPage({ type }: PaymentPageProps) {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [saveBeneficiary, setSaveBeneficiary] = useState(false);
   const [showOTPFull, setShowOTPFull] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Purchase>({
     service_id: "",
     phone: "",
+    account: "",
     amount: "",
-    plan: "",
     customer_id: "",
-    meter: "",
-    planType: "",
-account: "",
-    variation_id: "",
+    variation: null,
+    type: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
-  const [tvVariations, setTvVariations] = useState<null | []>(null);
-  const [dataVariations, setDataVariations] = useState<null | []>(null);
+  const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(null);
+  const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(null);
   const [selectedDuration, setSelectedDuration] = useState("Daily");
   const { user } = useAuth();
 
@@ -61,6 +78,7 @@ account: "",
   };
 
   const handleNext = () => setStep((prev) => prev + 1);
+
   const handleReset = () => {
     setStep(1);
     setOtp(["", "", "", ""]);
@@ -68,13 +86,11 @@ account: "",
     setFormData({
       service_id: "",
       phone: "",
-      amount: "",
-      plan: "",
-      customer_id: "",
-      meter: "",
-      planType: "",
       account: "",
-      variation_id: "",
+      amount: "",
+      customer_id: "",
+      variation: null,
+      type: ""
     });
   };
 
@@ -108,21 +124,6 @@ account: "",
     getProviders();
   }, [type])
 
-  const getTVVariations = async (service_id: string) => {
-    setLoading(true)
-    try {
-      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
-      if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setTvVariations(res.data.data)
-      } else {
-        setTvVariations([])
-      }
-    } catch (err) {
-      setDataVariations([])
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const getDataVariations = async (service_id: string) => {
     setLoading(true)
@@ -140,129 +141,46 @@ account: "",
     }
   }
 
-  const purchaceData = [
-    {
-      timeFrame: "Daily",
-      plans: [
-        { data: "1GB", price: "₦100", duration: "1day" },
-        { data: "2GB", price: "₦200", duration: "1day" },
-        { data: "5GB", price: "₦500", duration: "1day" },
-        { data: "10GB", price: "₦1000", duration: "1day" },
-        { data: "20GB", price: "₦2000", duration: "1day" },
-        { data: "50GB", price: "₦5000", duration: "1day" },
-      ],
-    },
-    {
-      timeFrame: "2 days",
-      plans: [
-        { data: "1GB", price: "₦150", duration: "2days" },
-        { data: "2GB", price: "₦300", duration: "2days" },
-        { data: "5GB", price: "₦750", duration: "2days" },
-        { data: "10GB", price: "₦1500", duration: "2days" },
-        { data: "20GB", price: "₦3000", duration: "2days" },
-        { data: "50GB", price: "₦7500", duration: "2days" },
-      ],
-    },
-    {
-      timeFrame: "Weekly",
-      plans: [
-        { data: "1GB", price: "₦300", duration: "7days" },
-        { data: "2GB", price: "₦600", duration: "7days" },
-        { data: "5GB", price: "₦1500", duration: "7days" },
-        { data: "10GB", price: "₦3000", duration: "7days" },
-        { data: "20GB", price: "₦6000", duration: "7days" },
-        { data: "50GB", price: "₦15000", duration: "7days" },
-      ],
-    },
-    {
-      timeFrame: "Monthly",
-      plans: [
-        { data: "1GB", price: "₦1000", duration: "30days" },
-        { data: "2GB", price: "₦2000", duration: "30days" },
-        { data: "5GB", price: "₦5000", duration: "30days" },
-        { data: "10GB", price: "₦10000", duration: "30days" },
-        { data: "20GB", price: "₦20000", duration: "30days" },
-        { data: "50GB", price: "₦50000", duration: "30days" },
-      ],
-    },
-    {
-      timeFrame: "Yearly",
-      plans: [
-        { data: "1GB", price: "₦10000", duration: "365days" },
-        { data: "2GB", price: "₦20000", duration: "365days" },
-        { data: "5GB", price: "₦50000", duration: "365days" },
-        { data: "10GB", price: "₦100000", duration: "365days" },
-        { data: "20GB", price: "₦200000", duration: "365days" },
-        { data: "50GB", price: "₦500000", duration: "365days" },
-      ],
-    },
-    {
-      timeFrame: "Unlimited",
-      plans: [{ data: "Unlimited", price: "₦1000000", duration: "365days" }],
-    },
-  ];
-
-  const provider: {
-    airtime: { value: string; name: string }[];
-    data: { value: string; name: string }[];
-    betting: { value: string; name: string }[];
-    tv: { value: string; name: string }[];
-    electricity: { value: string; name: string }[];
-    billNaTransaction: { value: string; name: string }[];
-    bankTransaction: { value: string; name: string }[];
-  } = {
-    airtime: [
-      { value: "mtn", name: "MTN" },
-      { value: "airtel", name: "Airtel" },
-      { value: "glo", name: "Glo" },
-      { value: "9mobile", name: "9mobile" },
-    ],
-    data: [
-      { value: "mtn", name: "MTN" },
-      { value: "airtel", name: "Airtel" },
-      { value: "glo", name: "Glo" },
-      { value: "9mobile", name: "9mobile" },
-    ],
-    betting: [
-      { value: "bet9ja", name: "Bet9ja" },
-      { value: "sportybet", name: "SportyBet" },
-      { value: "1xbet", name: "1xBet" },
-      { value: "betking", name: "BetKing" },
-    ],
-    tv: [
-      { value: "dstv", name: "DSTV" },
-      { value: "gotv", name: "GOTV" },
-      { value: "startimes", name: "Startimes" },
-    ],
-    electricity: [
-      { value: "ikedc", name: "IKEDC" },
-      { value: "eedc", name: "EEDC" },
-      { value: "aedc", name: "AEDC" },
-      { value: "kedco", name: "KEDCO" },
-    ],
-    billNaTransaction: [],
-    bankTransaction: [],
-  };
-
-  const dataPlans = [
-    { value: "500mb", label: "500MB - ₦200", amount: "200" },
-    { value: "1gb", label: "1GB - ₦350", amount: "350" },
-    { value: "2gb", label: "2GB - ₦700", amount: "700" },
-  ];
-
-  const tvPlans = [
-    { value: "dstv_padi", label: "DSTV Padi - ₦2,500", amount: "2500" },
-    { value: "gotv_max", label: "GOTV Max - ₦4,800", amount: "4800" },
-  ];
+  const getTVVariations = async (service_id: string) => {
+    setLoading(true)
+    try {
+      const res = await api.get<ApiResponse>(`/general/bill/tv-variations?service=${service_id}`)
+      if (!res.data.error && res.data.data && res.data.data.length > 0) {
+        setTvVariations(res.data.data)
+      } else {
+        setTvVariations([])
+      }
+    } catch (err) {
+      setDataVariations([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const presetAmounts = [100, 200, 500, 1000, 2000, 5000];
 
-  const handleFormChange = (field: string, value: string) => {
+  const handleFormChange = (
+    field: string,
+    value: string | number | null | Variation
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (type == "data" && field == "service_id") {
-      getDataVariations(value)
+
+    if (field === "service_id" && typeof value === "string") {
+      switch (type) {
+        case "tv":
+          setTvVariations(null);
+          getTVVariations(value);
+          break;
+
+        case "data":
+          setDataVariations(null);
+          getDataVariations(value);
+          break;
+      }
     }
   };
+
+
 
   const isStep1Valid = () => {
     const baseCheck = !!formData.service_id;
@@ -270,16 +188,16 @@ account: "",
       case "airtime":
         return baseCheck && !!formData.phone && !!formData.amount;
       case "data":
-        return baseCheck && !!formData.phone && !!formData.plan;
+        return baseCheck && !!formData.phone && !!formData.variation;
       case "betting":
         return baseCheck && !!formData.customer_id && !!formData.amount;
       case "tv":
-        return baseCheck && !!formData.customer_id && !!formData.plan;
+        return baseCheck && !!formData.customer_id && !!formData.variation && !!formData.type;
       case "electricity":
         return (
           baseCheck &&
           !!formData.customer_id &&
-          !!formData.variation_id &&
+          !!formData.variation &&
           !!formData.amount
         );
       case "billNaTransaction":
@@ -300,8 +218,8 @@ account: "",
             animate={{ opacity: 1, y: 0 }}
             className="space-y-8"
           >
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold text-stone-900">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-bold text-stone-800">
                 {typeConfig[type].title}
               </h2>
               <p className="text-stone-500 text-sm">
@@ -310,28 +228,8 @@ account: "",
             </div>
 
             <div className="space-y-6">
-              {loading || !providers ?
-                <div className="w-full flex flex-col gap-2">
-                  <p className="text-md font-normal text-stone-800">Select Provider</p>
-                  <div className="w-full animate-pulse grid grid-cols-4 gap-2">
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                    <div className="w-full h-20 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-stone-200 animate-pulse" />
-                      <div className="w-[60%] h-2 rounded-xl bg-stone-200 animate-pulse" />
-                    </div>
-                  </div>
-                </div>
+              {!providers ?
+                <ProviderSkeleton />
                 :
                 (providers.length === 0 ?
                   <p className="text-center py-4 font-normal text-stone-800">
@@ -354,6 +252,7 @@ account: "",
                     onChange={(e) => handleFormChange("phone", e.target.value)}
                   />
                   <AmountGrid
+                    type={type}
                     value={formData.amount}
                     onChange={(value) => handleFormChange("amount", value)}
                     presetAmounts={presetAmounts}
@@ -362,17 +261,22 @@ account: "",
               )}
 
               {type === "data" && (
-                <>
-                  <PlanSelect
-                    label="Select Data Plan"
-                    plans={dataPlans}
-                    value={formData.plan}
-                    onSelect={(plan) => {
-                      handleFormChange("plan", plan.label);
-                      handleFormChange("amount", plan.amount);
-                    }}
-                    purchaceData={purchaceData}
-                  />
+                <> {loading && <PlanSkeleton />}
+                  {dataVariations?.length === 0 ?
+                    <p className="text-center py-4 font-normal text-stone-800">
+                      No Plan available at the moment
+                    </p> :
+                    <PlanSelect
+                      label="Select Data Plan"
+                      value={formData.variation}
+                      onSelect={(plan) => {
+                        handleFormChange("variation", plan);
+                        handleFormChange("amount", plan.price);
+                      }}
+                      variations={dataVariations}
+                      type={type}
+                    />
+                  }
                   <InputField
                     label="Phone Number"
                     placeholder="2348012345678"
@@ -405,7 +309,7 @@ account: "",
                 <>
                   <InputField
                     label="Smart Card Number"
-                    placeholder="Enter smart card number"
+                    placeholder="Enter Smart card number"
                     value={formData.customer_id}
                     onChange={(e) =>
                       handleFormChange("customer_id", e.target.value)
@@ -413,13 +317,14 @@ account: "",
                     verify
                   />
                   <PlanSelect
-                    label="Select Plan"
-                    plans={tvPlans}
-                    value={formData.plan}
+                    label="Select Package"
+                    value={formData.variation}
+                    variations={tvVariations}
                     onSelect={(plan) => {
-                      handleFormChange("plan", plan.label);
-                      handleFormChange("amount", plan.amount);
+                      handleFormChange("variation", plan);
+                      handleFormChange("amount", plan.price);
                     }}
+                    type={type}
                   />
                 </>
               )}
@@ -429,17 +334,15 @@ account: "",
                   <InputField
                     label="Meter Number"
                     placeholder="Enter meter number"
-                    value={formData.meter}
-                    onChange={(e) => handleFormChange("meter", e.target.value)}
+                    value={formData.customer_id}
+                    onChange={(e) => handleFormChange("customer_id", e.target.value)}
                     verify
                   />
                   <SelectField
-                    label="Payment Type"
-                    options={["Prepaid", "Postpaid"]}
-                    value={formData.variation_id}
-                    onChange={(e) =>
-                      handleFormChange("variation_id", e.target.value)
-                    }
+                    label="Type"
+                    options={["prepaid", "postpaid"]}
+                    value={formData.type}
+                    onChange={(value) => handleFormChange("type", value)}
                   />
                   <AmountGrid
                     value={formData.amount}
@@ -448,60 +351,6 @@ account: "",
                   />
                 </>
               )}
-
-              {type === "bankTransaction" && (
-                <>
-                  <InputField
-                    label="Account Number"
-                    placeholder="Enter meter number"
-                    value={formData.account}
-                    onChange={(e) => handleFormChange("account", e.target.value)}
-                    verify
-                  />
-                 
-                  <AmountGrid
-                    value={formData.amount}
-                    onChange={(value) => handleFormChange("amount", value)}
-                    presetAmounts={presetAmounts}
-                  />
-                </>
-              )}
-
-              {type === "billNaTransaction" && (
-                <>
-                  <InputField
-                    label="BillN Account Number"
-                    placeholder="Enter account number"
-                    value={formData.account}
-                    onChange={(e) => handleFormChange("account", e.target.value)}
-                    verify
-                  />
-                 
-                  <AmountGrid
-                    value={formData.amount}
-                    onChange={(value) => handleFormChange("amount", value)}
-                    presetAmounts={presetAmounts}
-                  />
-                </>
-              )}
-
-              {/* <div className=" w-full bg-white  flex justify-between items-center rounded-2xl px-3 py-5">
-                <h1 className=" text-xl font-semibold text-black/70 ">
-                  Save as Beneficiary
-                </h1>
-                <div
-                  className={`" w-20 border-2 border-primary rounded-full p-1 items-center flex ${saveBeneficiary ? "justify-end " : "justify-start"
-                    } `}
-                >
-                  <div
-                    onClick={handleSaveBeneficiary}
-                    className={`" w-8 h-8 rounded-full   ${saveBeneficiary
-                        ? "translate-x-0 bg-primary"
-                        : "translate-x-[-2px] bg-stone-500"
-                      }  transition-all duration-500 cursor-pointer `}
-                  ></div>
-                </div>
-              </div> */}
 
               <button
                 onClick={handleNext}
@@ -542,7 +391,7 @@ account: "",
 
               <div className="space-y-4 mb-8">
                 <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
-                  <ReviewItem label="Product" value={typeConfig[type].title} />
+                  <ReviewItem label="Product" value={`${type.toUpperCase()}`} />
                   <div className="border-t border-teal-100" />
                   <ReviewItem
                     label="Provider"
@@ -553,18 +402,15 @@ account: "",
                   )}
                   {formData.customer_id && (
                     <ReviewItem
-                      label={type === "tv" ? "Smart Card" : "Account"}
+                      label={type === "tv" ? "Smartcardd Number" : "Account ID"}
                       value={formData.customer_id}
                     />
                   )}
-                  {formData.meter && (
-                    <ReviewItem label="Meter" value={formData.meter} />
+                  {formData.customer_id && (
+                    <ReviewItem label="Meter Number" value={formData.customer_id} />
                   )}
-                  {formData.plan && (
-                    <ReviewItem label="Plan" value={formData.plan} />
-                  )}
-                  {formData.variation_id && (
-                    <ReviewItem label="Type" value={formData.variation_id} />
+                  {formData.variation && (
+                    <ReviewItem label="Plan" value={type == "tv" ? formData.variation.package_bouquet ?? "" : formData.variation.data_plan ?? ""} />
                   )}
                   <div className="border-t border-teal-100" />
                   <div className="flex justify-between items-center pt-2">
@@ -765,7 +611,7 @@ account: "",
   );
 }
 
-function ReviewItem({ label, value }: { label: string; value: string }) {
+function ReviewItem({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex justify-between items-center">
       <span className="text-stone-600 text-sm font-medium">{label}</span>
@@ -774,134 +620,212 @@ function ReviewItem({ label, value }: { label: string; value: string }) {
   );
 }
 
+type ProviderSelectProps = {
+  label: string;
+  providers: Provider[];
+  value: string;
+  onChange: (service_id: string) => void;
+}
+
 function ProviderSelect({
   label,
   providers,
   value,
   onChange,
-}: {
-  label: string;
-  providers: Provider[];
-  value: string;
-  onChange: (service_id: string) => void;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+}: ProviderSelectProps) {
   return (
-    <div className="space-y-3 relative">
+    <div className="space-y-3">
+      {/* Label */}
       <label className="text-sm font-semibold text-stone-700 block">
         {label}
       </label>
 
+      {/* Horizontal Scroll Section */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className=" grid grid-cols-2 [@media(min-width:400px)]:grid-cols-4 gap-2 py-1 mt-2 z-10 overflow-hidden"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="flex items-center gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent"
       >
-        {providers.map((provider) => (
-          <button
-            key={provider.service_id}
-            onClick={() => {
-              onChange(provider.service_id);
-              setIsOpen(false);
-            }}
-            className={`${provider.service_id == value ? 'border-2 border-primary bg-teal-50' : 'border border-stone-300 bg-white'} w-full shadow-lg relative rounded-lg flex flex-col items-center gap-1 px-4 py-4 hover:bg-teal-50/75`}
-          >
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden relative ">
-              <Image src={provider.logo} alt={provider.service_name} fill className="object-cover" />
-            </div>
-            <span className="font-normal text-sm md:text-md text-stone-800">{provider.service_name}</span>
-          </button>
-        ))}
+        {providers.map((provider) => {
+          const isSelected = provider.service_id === value;
+          return (
+            <motion.button
+              key={provider.service_id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => onChange(provider.service_id)}
+              className={`flex flex-col items-center justify-center shrink-0 min-w-[90px] md:min-w-[100px] p-4 rounded-2xl transition-all duration-300
+                ${isSelected
+                  ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
+                  : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
+                }`}
+            >
+              <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden ring-1 ring-stone-200 mb-2">
+                <Image
+                  src={provider.logo}
+                  alt={provider.service_name}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span
+                className={`text-xs md:text-sm font-medium ${isSelected ? "text-teal-700" : "text-stone-700"
+                  } text-center truncate w-full`}
+              >
+                {provider.service_name}
+              </span>
+            </motion.button>
+          );
+        })}
+      </motion.div>
+
+      {/* Optional hint */}
+      <p className="w-full text-right text-xs text-stone-500 mt-0">
+        Scroll sideways to see more providers →
+      </p>
+    </div>
+  );
+}
+
+type PlanSelectProps = {
+  label: string;
+  value: Variation | null;
+  onSelect: (variation: Variation) => void;
+  variations: Variation[] | null;
+  type: string;
+}
+
+function PlanSelect({
+  label,
+  value,
+  onSelect,
+  variations,
+  type,
+}: PlanSelectProps) {
+  return (
+    <div className="space-y-3 relative">
+      {/* Label */}
+      <label className="text-sm font-semibold text-stone-700 block">
+        {label}
+      </label>
+
+      {/* Plan Grid / Scroll */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent py-1"
+      >
+        {variations?.map((item, index) => {
+          const planStr =
+            type === "data" ? item.data_plan : item.package_bouquet;
+          const [planTitle, planSubtitle] = planStr
+            ? stringArray(planStr, " - ")
+            : ["--", "--"];
+
+          const isSelected = value && value.variation_id === item.variation_id;
+
+          return (
+            <motion.button
+              key={index}
+              type="button"
+              onClick={() => onSelect(item)}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${isSelected
+                ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
+                : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
+                }`}
+            >
+              <span className="font-semibold text-sm">{planTitle}</span>
+              <span
+                className={`text-base md:text-lg font-bold ${isSelected ? "text-teal-600" : "text-primary"
+                  }`}
+              >
+                {formatNGN(item.price)}
+              </span>
+              <span className="font-normal text-xs text-stone-500">
+                {planSubtitle}
+              </span>
+            </motion.button>
+          );
+        })}
       </motion.div>
     </div>
   );
 }
 
-function PlanSelect({
-  label,
-  plans,
+type AmountGridProps = {
+  type: string,
+  value: string | number;
+  onChange: (value: string) => void;
+  presetAmounts: number[];
+};
+
+function AmountGrid({
+  type,
   value,
-  onSelect,
-  purchaceData,
-}: {
-  label: string;
-  plans: { value: string; label: string; amount: string }[];
-  value: string;
-  onSelect: (plan: { label: string; amount: string }) => void;
-  purchaceData?: {
-    timeFrame: string;
-    plans: { data: string; price: string; duration: string }[];
-  }[];
-}) {
-  const [selectedDuration, setSelectedDuration] = useState("Daily");
-
-  const mappedPlans =
-    purchaceData?.find((plan) => plan.timeFrame === selectedDuration)?.plans ||
-    [];
-
+  onChange,
+  presetAmounts,
+}: AmountGridProps) {
   return (
-    <div className="space-y-3 relative">
-      <label className="text-sm font-semibold text-stone-700 block">
-        {label}
+    <div className="space-y-4">
+      {/* Label */}
+      <label className="text-sm font-semibold text-stone-700 block tracking-wide">
+        Amount
       </label>
 
-      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6  gap-2 w-full">
-        {mappedPlans.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            className="w-full text-black text-sm  bg-alternate/10 gap-0 flex flex-col items-center justify-center text-center py-2 border-2 border-primary/60 hover:scale-105 transition-all duration-300 shadow-sm rounded-xl font-semibold "
-          >
-            <span>{item.data}</span>
-            <span className="text-primary truncate">{item.price}</span>
-            <span className="font-normal text-xs">{item.duration}</span>
-          </button>
-        ))}
+      {/* Preset Amount Buttons */}
+      {type == "airtime" && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+          {presetAmounts.map((amt) => {
+            const isSelected = value === amt.toString();
+
+            return (
+              <motion.button
+                key={amt}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onChange(amt.toString())}
+                className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 border text-sm
+                ${isSelected
+                    ? "border-teal-500 bg-gradient-to-r from-teal-500/10 to-teal-200 text-teal-700 shadow-[0_3px_8px_rgba(13,148,136,0.25)]"
+                    : "border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300"
+                  }`}
+              >
+                ₦{amt.toLocaleString()}
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Custom Amount Input */}
+      <div className="relative mt-3">
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-900 font-medium 
+            placeholder-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 
+            focus:border-teal-400 transition-all duration-150"
+        />
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 font-semibold">
+          ₦
+        </span>
       </div>
     </div>
   );
 }
 
-function AmountGrid({
-  value,
-  onChange,
-  presetAmounts,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  presetAmounts: number[];
-}) {
-  return (
-    <div className="space-y-4">
-      <label className="text-sm font-semibold text-stone-700 block">
-        Amount
-      </label>
-      <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6">
-        {presetAmounts.map((amt) => (
-          <motion.button
-            key={amt}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onChange(amt.toString())}
-            className={`w-auto mb-2 mr-2 py-3 rounded-full font-semibold transition-all duration-300 border-[1.5px] ${value === amt.toString()
-              ? "border-teal-600 bg-gradient-to-r from-teal-100 to-teal-300 text-teal-700 shadow-md"
-              : "border-stone-200 text-stone-700 hover:border-stone-300"
-              }`}
-          >
-            ₦{amt.toLocaleString()}
-          </motion.button>
-        ))}
-      </div>
-      <input
-        type="number"
-        placeholder="Enter amount"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
-      />
-    </div>
-  );
+type InputFieldProps = {
+  label: string;
+  placeholder: string;
+  value: string | number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  verify?: boolean;
 }
 
 function InputField({
@@ -910,74 +834,154 @@ function InputField({
   value,
   onChange,
   verify = false,
-}: {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  verify?: boolean;
-}) {
+}: InputFieldProps) {
   return (
-    <div className="space-y-2 w-full">
-      <label className="block text-gray-700 font-semibold text-sm">
+    <div className="w-full space-y-2">
+      {/* Label */}
+      <label className="text-sm font-semibold text-gray-700 tracking-wide">
         {label}
       </label>
+
+      {/* Input Container */}
       <div className="flex items-center gap-2">
-        <input
+        <motion.input
           type="text"
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 font-medium placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-all duration-150"
+          whileFocus={{ scale: 1.01 }}
+          transition={{ type: "spring", stiffness: 250, damping: 18 }}
+          className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 
+          text-gray-900 font-medium placeholder:text-gray-400 shadow-sm
+          focus:outline-none focus:ring-2 focus:ring-teal-400/70 focus:border-teal-500
+          transition-all duration-200"
         />
+
         {verify && (
-          <button
-            className="px-4 py-3 bg-teal-500 text-white font-semibold text-sm rounded-xl hover:bg-teal-600 transition-colors duration-150 shadow-sm"
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            whileHover={{ scale: 1.03 }}
+            className="px-4 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white 
+            font-semibold text-sm rounded-2xl shadow-md hover:shadow-lg
+            focus:outline-none focus:ring-2 focus:ring-teal-300/50 transition-all duration-200"
             type="button"
           >
             Verify
-          </button>
+          </motion.button>
         )}
       </div>
     </div>
   );
 }
 
+type SelectFieldProps = {
+  label: string;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+};
+
 function SelectField({
   label,
   options,
   value,
   onChange,
-}: {
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-}) {
+}: SelectFieldProps) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (val: string) => {
+    onChange(val);
+    setOpen(false);
+  };
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 relative">
       <label className="text-sm font-semibold text-stone-700 block">
         {label}
       </label>
-      <select
-        value={value}
-        onChange={onChange}
-        className="w-full border-2 border-stone-200 rounded-lg px-4 py-4 bg-white text-stone-800 font-medium outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-all appearance-none cursor-pointer"
-        style={{
-          backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 12px center",
-          backgroundSize: "20px",
-          paddingRight: "40px",
-        }}
+
+      <div
+        className="relative border-2 border-stone-200 rounded-lg px-4 py-4 bg-white text-stone-800 font-medium cursor-pointer 
+        focus-within:border-teal-600 focus-within:ring-2 focus-within:ring-teal-100 transition-all select-none"
+        onClick={() => setOpen(!open)}
       >
-        <option value="">Select an option</option>
-        {options.map((opt, i) => (
-          <option key={i} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+        <div className="flex justify-between items-center">
+          <span>{value || "Select an option"}</span>
+          <ChevronDown
+            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"
+              }`}
+          />
+        </div>
+
+        {/* Dropdown List */}
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="absolute z-20 left-0 top-[110%] w-full bg-white border-2 border-teal-100 rounded-xl shadow-lg overflow-hidden"
+            >
+              {options.length > 0 ? (
+                options.map((opt, i) => (
+                  <li
+                    key={i}
+                    onClick={() => handleSelect(opt)}
+                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${value === opt ? "bg-teal-50 text-teal-700" : ""
+                      }`}
+                  >
+                    {opt}
+                  </li>
+                ))
+              ) : (
+                <li className="px-4 py-3 text-stone-400">No options available</li>
+              )}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
+
+const ProviderSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      <p className="text-md font-normal text-stone-800">Select Provider</p>
+      <div className="w-full grid grid-cols-4 gap-2">
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <ProviderSkeletonCard key={idx} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const ProviderSkeletonCard = () => (
+  <div className="w-full h-24 rounded-lg border border-stone-200 flex flex-col items-center justify-center gap-2 bg-white shadow-md animate-pulse">
+    <div className="w-16 h-16 rounded-full bg-stone-200" />
+    <div className="w-[60%] h-2 rounded-xl bg-stone-200" />
+  </div>
+);
+
+const PlanSkeleton = () => {
+  return (
+    <div className="w-full flex flex-col gap-2">
+      {/* <p className="text-md font-normal text-stone-800">Select Data Plan</p> */}
+      <div className="grid grid-cols-3 [@media(min-width:480px)]:grid-cols-4 [@media(min-width:676px)]:grid-cols-6 gap-2 w-full">
+        {Array.from({ length: 6 }).map((_, idx) => (
+          <PlanSkeletonCard key={idx} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const PlanSkeletonCard = () => (
+  <div className="w-full flex flex-col items-center justify-center gap-2 py-2 border-2 border-primary/50 rounded-xl bg-primary/5 shadow-sm animate-pulse">
+    <div className="w-3/4 h-4 bg-primary/25 rounded-md" />
+    <div className="w-1/2 h-4 bg-primary/25 rounded-md" />
+    <div className="w-1/3 h-3 bg-primary/25 rounded-md" />
+  </div>
+);
