@@ -17,23 +17,38 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import AddFunds from "@/components/modal/payments/add-funds";
 import { useAuth } from "@/hooks/useAuth";
-import ComingSoon from "@/components/coming-soon";
+import ComingSoon from "@/components/ComingSoon";
 import { useRouter } from "next/navigation";
 import { Wallet } from "@/types/api";
 import api from "@/lib/axios";
 import { formatNGN } from "@/utils/amount";
+import { usePin } from "@/hooks/usePin";
+import SetPin from "@/components/SetPin";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { hasPin, pinConfirmationLoading } = usePin();
   const [showBalance, setShowBalance] = useState(true);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
   const [isComing, setIsComing] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [userHasPin, setUserHasPin] = useState<boolean>(false);
 
   const router = useRouter();
 
   const handleShowBalance = () => setShowBalance(!showBalance);
+  useEffect(() => {
+    if (pinConfirmationLoading) return;
+
+    const storedPin = localStorage.getItem("userSetPin");
+    if (storedPin === "true" || hasPin) {
+      setUserHasPin(true);
+    } else {
+      setUserHasPin(false);
+    }
+  }, [hasPin, pinConfirmationLoading]);
+
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -49,7 +64,6 @@ export default function DashboardPage() {
     getWalletBalance();
     getRecentTransactions();
   }, []);
-
   const items = [
     { name: "Airtime", icon: Smartphone, link: "/app/payments/airtime" },
     { name: "Data", icon: Wifi, link: "/app/payments/data" },
@@ -93,9 +107,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen container">
-      <div className="flex flex-col w-full mx-auto h-screen overflow-y-auto pb-16">
+      <div className="flex flex-col w-full mx-auto h-auto pb-16">
         {/* HEADER */}
-        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-6 pb-4 relative shadow-sm z-[99]">
+        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-6 pb-4 relative shadow-sm z-1">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
@@ -122,16 +136,16 @@ export default function DashboardPage() {
 
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-3xl font-bold tracking-tight">
+              <h3 className="text-2xl font-bold tracking-tight">
                 {showBalance ? formatNGN(wallet?.balance) : "₦****"}
               </h3>
               <button className="cursor-pointer" onClick={handleShowBalance}>
-                <Eye size={22} />
+                <Eye size={20} />
               </button>
             </div>
             <button
               onClick={() => setAddFunds(true)}
-              className="bg-white text-[#21A29D] font-semibold py-3 px-6 rounded-2xl shadow-sm hover:shadow-md transition"
+              className="bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
             >
               + Add Money
             </button>
@@ -139,7 +153,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Promo Slider */}
-        <div className="overflow-hidden bg-transparent -mt-12">
+        <div className="overflow-hidden bg-transparent -mt-16 pb-4">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -149,10 +163,10 @@ export default function DashboardPage() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               className={`p-6 rounded-b-[50px] pt-20 -z-0 ${slides[currentIndex].bg} ${slides[currentIndex].textColor}`}
             >
-              <h2 className="text-2xl font-bold mb-2">
+              <h2 className="text-xl font-semibold mb-2">
                 {slides[currentIndex].title}
               </h2>
-              <p className="text-sm opacity-90">
+              <p className="text-sm font-normal">
                 {slides[currentIndex].desc}
               </p>
             </motion.div>
@@ -215,8 +229,8 @@ export default function DashboardPage() {
                       </div>
                       <span
                         className={`font-semibold ${txn.amount < 0
-                            ? "text-red-500"
-                            : "text-green-600"
+                          ? "text-red-500"
+                          : "text-green-600"
                           }`}
                       >
                         {txn.amount < 0 ? "-" : "+"}
@@ -229,6 +243,24 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* {!userHasPin && (
+          <SetPin
+            close={setUserHasPin}
+            onSuccess={() => {
+              setUserHasPin(true);
+            }}
+          />
+        )} */}
+        {!userHasPin && (
+          <SetPin
+            close={setUserHasPin}
+            onSuccess={() => {
+              setUserHasPin(true);
+              localStorage.setItem("userSetPin", "true");
+            }}
+          />
+        )}
 
         {addFunds && <AddFunds close={setAddFunds} />}
         {isComing && <ComingSoon close={setIsComing} />}

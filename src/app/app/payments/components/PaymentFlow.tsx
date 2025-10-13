@@ -52,6 +52,7 @@ type Purchase = {
   type: string,
 }
 export default function PaymentPage({ type }: PaymentPageProps) {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
@@ -69,8 +70,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
   const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(null);
   const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(null);
-  const [selectedDuration, setSelectedDuration] = useState("Daily");
-  const { user } = useAuth();
 
   const handleBack = () => {
     if (step === 1) window.history.back();
@@ -261,7 +260,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
               )}
 
               {type === "data" && (
-                <> {loading && <PlanSkeleton />}
+                <>
                   {dataVariations?.length === 0 ?
                     <p className="text-center py-4 font-normal text-stone-800">
                       No Plan available at the moment
@@ -277,6 +276,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       type={type}
                     />
                   }
+                  {loading && <PlanSkeleton />}
                   <InputField
                     label="Phone Number"
                     placeholder="2348012345678"
@@ -298,6 +298,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     verify
                   />
                   <AmountGrid
+                    type={type}
                     value={formData.amount}
                     onChange={(value) => handleFormChange("amount", value)}
                     presetAmounts={presetAmounts}
@@ -345,6 +346,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     onChange={(value) => handleFormChange("type", value)}
                   />
                   <AmountGrid
+                    type={type}
                     value={formData.amount}
                     onChange={(value) => handleFormChange("amount", value)}
                     presetAmounts={presetAmounts}
@@ -446,80 +448,88 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
-              initial={{ y: 100, opacity: 0 }}
+              initial={{ y: 80, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              className="bg-white rounded-3xl px-6 pb-24 pt-8 w-full max-w-md shadow-2xl"
+              exit={{ y: 80, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 15 }}
+              className="relative bg-white rounded-3xl w-full px-6 pb-20 sm:pb-6 sm:px-8 shadow-2xl border border-stone-100"
             >
-
+              {/* Close Button */}
               <button
                 onClick={handleBack}
-                className="w-full text-left items-start justify-start text-stone-600 font-semibold py-3 hover:text-stone-700"
+                className="absolute top-4 left-4 text-stone-500 hover:text-stone-700 transition-colors pb-4"
+                title="Close"
               >
-                ← Back
+                <motion.span whileHover={{ scale: 1.1 }} className="text-xl">
+                  ✕
+                </motion.span>
               </button>
-              <div className="text-center space-y-8">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-stone-900">
-                    Enter PIN
-                  </h2>
-                  <p className="text-stone-500 text-sm">
-                    Secure your transaction with your 4-digit PIN
-                  </p>
-                </div>
 
-                <div className="flex justify-center gap-3">
-                  {otp.map((digit, idx) => (
-                    <motion.input
-                      key={idx}
-                      type={showOTPFull ? "text" : "password"}
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => {
-                        const newOtp = [...otp];
-                        newOtp[idx] = e.target.value.slice(-1);
-                        setOtp(newOtp);
-                        if (e.target.value && idx < 3) {
-                          document.getElementById(`otp-${idx + 1}`)?.focus();
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Backspace" && !otp[idx] && idx > 0) {
-                          document.getElementById(`otp-${idx - 1}`)?.focus();
-                        }
-                      }}
-                      id={`otp-${idx}`}
-                      className="w-14 h-14 text-2xl font-bold text-center border-2 border-stone-200 rounded-xl focus:border-teal-600 focus:ring-2 focus:ring-teal-100 outline-none transition-all"
-                      placeholder="•"
-                    />
-                  ))}
-                </div>
+              {/* Header */}
+              <div className="text-center space-y-2 mt-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-stone-900">
+                  Enter Your PIN
+                </h2>
+                <p className="text-stone-500 text-sm">
+                  Secure your transaction with your 4-digit PIN
+                </p>
+              </div>
 
-                <button
-                  onClick={() => setShowOTPFull(!showOTPFull)}
-                  className="flex items-center justify-center gap-2 mx-auto text-sm text-stone-600 hover:text-stone-800"
-                >
-                  {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
-                  {showOTPFull ? "Hide" : "Show"}
-                </button>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={() => {
-                      if (otp.every((d) => d)) {
-                        setSuccess(Math.random() > 0.4);
-                        handleNext();
+              {/* OTP Input Fields */}
+              <div className="flex justify-center gap-4 mt-8">
+                {otp.map((digit, idx) => (
+                  <motion.input
+                    key={idx}
+                    type={showOTPFull ? "text" : "password"}
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => {
+                      const newOtp = [...otp];
+                      newOtp[idx] = e.target.value.slice(-1);
+                      setOtp(newOtp);
+                      if (e.target.value && idx < 3) {
+                        document.getElementById(`otp-${idx + 1}`)?.focus();
                       }
                     }}
-                    disabled={!otp.every((d) => d)}
-                    className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed transition-all"
-                  >
-                    Confirm
-                  </button>
-                </div>
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !otp[idx] && idx > 0) {
+                        document.getElementById(`otp-${idx - 1}`)?.focus();
+                      }
+                    }}
+                    id={`otp-${idx}`}
+                    className="w-14 h-14 sm:w-16 sm:h-16 text-2xl sm:text-3xl font-semibold text-center border-2 border-stone-200 rounded-2xl focus:border-teal-600 focus:ring-2 focus:ring-teal-100 outline-none transition-all placeholder:text-stone-300"
+                    placeholder="•"
+                  />
+                ))}
+              </div>
+
+              {/* Show/Hide Toggle */}
+              <button
+                onClick={() => setShowOTPFull(!showOTPFull)}
+                className="flex items-center justify-center gap-2 mx-auto mt-4 text-sm text-stone-600 hover:text-stone-800"
+              >
+                {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showOTPFull ? "Hide" : "Show"} PIN
+              </button>
+
+              {/* Confirm Button */}
+              <div className="mt-8">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => {
+                    if (otp.every((d) => d)) {
+                      setSuccess(Math.random() > 0.4);
+                      handleNext();
+                    }
+                  }}
+                  disabled={!otp.every((d) => d)}
+                  className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-2xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed shadow-md transition-all"
+                >
+                  Confirm
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
@@ -777,7 +787,7 @@ function AmountGrid({
       </label>
 
       {/* Preset Amount Buttons */}
-      {type == "airtime" && (
+      {["betting", "airtime"].includes(type) && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {presetAmounts.map((amt) => {
             const isSelected = value === amt.toString();
@@ -979,9 +989,9 @@ const PlanSkeleton = () => {
 }
 
 const PlanSkeletonCard = () => (
-  <div className="w-full flex flex-col items-center justify-center gap-2 py-2 border-2 border-primary/50 rounded-xl bg-primary/5 shadow-sm animate-pulse">
-    <div className="w-3/4 h-4 bg-primary/25 rounded-md" />
-    <div className="w-1/2 h-4 bg-primary/25 rounded-md" />
-    <div className="w-1/3 h-3 bg-primary/25 rounded-md" />
+  <div className="w-full flex flex-col items-center justify-center gap-2 py-4 border-2 border-stone-100/50 rounded-xl bg-stone-100/5 shadow-sm animate-pulse">
+    <div className="w-1/2 h-4 bg-stone-400/25 rounded-md py-1" />
+    <div className="w-3/4 h-5 bg-stone-400/25 rounded-md py-1" />
+    <div className="w-1/3 h-4 bg-stone-400/25 rounded-md py-1" />
   </div>
 );
