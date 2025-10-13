@@ -1,7 +1,5 @@
-import React from 'react'
+import AdminLayout from '@/app/(admin)/admin/components/AdminLayout';
 
-export default function page() {
-  return (
-    <div>page</div>
-  )
+export default function AdminPage() {
+  return <AdminLayout />;
 }

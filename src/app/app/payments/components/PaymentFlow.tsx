@@ -46,7 +46,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     customer_id: "",
     meter: "",
     planType: "",
-
+account: "",
     variation_id: "",
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
@@ -72,6 +72,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       plan: "",
       customer_id: "",
       meter: "",
+      planType: "",
+      account: "",
       variation_id: "",
     });
   };
@@ -89,8 +91,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     electricity: { title: "Electricity Token" },
     billNaTransaction: { title: "In App Transaction" },
     bankTransaction: { title: "Transfer to other bank" },
-    tv: { title: "Cable/TV Subscription" },
-    electricity: { title: " Electricity Token" },
+   
   };
 
   useEffect(() => {
@@ -201,7 +202,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     },
   ];
 
-  const providers: {
+  const provider: {
     airtime: { value: string; name: string }[];
     data: { value: string; name: string }[];
     betting: { value: string; name: string }[];

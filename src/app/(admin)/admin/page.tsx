@@ -26,7 +26,7 @@ export default function AdminLogin() {
 
   return (
     <div className="w-full h-screen">
-      <div className="min-h-screen bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-teal-white flex flex-col">
         {/* Header */}
         <div className="p-6 flex items-center justify-between">
           <button
