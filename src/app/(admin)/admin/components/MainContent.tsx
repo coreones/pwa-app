@@ -4,7 +4,8 @@ import { EntityType } from '@/types/admin';
 import Header from './header';
 import Dashboard from './Dashboard';
 import UserCRUD from './crud/UserCRUD';
-import PaymentCRUD from './crud/PaymentCRUD';
+import TransactionsCRUD from './crud/transactionCRUD'
+import WalletsCRUD from './crud/walletCRUD';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface MainContentProps {
@@ -20,8 +21,10 @@ export default function MainContent({ activeEntity, searchQuery, onSearchChange 
         return <Dashboard />;
       case 'users':
         return <UserCRUD searchQuery={searchQuery} />;
-      case 'payments':
-        return <PaymentCRUD searchQuery={searchQuery} />;
+      case 'transactions':
+        return <TransactionsCRUD searchQuery={searchQuery} />;
+      case 'wallets':
+        return <WalletsCRUD searchQuery={searchQuery} />;
       default:
         return (
           <div className="p-6">

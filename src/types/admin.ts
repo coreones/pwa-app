@@ -39,34 +39,54 @@ export interface User {
   id: string;
   firstName: string;
   lastName: string;
-  fullName: string;
+  fullName?: string;
   email: string;
+  phone?: string;
   role: string;
   status: "active" | "inactive";
+  type?: "user" | "admin";
+  walletBalance?: number;
   createdAt: string;
 }
 
-export interface Post {
+export interface Transaction {
   id: string;
-  title: string;
-  content: string;
-  author: string;
-  status: "published" | "draft";
-  createdAt: string;
-}
-
-export interface Payment {
-  id: string;
-  amount: number;
-  currency: string;
-  status: "completed" | "pending" | "failed";
   userId: string;
-  type?: string;
+  reference: string;
+  type: "credit" | "debit";
+  action: string;
+  amount: number;
+  fee: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  status: "pending" | "completed" | "failed" | "reversed";
+  wallet: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface Wallet {
+  id: string;
+  userId: string;
+  balance: number;
+  locked: number;
+  totalBalance: number;
+  user?: User;
+  createdAt: string;
+}
+
+export interface BankAccount {
+  id: string;
+  userId: string;
+  bankName: string;
+  bankCode: string;
+  accountName: string;
+  accountNumber: string;
   createdAt: string;
 }
 
 export type CRUDAction = "create" | "read" | "update" | "delete";
-export type EntityType = "users" | "payments" | "dashboard";
+export type EntityType = "dashboard" | "users" | "transactions" | "wallets";
 
 export interface SidebarItem {
   id: EntityType;

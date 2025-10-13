@@ -13,7 +13,8 @@ interface HeaderProps {
 const entityLabels: Record<EntityType, string> = {
   dashboard: 'Dashboard',
   users: 'Users',
-  payments: 'Payments'
+  transactions: 'Transactions',
+  wallets: 'Wallets'
 };
 
 export default function Header({
