@@ -43,7 +43,7 @@ interface UserCRUDProps {
 }
 
 export default function UserCRUD({ searchQuery }: UserCRUDProps) {
-  const [users, setUsers] = useState(userService.getAll());
+  const [users, setUsers] = useState<User[]>(() => userService.getAll());
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -214,7 +214,11 @@ const handleCreate = () => {
   const handleUpdate = () => {
     if (selectedUser && selectedUser.id) {
       userService.update(selectedUser.id, editFormData);
-      setUsers(userService.getAll());
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u.id === selectedUser.id ? { ...u, ...editFormData } : u
+        )
+      );
       setSelectedUser(null);
       setEditFormData({});
       setIsEditDialogOpen(false);
@@ -224,7 +228,7 @@ const handleCreate = () => {
   const handleDelete = () => {
     if (selectedUser && selectedUser.id) {
       userService.delete(selectedUser.id);
-      setUsers(userService.getAll());
+      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== selectedUser.id));
       setSelectedUser(null);
       setIsDeleteDialogOpen(false);
     }
@@ -1171,8 +1175,8 @@ const CreateUserForm = () => (
       </Dialog>
 
       {/* View Dialog */}
-      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl">
+      <Dialog  open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="min-w-2xl w-full">
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
             <DialogDescription>
@@ -1180,7 +1184,7 @@ const CreateUserForm = () => (
             </DialogDescription>
           </DialogHeader>
           {selectedUser && (
-            <div className="space-y-6">
+            <div className="space-y-6 w-full ">
               {/* Personal Information */}
               <div>
                 <h4 className="text-sm font-medium mb-3">Personal Information</h4>

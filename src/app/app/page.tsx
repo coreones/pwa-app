@@ -20,6 +20,8 @@ import {
   PhoneCall,
   Volleyball,
   ArrowRightLeft,
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -68,6 +70,7 @@ export default function DashboardPage() {
 
     const getRecentTransactions = async () => {
       const res = await api.get("/transactions/recent");
+      console.log(res.data.data)
       if (!res.data.error) setTransactions(res.data.data);
     };
 
@@ -249,29 +252,52 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <ul>
-                  {transactions.map((txn, i) => (
-                    <li
-                      key={i}
-                      className="flex justify-between items-center px-5 py-4 border-b border-gray-100 last:border-none hover:bg-gray-50 transition"
+                  {transactions.map((txn, i) => {
+                     const isCredit = txn.amount.startsWith("+");
+                const statusColor =
+                    txn.status === "completed"
+                        ? "bg-green-100 text-green-700"
+                        : txn.status === "Failed"
+                            ? "bg-red-100 text-red-600"
+                            : "bg-yellow-100 text-yellow-700";
+                  return  (<div
+                        key={i}
+                        className="flex justify-between items-center bg-white rounded-xl p-4 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-300"
                     >
-                      <div>
-                        <p className="font-medium text-gray-800 capitalize">
-                          {txn.description || txn.type}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(txn.created_at).toLocaleString()}
-                        </p>
-                      </div>
-                      <span
-                        className={`font-semibold ${
-                          txn.amount < 0 ? "text-red-500" : "text-green-600"
-                        }`}
-                      >
-                        {txn.amount < 0 ? "-" : "+"}
-                        {formatNGN(Math.abs(txn.amount))}
-                      </span>
-                    </li>
-                  ))}
+                        <div className="flex items-center gap-3">
+                            <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center ${isCredit ? "bg-green-50" : "bg-stone-100"
+                                    }`}
+                            >
+                                {isCredit ? (
+                                    <ArrowDownLeftIcon className="w-5 h-5 text-green-500" />
+                                ) : (
+                                    <ArrowUpRightIcon className="w-5 h-5 text-stone-600" />
+                                )}
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-stone-800 text-sm md:text-base">
+                                    {txn.action}
+                                </h4>
+                                <p className="text-stone-500 text-xs md:text-sm">{txn.created_at}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-end">
+                            <span
+                                className={`text-sm md:text-base font-semibold ${isCredit ? "text-green-600" : "text-stone-800"
+                                    }`}
+                            >
+                                {txn.amount}
+                            </span>
+                            <span
+                                className={`text-xs px-2 py-0.5 mt-1 rounded-full ${statusColor}`}
+                            >
+                                {txn.status}
+                            </span>
+                        </div>
+                    </div>
+)})}
                 </ul>
               )}
             </div>
