@@ -968,7 +968,7 @@ type InputFieldProps = {
   verify?: boolean;
   handleVerifyCustomer?: () => void;
   verifyData?: any;
-  type: string;
+  type?: string;
 };
 
 export function InputField({
