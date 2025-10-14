@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import api from "@/lib/axios";
-import { setClientLocalStorage } from "@/lib/local-storage";
+import { setToLocalStorage } from "@/lib/local-storage";
 import { XMarkIcon, CameraIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -62,7 +62,7 @@ export default function EditProfile({ setTab }: { setTab: (v: string | null) => 
             if (res.data.error) {
                 toast.error("Failed to update profile");
             }
-            setClientLocalStorage("user", JSON.stringify(res.data.data))
+            setToLocalStorage("user", JSON.stringify(res.data.data))
             toast.success("Profile updated");
             setTab(null);
         } catch (err) {

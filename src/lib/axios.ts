@@ -3,7 +3,7 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import { deleteClientCookie, getClientCookie } from "./cookies";
+import { deleteFromCookie, getFromCookie } from "./cookies";
 import { ApiResponse } from "@/types/api";
 
 const api = axios.create({
@@ -16,7 +16,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = getClientCookie("accessToken");
+    const token = getFromCookie("token");
 
     if (token) {
       if (!config.headers) config.headers = new axios.AxiosHeaders();
@@ -39,8 +39,8 @@ api.interceptors.response.use(
     if (status >= 200 && status <= 400) {
       return response;
     } else if (status === 401) {
-      // deleteClientCookie("accessToken");
-      // return window.location.assign("/auth/login");
+      deleteFromCookie("token");
+      return window.location.assign("/auth/login");
     } else if (status > 401 && status < 500) {
       return response;
     } else {

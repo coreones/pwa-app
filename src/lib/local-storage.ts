@@ -1,5 +1,5 @@
-export const getClientLocalStorage = (key: string) => localStorage.getItem(key);
-export const setClientLocalStorage = (key: string, value: string) =>
+export const getFromLocalStorage = (key: string) => localStorage.getItem(key);
+export const setToLocalStorage = (key: string, value: string) =>
   localStorage.setItem(key, value);
-export const removeClientLocalStorage = (key: string) =>
+export const removeFromLocalStorage = (key: string) =>
   localStorage.removeItem(key);

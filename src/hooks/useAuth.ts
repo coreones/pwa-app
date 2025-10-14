@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getClientCookie } from "@/lib/cookies";
-import { getClientLocalStorage } from "@/lib/local-storage";
+import { getFromCookie } from "@/lib/cookies";
+import { getFromLocalStorage } from "@/lib/local-storage";
 import { User } from "@/types/api";
 
 export const useAuth = () => {
@@ -12,8 +12,8 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const token = getClientCookie("accessToken");
-    const get_user = getClientLocalStorage("user");
+    const token = getFromCookie("token");
+    const get_user = getFromLocalStorage("user");
     if (!token) {
       router.push("/auth/login");
     } else {
