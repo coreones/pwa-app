@@ -51,6 +51,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [success, setSuccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [purchasing, setPurchasing] = useState<boolean>(false);
+  const [verifying, setVerifying] = useState<boolean>(false);
+  const [verifyData, setVerifyData] = useState<any>(null);
   const [reference, setReference] = useState<string>("");
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [formData, setFormData] = useState<Purchase>({
@@ -175,17 +177,17 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     }
   };
 
-  const purchase = async () => {
+  const handleSubmit = async () => {
     setPurchasing(true);
     try {
       let payload = {
-        service_id: formData.service_id, pin: pinExtractor(otp),
-        ...(["airtime", "data"].includes(type) && formData.amount) && { amount: formData.amount },
+        service_id: formData.service_id, pin: pinExtractor(otp), amount: formData.amount,
         ...(formData.customer_id) && { phone: ["airtime", "data"].includes(type) ? formData.customer_id : (user?.phone ?? null) },
         ...(["betting", "tv", "data"].includes(type) && formData.variation) && { variation_id: formData.variation.variation_id.toString() },
         ...(["betting", "tv", "electricity"].includes(type) && formData.customer_id) && { customer_id: formData.customer_id },
         ...(["tv"].includes(type) && formData.type) && { type: formData.type },
-
+        ...(["electricity"].includes(type) && formData.type) && { variation_id: formData.type },
+        ...(verifyData) && { verify_data: verifyData }
       }
       const url = `/transactions/buy-${type}`;
       const res = await api.post<ApiResponse<Transaction | null>>(url, payload);
@@ -202,6 +204,28 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     } finally {
       setPurchasing(false);
       handleNext();
+    }
+  }
+
+  const handleVerifyCustomer = async () => {
+    setVerifying(true);
+    try {
+      let payload = {
+        service_id: formData.service_id,
+        customer_id: formData.customer_id,
+        variation_id: type === "electricity" ? formData.type : formData.variation?.variation_id,
+      }
+      const url = "/general/bill/verify-customer";
+      const res = await api.post<ApiResponse>(url, payload);
+      if (res.data.error) {
+        toast.error("Verification failed")
+      } else {
+        toast.success("Verification successful");
+      }
+      setVerifyData(res.data.data ?? null);
+    } catch (err) {
+    } finally {
+      setVerifying(false)
     }
   }
 
@@ -225,7 +249,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
         return (
           baseCheck &&
           !!formData.customer_id &&
-          !!formData.variation &&
+          !!formData.type &&
           !!formData.amount
         );
       default:
@@ -274,6 +298,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     placeholder="2348012345678"
                     value={formData.customer_id}
                     onChange={(e) => handleFormChange("customer_id", e.target.value)}
+                    type="airtime"
                   />
                   <AmountGrid
                     type={type}
@@ -303,12 +328,15 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     />
                   )}
                   {loading && <PlanSkeleton />}
-                  <InputField
-                    label="Receiving Phone Number"
-                    placeholder="2348012345678"
-                    value={formData.customer_id}
-                    onChange={(e) => handleFormChange("customer_id", e.target.value)}
-                  />
+                  {formData.variation && (
+                    <InputField
+                      label="Receiving Phone Number"
+                      placeholder="2348012345678"
+                      value={formData.customer_id}
+                      type="data"
+                      onChange={(e) => handleFormChange("customer_id", e.target.value)}
+                    />
+                  )}
                 </>
               )}
 
@@ -322,27 +350,23 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       handleFormChange("customer_id", e.target.value)
                     }
                     verify
+                    handleVerifyCustomer={handleVerifyCustomer}
+                    verifyData={verifyData}
+                    type="betting"
                   />
-                  <AmountGrid
-                    type={type}
-                    value={formData.amount}
-                    onChange={(value) => handleFormChange("amount", value)}
-                    presetAmounts={presetAmounts}
-                  />
+                  {verifyData && (
+                    <AmountGrid
+                      type={type}
+                      value={formData.amount}
+                      onChange={(value) => handleFormChange("amount", value)}
+                      presetAmounts={presetAmounts}
+                    />
+                  )}
                 </>
               )}
 
               {type === "tv" && (
                 <>
-                  <InputField
-                    label="Smartcard Number"
-                    placeholder="Enter Smartcard number"
-                    value={formData.customer_id}
-                    onChange={(e) =>
-                      handleFormChange("customer_id", e.target.value)
-                    }
-                    verify
-                  />
                   <PlanSelect
                     label="Select Package"
                     value={formData.variation}
@@ -353,11 +377,29 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     }}
                     type={type}
                   />
+                  <InputField
+                    label="Smartcard Number"
+                    placeholder="Enter Smartcard number"
+                    value={formData.customer_id}
+                    onChange={(e) =>
+                      handleFormChange("customer_id", e.target.value)
+                    }
+                    verify
+                    handleVerifyCustomer={handleVerifyCustomer}
+                    verifyData={verifyData}
+                    type="tv"
+                  />
                 </>
               )}
 
               {type === "electricity" && (
                 <>
+                  <SelectField
+                    label="Type"
+                    options={["prepaid", "postpaid"]}
+                    value={formData.type}
+                    onChange={(value) => handleFormChange("type", value)}
+                  />
                   <InputField
                     label="Meter Number"
                     placeholder="Enter Meter Number"
@@ -366,19 +408,19 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       handleFormChange("customer_id", e.target.value)
                     }
                     verify
+                    handleVerifyCustomer={handleVerifyCustomer}
+                    verifyData={verifyData}
+                    type="electricity"
                   />
-                  <SelectField
-                    label="Type"
-                    options={["prepaid", "postpaid"]}
-                    value={formData.type}
-                    onChange={(value) => handleFormChange("type", value)}
-                  />
-                  <AmountGrid
-                    type={type}
-                    value={formData.amount}
-                    onChange={(value) => handleFormChange("amount", value)}
-                    presetAmounts={presetAmounts}
-                  />
+
+                  {verifyData && (
+                    <AmountGrid
+                      type={type}
+                      value={formData.amount}
+                      onChange={(value) => handleFormChange("amount", value)}
+                      presetAmounts={presetAmounts}
+                    />
+                  )}
                 </>
               )}
 
@@ -594,7 +636,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   }}
                   onConfirm={() => {
                     if (otp.every((d) => d)) {
-                      purchase()
+                      handleSubmit()
                     } else {
                       toast.error("Unable to process your request at the moment, please try again.")
                     }
@@ -701,7 +743,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       <div className="flex-1 bg-gradient-to-t from-white to-stone-50 rounded-t-3xl p-6 overflow-y-auto">
         <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
         <AnimatePresence>
-          {purchasing && <PurchasingOverlay />}
+          {(purchasing || verifying) && <PurchasingOverlay />}
         </AnimatePresence>
       </div>
     </div>
@@ -924,6 +966,9 @@ type InputFieldProps = {
   value: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   verify?: boolean;
+  handleVerifyCustomer?: () => void;
+  verifyData?: any;
+  type: string;
 };
 
 export function InputField({
@@ -932,6 +977,9 @@ export function InputField({
   value,
   onChange,
   verify = false,
+  handleVerifyCustomer,
+  verifyData,
+  type,
 }: InputFieldProps) {
   return (
     <div className="w-full space-y-2">
@@ -955,7 +1003,7 @@ export function InputField({
           transition-all duration-200"
         />
 
-        {verify && (
+        {verify && handleVerifyCustomer && (
           <motion.button
             whileTap={{ scale: 0.96 }}
             whileHover={{ scale: 1.03 }}
@@ -963,11 +1011,19 @@ export function InputField({
             font-semibold text-sm rounded-2xl shadow-md hover:shadow-lg
             focus:outline-none focus:ring-2 focus:ring-teal-300/50 transition-all duration-200"
             type="button"
+            onClick={handleVerifyCustomer}
           >
             Verify
           </motion.button>
         )}
       </div>
+      {verifyData && type && (
+        <div className="w-full text-sm font-normal text-primary">
+          {type === "betting" && <span>{verifyData.customer_name} ({verifyData.customer_username})</span>}
+          {type === "tv" && <span>{verifyData.customer_name}</span>}
+          {type === "electricity" && <span>{verifyData.customer_name} ({verifyData.customer_address})</span>}
+        </div>
+      )}
     </div>
   );
 }

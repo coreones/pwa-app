@@ -44,7 +44,7 @@ export default function DashboardPage() {
   const [isComing, setIsComing] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { hasPin, pinConfirmationLoading } = usePin();
-  const [userHasPin, setUserHasPin] = useState<boolean>(false);
+  const [userHasPin, setUserHasPin] = useState<boolean>(true);
 
   useEffect(() => {
     if (!pinConfirmationLoading) {
@@ -55,7 +55,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const handleShowBalance = () => setShowBalance(!showBalance);
-  
+
   useEffect(() => {
     if (pinConfirmationLoading) return;
 
