@@ -31,35 +31,30 @@ import { useRouter } from "next/navigation";
 import { Wallet } from "@/types/api";
 import api from "@/lib/axios";
 import { formatNGN } from "@/utils/amount";
-import { usePin } from "@/hooks/usePin";
-import SetPin from "@/components/SetPin";
 import Link from "next/link";
 import { logoutModal } from "@/lib/logout-modal";
+import { setPinModal } from "@/lib/set-pin-modal";
+import { usePin } from "@/hooks/usePin";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { hasPin, pinConfirmationLoading } = usePin();
   const [showBalance, setShowBalance] = useState(true);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
   const [isComing, setIsComing] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const { hasPin, pinConfirmationLoading } = usePin();
   const [userHasPin, setUserHasPin] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!pinConfirmationLoading) {
+      setUserHasPin(hasPin)
+    }
+  }, [hasPin, pinConfirmationLoading])
 
   const router = useRouter();
 
   const handleShowBalance = () => setShowBalance(!showBalance);
-  useEffect(() => {
-    if (pinConfirmationLoading) return;
-
-    const storedPin = localStorage.getItem("userSetPin");
-    if (storedPin === "true" || hasPin) {
-      setUserHasPin(true);
-    } else {
-      setUserHasPin(false);
-    }
-  }, [hasPin, pinConfirmationLoading]);
-
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -218,8 +213,13 @@ export default function DashboardPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   key={idx}
-                  onClick={() =>
+                  onClick={() => {
+                    if (!userHasPin) {
+                      setPinModal.open()
+                      return;
+                    }
                     item.link ? router.push(item.link) : setIsComing(true)
+                  }
                   }
                   className="relative flex flex-col items-center justify-center p-4 bg-white/80 backdrop-blur-lg rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
                 >
@@ -275,25 +275,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
-        {/* {!userHasPin && (
-          <SetPin
-            close={setUserHasPin}
-            onSuccess={() => {
-              setUserHasPin(true);
-            }}
-          />
-        )} */}
-        {!userHasPin && (
-          <SetPin
-            close={setUserHasPin}
-            onSuccess={() => {
-              setUserHasPin(true);
-              localStorage.setItem("userSetPin", "true");
-            }}
-          />
-        )}
-
         {addFunds && <AddFunds close={setAddFunds} />}
         {isComing && <ComingSoon close={setIsComing} />}
       </div>

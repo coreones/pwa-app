@@ -189,7 +189,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       }
       const url = `/transactions/buy-${type}`;
       const res = await api.post<ApiResponse<Transaction | null>>(url, payload);
-      console.log(res.data)
       if (res.data.error) {
         setSuccess(false)
         toast.error(res.data.message ?? "Transaction failed")
@@ -400,13 +399,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
+            className="fixed inset-0 bg-black/40 max-w-3xl mx-auto flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
+              className="bg-white rounded-3xl px-6 pb-20 pt-10 sm:pb-10 w-full max-w-3xl sm:max-w-md shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-stone-900">
@@ -621,7 +620,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
               initial={{ y: 100, opacity: 0, scale: 0.9 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 100, opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-3xl px-6 pb-24 pt-8 w-full max-w-md shadow-2xl text-center space-y-8"
+              className="bg-white rounded-3xl px-6 pb-20 pt-10 sm:pb-10 w-full max-w-md shadow-2xl text-center space-y-6"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -639,7 +638,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 )}
               </motion.div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-stone-900">
                   {success ? "Transaction Successful" : "Transaction Failed"}
                 </h2>
