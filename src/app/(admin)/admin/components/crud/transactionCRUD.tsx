@@ -1,52 +1,92 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Transaction } from '@/types/admin';
-import { transactionService } from '@/lib/data';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Eye, Edit, Trash2, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import { Transaction } from "@/types/api";
+import { transactionService } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Eye, Edit, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface TransactionsCRUDProps {
   searchQuery: string;
 }
 
-export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps) {
+export default function TransactionsCRUD({
+  searchQuery,
+}: TransactionsCRUDProps) {
   const [transactions, setTransactions] = useState(transactionService.getAll());
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const filteredTransactions = transactions.filter(transaction => {
-    const matchesSearch = 
-      transaction.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
-    
+  const filteredTransactions = transactions.filter((transaction) => {
+    const matchesSearch =
+      transaction.reference
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      transaction.description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || transaction.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
   const handleUpdate = () => {
-    if (selectedTransaction) {
-      transactionService.update(selectedTransaction.id, selectedTransaction);
+    if (selectedTransaction?.id) {
+      transactionService.update(
+        String(selectedTransaction.id),
+        selectedTransaction
+      );
       setTransactions(transactionService.getAll());
       setSelectedTransaction(null);
       setIsEditDialogOpen(false);
     }
   };
+  const isValidTransactionStatus = (
+    value: string
+  ): value is NonNullable<Transaction["status"]> => {
+    return ["pending", "completed", "failed", "reversed"].includes(value);
+  };
 
   const handleDelete = () => {
-    if (selectedTransaction) {
-      transactionService.delete(selectedTransaction.id);
+    if (selectedTransaction?.id) {
+      transactionService.delete(String(selectedTransaction.id));
       setTransactions(transactionService.getAll());
       setSelectedTransaction(null);
       setIsDeleteDialogOpen(false);
@@ -59,7 +99,7 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
   };
 
   const handleEdit = (transaction: Transaction) => {
-    setSelectedTransaction({...transaction});
+    setSelectedTransaction({ ...transaction });
     setIsEditDialogOpen(true);
   };
 
@@ -68,46 +108,54 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
     setIsDeleteDialogOpen(true);
   };
 
-  const getStatusVariant = (status: string) => {
+  const getStatusVariant = (status?: string) => {
     switch (status) {
-      case 'completed': return 'default';
-      case 'pending': return 'secondary';
-      case 'failed': return 'destructive';
-      case 'reversed': return 'outline';
-      default: return 'outline';
+      case "completed":
+        return "default";
+      case "pending":
+        return "secondary";
+      case "failed":
+        return "destructive";
+      case "reversed":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
-  const getTypeVariant = (type: string) => {
-    return type === 'credit' ? 'default' : 'secondary';
+  const getTypeVariant = (type?: string) => {
+    return type === "credit" ? "default" : "secondary";
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-    }).format(amount);
+  const formatCurrency = (amount?: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(amount || 0);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-NG', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-NG", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   // Calculate transaction statistics
   const transactionStats = {
     totalTransactions: transactions.length,
-    totalVolume: transactions.reduce((sum, t) => sum + t.amount, 0),
-    completedTransactions: transactions.filter(t => t.status === 'completed').length,
-    pendingTransactions: transactions.filter(t => t.status === 'pending').length,
-    totalFees: transactions.reduce((sum, t) => sum + t.fee, 0),
-    creditTransactions: transactions.filter(t => t.type === 'credit').length,
-    debitTransactions: transactions.filter(t => t.type === 'debit').length,
+    totalVolume: transactions.reduce((sum, t) => sum + (t.amount || 0), 0),
+    completedTransactions: transactions.filter((t) => t.status === "completed")
+      .length,
+    pendingTransactions: transactions.filter((t) => t.status === "pending")
+      .length,
+    totalFees: transactions.reduce((sum, t) => sum + (t.fee || 0), 0),
+    creditTransactions: transactions.filter((t) => t.type === "credit").length,
+    debitTransactions: transactions.filter((t) => t.type === "debit").length,
   };
 
   return (
@@ -120,18 +168,26 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
             <Badge variant="default">₦</Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(transactionStats.totalVolume)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(transactionStats.totalVolume)}
+            </div>
             <p className="text-xs text-muted-foreground">All transactions</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
-            <Badge variant="secondary">{transactionStats.totalTransactions}</Badge>
+            <CardTitle className="text-sm font-medium">
+              Total Transactions
+            </CardTitle>
+            <Badge variant="secondary">
+              {transactionStats.totalTransactions}
+            </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{transactionStats.totalTransactions}</div>
+            <div className="text-2xl font-bold">
+              {transactionStats.totalTransactions}
+            </div>
             <p className="text-xs text-muted-foreground">All time</p>
           </CardContent>
         </Card>
@@ -139,11 +195,17 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <Badge variant="default">{transactionStats.completedTransactions}</Badge>
+            <Badge variant="default">
+              {transactionStats.completedTransactions}
+            </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{transactionStats.completedTransactions}</div>
-            <p className="text-xs text-muted-foreground">Successful transactions</p>
+            <div className="text-2xl font-bold text-green-600">
+              {transactionStats.completedTransactions}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Successful transactions
+            </p>
           </CardContent>
         </Card>
 
@@ -153,7 +215,9 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
             <Badge variant="outline">₦</Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(transactionStats.totalFees)}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(transactionStats.totalFees)}
+            </div>
             <p className="text-xs text-muted-foreground">Commission earned</p>
           </CardContent>
         </Card>
@@ -199,22 +263,29 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
             </TableHeader>
             <TableBody>
               {filteredTransactions.map((transaction) => (
-                <TableRow 
-                  key={transaction.id} 
+                <TableRow
+                  key={transaction.id}
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => handleView(transaction)}
                 >
-                  <TableCell className="font-medium">{transaction.reference}</TableCell>
-                  <TableCell>{transaction.userId}</TableCell>
+                  <TableCell className="font-medium">
+                    {transaction.reference}
+                  </TableCell>
+                  <TableCell>{transaction.user_id}</TableCell>
                   <TableCell>
                     <Badge variant={getTypeVariant(transaction.type)}>
-                      {transaction.type.toUpperCase()}
+                      {transaction.type?.toUpperCase()}
                     </Badge>
                   </TableCell>
-                  <TableCell className={`font-semibold ${
-                    transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                  <TableCell
+                    className={`font-semibold ${
+                      transaction.type === "credit"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {transaction.type === "credit" ? "+" : "-"}
+                    {formatCurrency(transaction.amount)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {formatCurrency(transaction.fee)}
@@ -224,7 +295,7 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
                       {transaction.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatDate(transaction.createdAt)}</TableCell>
+                  <TableCell>{formatDate(transaction.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -279,69 +350,112 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Reference</label>
-                  <p className="text-sm font-mono">{selectedTransaction.reference}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">User ID</label>
-                  <p className="text-sm">{selectedTransaction.userId}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Type</label>
-                  <Badge variant={getTypeVariant(selectedTransaction.type)}>
-                    {selectedTransaction.type.toUpperCase()}
-                  </Badge>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Action</label>
-                  <p className="text-sm capitalize">{selectedTransaction.action}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Amount</label>
-                  <p className={`text-lg font-semibold ${
-                    selectedTransaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {selectedTransaction.type === 'credit' ? '+' : '-'}{formatCurrency(selectedTransaction.amount)}
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Reference
+                  </label>
+                  <p className="text-sm font-mono">
+                    {selectedTransaction.reference}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Fee</label>
-                  <p className="text-sm">{formatCurrency(selectedTransaction.fee)}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    User ID
+                  </label>
+                  <p className="text-sm">{selectedTransaction.user_id}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Balance Before</label>
-                  <p className="text-sm">{formatCurrency(selectedTransaction.balanceBefore)}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Type
+                  </label>
+                  <Badge variant={getTypeVariant(selectedTransaction.type)}>
+                    {selectedTransaction.type?.toUpperCase()}
+                  </Badge>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Balance After</label>
-                  <p className="text-sm">{formatCurrency(selectedTransaction.balanceAfter)}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Action
+                  </label>
+                  <p className="text-sm capitalize">
+                    {selectedTransaction.action}
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Amount
+                  </label>
+                  <p
+                    className={`text-lg font-semibold ${
+                      selectedTransaction.type === "credit"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {selectedTransaction.type === "credit" ? "+" : "-"}
+                    {formatCurrency(selectedTransaction.amount)}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Fee
+                  </label>
+                  <p className="text-sm">
+                    {formatCurrency(selectedTransaction.fee)}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Balance Before
+                  </label>
+                  <p className="text-sm">
+                    {formatCurrency(selectedTransaction.balance_before)}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Balance After
+                  </label>
+                  <p className="text-sm">
+                    {formatCurrency(selectedTransaction.balance_after)}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Status
+                  </label>
                   <Badge variant={getStatusVariant(selectedTransaction.status)}>
                     {selectedTransaction.status}
                   </Badge>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Wallet</label>
-                  <p className="text-sm capitalize">{selectedTransaction.wallet}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Wallet
+                  </label>
+                  <p className="text-sm capitalize">
+                    {selectedTransaction.wallet}
+                  </p>
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Description</label>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Description
+                </label>
                 <p className="text-sm">{selectedTransaction.description}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Date</label>
-                <p className="text-sm">{formatDate(selectedTransaction.createdAt)}</p>
+                <label className="text-sm font-medium text-muted-foreground">
+                  Date
+                </label>
+                <p className="text-sm">
+                  {formatDate(selectedTransaction.created_at)}
+                </p>
               </div>
             </div>
           )}
@@ -361,12 +475,16 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Status</label>
-                <Select 
-                  value={selectedTransaction.status} 
-                  onValueChange={(value: any) => setSelectedTransaction({
-                    ...selectedTransaction,
-                    status: value
-                  })}
+                <Select
+                  value={selectedTransaction.status || ""}
+                  onValueChange={(value: string) => {
+                    if (isValidTransactionStatus(value)) {
+                      setSelectedTransaction({
+                        ...selectedTransaction,
+                        status: value,
+                      });
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -382,22 +500,25 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
               <div>
                 <label className="text-sm font-medium">Description</label>
                 <Input
-                  value={selectedTransaction.description}
-                  onChange={(e) => setSelectedTransaction({
-                    ...selectedTransaction,
-                    description: e.target.value
-                  })}
+                  value={selectedTransaction.description || ""}
+                  onChange={(e) =>
+                    setSelectedTransaction({
+                      ...selectedTransaction,
+                      description: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
           )}
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleUpdate}>
-              Update Transaction
-            </Button>
+            <Button onClick={handleUpdate}>Update Transaction</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -408,18 +529,29 @@ export default function TransactionsCRUD({ searchQuery }: TransactionsCRUDProps)
           <DialogHeader>
             <DialogTitle>Delete Transaction</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this transaction? This action cannot be undone.
+              Are you sure you want to delete this transaction? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           {selectedTransaction && (
             <div className="space-y-2">
-              <p><strong>Reference:</strong> {selectedTransaction.reference}</p>
-              <p><strong>Amount:</strong> {formatCurrency(selectedTransaction.amount)}</p>
-              <p><strong>User ID:</strong> {selectedTransaction.userId}</p>
+              <p>
+                <strong>Reference:</strong> {selectedTransaction.reference}
+              </p>
+              <p>
+                <strong>Amount:</strong>{" "}
+                {formatCurrency(selectedTransaction.amount)}
+              </p>
+              <p>
+                <strong>User ID:</strong> {selectedTransaction.user_id}
+              </p>
             </div>
           )}
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>

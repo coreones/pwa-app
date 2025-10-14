@@ -56,8 +56,8 @@ export type TransactionAction =
   | "flight_booking";
 
 export type Transaction = {
-  id?: number;
-  user_id?: number;
+  id?: number | string;
+  user_id?: number | string;
   reference?: string;
   session_id?: string | null;
   type?: "credit" | "debit";

@@ -37,7 +37,7 @@ import { setPinModal } from "@/lib/set-pin-modal";
 import { usePin } from "@/hooks/usePin";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, authenticated } = useAuth();
   const [showBalance, setShowBalance] = useState(true);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
@@ -55,6 +55,17 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const handleShowBalance = () => setShowBalance(!showBalance);
+  
+  useEffect(() => {
+    if (pinConfirmationLoading) return;
+
+    const storedPin = localStorage.getItem("userSetPin");
+    if (storedPin === "true" || hasPin) {
+      setUserHasPin(true);
+    } else {
+      setUserHasPin(false);
+    }
+  }, [hasPin, pinConfirmationLoading]);
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -142,10 +153,16 @@ export default function DashboardPage() {
               <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
                 <Sun size={20} />
               </button>
-              <Link href="/app/profile/edit" className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+              <Link
+                href="/app/profile/edit"
+                className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition"
+              >
                 <Settings size={20} />
               </Link>
-              <button onClick={() => logoutModal.open()} className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+              <button
+                onClick={() => logoutModal.open()}
+                className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition"
+              >
                 <LogOut size={20} />
               </button>
             </div>
@@ -161,13 +178,13 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="flex flex-row items-center gap-2">
-              <button
-                onClick={() => setAddFunds(true)}
+              <Link
+                href={"/app/transfer"}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
                 <Send size={12} />
                 <span>Send</span>
-              </button>
+              </Link>
               <button
                 onClick={() => setAddFunds(true)}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
@@ -193,9 +210,7 @@ export default function DashboardPage() {
               <h2 className="text-xl font-semibold mb-2">
                 {slides[currentIndex].title}
               </h2>
-              <p className="text-sm font-normal">
-                {slides[currentIndex].desc}
-              </p>
+              <p className="text-sm font-normal">{slides[currentIndex].desc}</p>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -260,9 +275,7 @@ export default function DashboardPage() {
                         </p>
                       </div>
                       <span
-                        className={`font-semibold ${txn.amount < 0
-                          ? "text-red-500"
-                          : "text-green-600"
+                        className={`font-semibold ${txn.amount < 0 ? "text-red-500" : "text-green-600"
                           }`}
                       >
                         {txn.amount < 0 ? "-" : "+"}

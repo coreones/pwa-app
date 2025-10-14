@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Wallet } from '@/types/admin';
+import { Wallet } from '@/types/api';
 import { walletService } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,14 +23,12 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const filteredWallets = wallets.filter(wallet =>
-    wallet.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    wallet.user?.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    wallet.user?.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+    String(wallet.user_id).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleUpdate = () => {
-    if (selectedWallet) {
-      walletService.update(selectedWallet.id, selectedWallet);
+    if (selectedWallet?.id) {
+      walletService.update(String(selectedWallet.id), selectedWallet);
       setWallets(walletService.getAll());
       setSelectedWallet(null);
       setIsEditDialogOpen(false);
@@ -38,8 +36,8 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
   };
 
   const handleDelete = () => {
-    if (selectedWallet) {
-      walletService.delete(selectedWallet.id);
+    if (selectedWallet?.id) {
+      walletService.delete(String(selectedWallet.id));
       setWallets(walletService.getAll());
       setSelectedWallet(null);
       setIsDeleteDialogOpen(false);
@@ -61,21 +59,26 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
     setIsDeleteDialogOpen(true);
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount?: number) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
-    }).format(amount);
+    }).format(amount || 0);
   };
 
   // Calculate wallet statistics
   const walletStats = {
-    totalBalance: wallets.reduce((sum, w) => sum + w.balance, 0),
-    totalLocked: wallets.reduce((sum, w) => sum + w.locked, 0),
+    totalBalance: wallets.reduce((sum, w) => sum + (w.balance || 0), 0),
+    totalLocked: wallets.reduce((sum, w) => sum + (w.locked || 0), 0),
     totalWallets: wallets.length,
-    averageBalance: wallets.length > 0 ? wallets.reduce((sum, w) => sum + w.balance, 0) / wallets.length : 0,
-    highestBalance: Math.max(...wallets.map(w => w.balance)),
-    lowestBalance: Math.min(...wallets.map(w => w.balance)),
+    averageBalance: wallets.length > 0 ? wallets.reduce((sum, w) => sum + (w.balance || 0), 0) / wallets.length : 0,
+    highestBalance: Math.max(...wallets.map(w => w.balance || 0)),
+    lowestBalance: Math.min(...wallets.map(w => w.balance || 0)),
+  };
+
+  // Calculate total balance for display
+  const getTotalBalance = (wallet: Wallet) => {
+    return (wallet.balance || 0) + (wallet.locked || 0);
   };
 
   return (
@@ -139,7 +142,6 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
                 <TableHead>User ID</TableHead>
                 <TableHead>Available Balance</TableHead>
                 <TableHead>Locked Funds</TableHead>
@@ -155,10 +157,7 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
                   className="cursor-pointer hover:bg-muted/50"
                   onClick={() => handleView(wallet)}
                 >
-                  <TableCell className="font-medium">
-                    {wallet.user ? `${wallet.user.firstName} ${wallet.user.lastName}` : 'N/A'}
-                  </TableCell>
-                  <TableCell>{wallet.userId}</TableCell>
+                  <TableCell className="font-medium">{wallet.user_id}</TableCell>
                   <TableCell className="font-semibold text-green-600">
                     {formatCurrency(wallet.balance)}
                   </TableCell>
@@ -166,9 +165,9 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
                     {formatCurrency(wallet.locked)}
                   </TableCell>
                   <TableCell className="font-bold text-blue-600">
-                    {formatCurrency(wallet.totalBalance)}
+                    {formatCurrency(getTotalBalance(wallet))}
                   </TableCell>
-                  <TableCell>{wallet.createdAt}</TableCell>
+                  <TableCell>{wallet.created_at}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -223,14 +222,12 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">User</label>
-                  <p className="text-sm">
-                    {selectedWallet.user ? `${selectedWallet.user.firstName} ${selectedWallet.user.lastName}` : 'N/A'}
-                  </p>
+                  <label className="text-sm font-medium text-muted-foreground">Wallet ID</label>
+                  <p className="text-sm">{selectedWallet.id}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">User ID</label>
-                  <p className="text-sm">{selectedWallet.userId}</p>
+                  <p className="text-sm">{selectedWallet.user_id}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -250,12 +247,12 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Total Balance</label>
                 <p className="text-xl font-bold text-blue-600">
-                  {formatCurrency(selectedWallet.totalBalance)}
+                  {formatCurrency(getTotalBalance(selectedWallet))}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Created</label>
-                <p className="text-sm">{selectedWallet.createdAt}</p>
+                <p className="text-sm">{selectedWallet.created_at}</p>
               </div>
             </div>
           )}
@@ -277,11 +274,10 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
                 <label className="text-sm font-medium">Available Balance (₦)</label>
                 <Input
                   type="number"
-                  value={selectedWallet.balance}
+                  value={selectedWallet.balance || 0}
                   onChange={(e) => setSelectedWallet({
                     ...selectedWallet,
                     balance: parseFloat(e.target.value) || 0,
-                    totalBalance: (parseFloat(e.target.value) || 0) + selectedWallet.locked
                   })}
                 />
               </div>
@@ -289,17 +285,16 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
                 <label className="text-sm font-medium">Locked Funds (₦)</label>
                 <Input
                   type="number"
-                  value={selectedWallet.locked}
+                  value={selectedWallet.locked || 0}
                   onChange={(e) => setSelectedWallet({
                     ...selectedWallet,
                     locked: parseFloat(e.target.value) || 0,
-                    totalBalance: selectedWallet.balance + (parseFloat(e.target.value) || 0)
                   })}
                 />
               </div>
               <div className="p-3 bg-muted rounded-lg">
                 <label className="text-sm font-medium">Total Balance</label>
-                <p className="text-lg font-bold">{formatCurrency(selectedWallet.totalBalance)}</p>
+                <p className="text-lg font-bold">{formatCurrency(getTotalBalance(selectedWallet))}</p>
               </div>
             </div>
           )}
@@ -325,9 +320,9 @@ export default function WalletsCRUD({ searchQuery }: WalletsCRUDProps) {
           </DialogHeader>
           {selectedWallet && (
             <div className="space-y-2">
-              <p><strong>User:</strong> {selectedWallet.user ? `${selectedWallet.user.firstName} ${selectedWallet.user.lastName}` : 'N/A'}</p>
-              <p><strong>Balance:</strong> {formatCurrency(selectedWallet.totalBalance)}</p>
-              <p><strong>User ID:</strong> {selectedWallet.userId}</p>
+              <p><strong>Wallet ID:</strong> {selectedWallet.id}</p>
+              <p><strong>Balance:</strong> {formatCurrency(getTotalBalance(selectedWallet))}</p>
+              <p><strong>User ID:</strong> {selectedWallet.user_id}</p>
             </div>
           )}
           <div className="flex gap-2 justify-end">
