@@ -212,13 +212,12 @@ export default function BankTransfer() {
                       key={i}
                       animate={{ scale: otp[i] ? 1.1 : 1 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
-                        showOTPFull
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${showOTPFull
                           ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
                           : otp[i]
-                          ? "bg-teal-600 text-white"
-                          : "bg-stone-200 border border-stone-300"
-                      }`}
+                            ? "bg-teal-600 text-white"
+                            : "bg-stone-200 border border-stone-300"
+                        }`}
                     >
                       {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
                     </motion.div>

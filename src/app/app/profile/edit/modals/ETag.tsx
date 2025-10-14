@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { XMarkIcon, TagIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import api from "@/lib/axios";
-import { setClientLocalStorage } from "@/lib/local-storage";
+import { setToLocalStorage } from "@/lib/local-storage";
 
 export default function ETag({ setTab }: { setTab: (v: string | null) => void }) {
     const [eTag, setETag] = useState("");
@@ -18,7 +18,7 @@ export default function ETag({ setTab }: { setTab: (v: string | null) => void })
             if (res.data.error) {
                 toast.error("Failed to change e-tag");
             }
-            setClientLocalStorage("user", JSON.stringify(res.data.data))
+            setToLocalStorage("user", JSON.stringify(res.data.data))
             toast.success("e-Tag changed");
             setTab(null);
         } catch (err) {

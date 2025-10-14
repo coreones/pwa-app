@@ -7,6 +7,10 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import DeviceRestriction from "@/components/DeviceRestriction";
 import LogoutModal from "@/components/Logout";
+import SetPinModal from "@/components/SetPin";
+import { usePin } from "@/hooks/usePin";
+import { useEffect } from "react";
+import { setPinModal } from "@/lib/set-pin-modal";
 
 export default function AppLayout({
   children,
@@ -14,6 +18,7 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   const { loading, authenticated } = useAuth();
+  const { hasPin, pinConfirmationLoading } = usePin();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -34,6 +39,12 @@ export default function AppLayout({
       ease: "easeOut",
     },
   };
+  
+  useEffect(() => {
+    if (!pinConfirmationLoading && !hasPin) {
+      setPinModal.open()
+    }
+  }, [hasPin, pinConfirmationLoading]);
 
   if (loading)
     return (
@@ -70,6 +81,7 @@ export default function AppLayout({
           {/* Main content area */}
           <main className="flex-1 overflow-y-auto pb-[120px]">{children}</main>
 
+          <SetPinModal />
           <LogoutModal />
           {/* Floating Mobile Nav */}
           <div

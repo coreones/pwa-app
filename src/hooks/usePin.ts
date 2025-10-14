@@ -13,7 +13,7 @@ export const usePin = () => {
     const checkPinStatus = async () => {
       try {
         const res = await api.get("/user/has-set-pin");
-        if (!res.data.error && res.data.data) setHasPin(true);
+        if (!res.data.error && res.data.data) setHasPin(res.data.data);
       } catch (err) {
       } finally {
         setPinConfirmationLoading(false);

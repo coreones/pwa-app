@@ -1,11 +1,11 @@
-export const getClientCookie = (name: string): string | undefined => {
+export const getFromCookie = (name: string): string | undefined => {
   if (typeof document === "undefined") return undefined;
 
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   return match ? decodeURIComponent(match[2]) : undefined;
 };
 
-export const setClientCookie = (
+export const setToCookie = (
   name: string,
   value: string,
   options: { path?: string; expires?: Date } = {}
@@ -21,6 +21,6 @@ export const setClientCookie = (
   document.cookie = cookieStr;
 };
 
-export const deleteClientCookie = (name: string) => {
+export const deleteFromCookie = (name: string) => {
   document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
 };
