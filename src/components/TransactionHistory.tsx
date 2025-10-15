@@ -18,18 +18,30 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { formatTransactionLabel, TransactionAction, TransactionStatus } from "@/types/api";
+import {
+  formatTransactionLabel,
+  TransactionAction,
+  TransactionStatus,
+} from "@/types/api";
 
+interface Extra{
+  phone?: string | undefined
+  service_id?: string;
+
+}
 interface Transaction {
   id: number | string;
   action: TransactionAction;
   date: string;
   amount: string;
   status: TransactionStatus;
-  creditedTo: string;
-  transactionDate: string;
+  created_at: string;
+  session_id: string;
   transactionNo: string;
   remark: string;
+  description: string;
+  reference: string;
+  extra: Extra;
 }
 
 interface Props {
@@ -37,7 +49,8 @@ interface Props {
 }
 
 export default function TransactionHistory({ data }: Props) {
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
 
   const getIcon = (action: TransactionAction) => {
     switch (action) {
@@ -83,11 +96,18 @@ export default function TransactionHistory({ data }: Props) {
     }
   };
 
+   const formattedDate = (txn: string) => {
+        return  new Date(txn).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+        };
   return (
     <div className="space-y-3">
       {data.map((item) => {
         const isCredit = item.amount.startsWith("+");
-
+     
         return (
           <motion.div
             key={item.id}
@@ -114,8 +134,9 @@ export default function TransactionHistory({ data }: Props) {
 
             <div className="flex flex-col items-end">
               <span
-                className={`text-sm md:text-base font-semibold ${isCredit ? "text-green-600" : "text-gray-800"
-                  }`}
+                className={`text-sm md:text-base font-semibold ${
+                  isCredit ? "text-green-600" : "text-gray-800"
+                }`}
               >
                 {item.amount}
               </span>
@@ -130,10 +151,11 @@ export default function TransactionHistory({ data }: Props) {
           </motion.div>
         );
       })}
-
+  
       {/* 🔹 Transaction Detail Popup */}
       <AnimatePresence>
         {selectedTransaction && (
+          
           <motion.div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center z-[99]"
             initial={{ opacity: 0 }}
@@ -151,7 +173,9 @@ export default function TransactionHistory({ data }: Props) {
             >
               {/* Header */}
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-800">Transaction Details</h2>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Transaction Details
+                </h2>
                 <button
                   onClick={() => setSelectedTransaction(null)}
                   className="text-gray-400 hover:text-gray-700 transition-colors"
@@ -176,10 +200,30 @@ export default function TransactionHistory({ data }: Props) {
 
               {/* Info Rows */}
               <div className="space-y-3 text-sm text-gray-700">
-                <InfoRow label="Credited To" value={selectedTransaction.creditedTo} />
-                <InfoRow label="Transaction No" value={selectedTransaction.transactionNo} />
-                <InfoRow label="Transaction Date" value={selectedTransaction.transactionDate} />
-                <InfoRow label="Remark" value={selectedTransaction.remark} />
+                <InfoRow
+                  label="Credited To"
+                  value={selectedTransaction.extra.phone}
+                />
+                  <InfoRow
+                  label="Service"
+                  value={selectedTransaction.extra.service_id}
+                />
+                <InfoRow
+                  label="Reference"
+                  value={selectedTransaction.reference}
+                />
+                <InfoRow
+                  label="Session id"
+                  value={selectedTransaction.session_id}
+                />
+                <InfoRow
+                  label="Transaction Date"
+                  value={formattedDate(selectedTransaction.created_at)}
+                />
+                <InfoRow
+                  label="Description"
+                  value={selectedTransaction.description}
+                />
               </div>
 
               {/* Action */}
@@ -191,7 +235,9 @@ export default function TransactionHistory({ data }: Props) {
               </div> */}
             </motion.div>
           </motion.div>
-        )}
+        )
+        
+        }
       </AnimatePresence>
     </div>
   );
@@ -199,8 +245,10 @@ export default function TransactionHistory({ data }: Props) {
 
 // 🔹 Clean Row Subcomponent
 const InfoRow = ({ label, value }: { label: string; value?: string }) => (
-  <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-    <span className="text-gray-500">{label}</span>
-    <span className="font-medium text-gray-800">{value || "-"}</span>
+  <div className="flex justify-between items-center border-b w-full border-gray-100 pb-2">
+    <span className="text-gray-500 w-full">{label}</span>
+    <span className="font-medium text-gray-800 w-full text-end">
+      {value || "-"}
+    </span>
   </div>
 );
