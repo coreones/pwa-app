@@ -1,14 +1,16 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Lock, X, XCircle } from "lucide-react";
+import { CheckCircle2, Lock, XCircle } from "lucide-react";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Modal from "./ui/Modal";
 import { setPinModal } from "@/lib/set-pin-modal";
+import { useRouter } from "next/navigation";
 
 const SetPinModal = () => {
 
+    const router = useRouter();
     const [show, setShow] = useState(false);
     useEffect(() => {
         setPinModal.register(setShow);
@@ -41,6 +43,7 @@ const SetPinModal = () => {
                 setPin("");
                 setConfirmPin("");
                 setStep("create");
+                router.refresh();
             }, 1500);
         }
 

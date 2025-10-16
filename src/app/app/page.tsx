@@ -1,27 +1,12 @@
 "use client";
 
 import {
-  Bus,
   Eye,
-  Gift,
-  Lightbulb,
-  List,
-  Plane,
   Plus,
-  Receipt,
   Send,
-  Smartphone,
   Sun,
-  Star,
-  Tv,
-  Wifi,
   Settings,
   LogOut,
-  PhoneCall,
-  Volleyball,
-  ArrowRightLeft,
-  ArrowDownLeftIcon,
-  ArrowUpRightIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,13 +15,16 @@ import AddFunds from "@/components/modal/payments/add-funds";
 import { useAuth } from "@/hooks/useAuth";
 import ComingSoon from "@/components/ComingSoon";
 import { useRouter } from "next/navigation";
-import { Wallet } from "@/types/api";
+import { Transaction, Wallet } from "@/types/api";
 import api from "@/lib/axios";
 import { formatNGN } from "@/utils/amount";
 import Link from "next/link";
 import { logoutModal } from "@/lib/logout-modal";
 import { setPinModal } from "@/lib/set-pin-modal";
 import { usePin } from "@/hooks/usePin";
+import { features } from "@/utils/string";
+import TransactionHistory from "@/components/TransactionHistory";
+import TransactionSkeleton from "@/components/TransactionSkeleton";
 
 export default function DashboardPage() {
   const { user, authenticated } = useAuth();
@@ -44,7 +32,7 @@ export default function DashboardPage() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [addFunds, setAddFunds] = useState(false);
   const [isComing, setIsComing] = useState(false);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const { hasPin, pinConfirmationLoading } = usePin();
   const [userHasPin, setUserHasPin] = useState<boolean>(true);
 
@@ -77,26 +65,12 @@ export default function DashboardPage() {
 
     const getRecentTransactions = async () => {
       const res = await api.get("/transactions/recent");
-      console.log(res.data.data);
       if (!res.data.error) setTransactions(res.data.data);
     };
 
     getWalletBalance();
     getRecentTransactions();
   }, []);
-  const items = [
-    { name: "Receive", icon: Plus, link: "/app/receive" },
-    { name: "Send", icon: Send, link: "/app/transfer" },
-    { name: "Airtime", icon: PhoneCall, link: "/app/payments/airtime" },
-    { name: "Data", icon: Wifi, link: "/app/payments/data" },
-    { name: "Electricity", icon: Lightbulb, link: "/app/payments/electricity" },
-    { name: "Cable/TV", icon: Tv, link: "/app/payments/tv" },
-    { name: "Beting", icon: Volleyball, link: "/app/payments/betting" },
-    { name: "Transactions", icon: ArrowRightLeft, link: "app/history" },
-    { name: "Flight", icon: Plane, link: "" },
-    // { name: "Gift Card", icon: Gift, link: "" },
-    // { name: "Transport", icon: Bus, link: "" },
-  ];
 
   const slides = [
     {
@@ -224,107 +198,52 @@ export default function DashboardPage() {
             Quick Actions
           </h3>
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-4">
-            {items.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  key={idx}
-                  onClick={() => {
-                    if (!userHasPin) {
-                      setPinModal.open();
-                      return;
-                    }
-                    item.link ? router.push(item.link) : setIsComing(true);
-                  }}
-                  className="relative flex flex-col items-center justify-center p-4 bg-white/80 backdrop-blur-lg rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
-                >
-                  <div className="bg-[#1FBFAE]/10 p-3 rounded-full mb-2">
-                    <Icon className="text-[#1FBFAE]" size={22} />
-                  </div>
-                  <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">
-                    {item.name}
-                  </span>
-                </motion.button>
-              );
+            {features.map((item, idx) => {
+              if (item.showInHome) {
+                const Icon = item.icon;
+                return (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    key={idx}
+                    onClick={() => {
+                      if (!userHasPin) {
+                        setPinModal.open();
+                        return;
+                      }
+                      item.link ? router.push(item.link) : setIsComing(true);
+                    }}
+                    className="relative flex flex-col items-center justify-center p-4 bg-white/80 backdrop-blur-lg rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all"
+                  >
+                    <div className="bg-[#1FBFAE]/10 p-3 rounded-full mb-2">
+                      <Icon className="text-[#1FBFAE]" size={22} />
+                    </div>
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">
+                      {item.name}
+                    </span>
+                  </motion.button>
+                );
+              }
             })}
           </div>
 
-          {/* 🧾 Recent Transactions */}
+          {/* Recent Transactions */}
           <div className="mt-8 space-y-4">
             <h3 className="text-base font-semibold text-gray-700">
               Recent Transactions
             </h3>
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              {transactions.length === 0 ? (
-                <div className="p-6 text-center text-gray-500 text-sm">
-                  No recent transactions
-                </div>
-              ) : (
-                <ul>
-                  {transactions.map((txn, i) => {
-                    const isCredit = txn.amount.startsWith("+");
-                    const statusColor =
-                      txn.status === "completed"
-                        ? "bg-green-100 text-green-700"
-                        : txn.status === "Failed"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-yellow-100 text-yellow-700";
-                    return (
-                      <div
-                        key={i}
-                        className="flex justify-between items-center bg-white rounded-xl p-4 shadow-sm border border-stone-100 hover:shadow-md transition-all duration-300"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                              isCredit ? "bg-green-50" : "bg-stone-100"
-                            }`}
-                          >
-                            {isCredit ? (
-                              <ArrowDownLeftIcon className="w-5 h-5 text-green-500" />
-                            ) : (
-                              <ArrowUpRightIcon className="w-5 h-5 text-stone-600" />
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-stone-800 text-sm md:text-base">
-                              {txn.action.toUpperCase()}
-                            </h4>
-                            <p className="text-stone-500 text-xs md:text-sm">
-                              {" "}
-                              {new Date(txn.created_at).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end">
-                          <span
-                            className={`text-sm md:text-base font-semibold ${
-                              isCredit ? "text-green-600" : "text-stone-800"
-                            }`}
-                          >
-                            {txn.amount}
-                          </span>
-                          <span
-                            className={`text-xs px-2 py-0.5 mt-1 rounded-full ${statusColor}`}
-                          >
-                            {txn.status}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </ul>
-              )}
+            <div className="w-full overflow-hidden">
+              {!transactions ?
+                <div className="space-y-4 animate-pulse">
+                  {[...Array(10)].map((_, i) => (
+                   <TransactionSkeleton key={i} />
+                  ))}
+                </div> : (
+                  <TransactionHistory
+                    data={transactions}
+                    minimal={false}
+                  />
+                )}
             </div>
           </div>
         </div>

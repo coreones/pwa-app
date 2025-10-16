@@ -17,6 +17,7 @@ import { formatNGN } from "@/utils/amount";
 import { customerLabel, pinExtractor, stringArray } from "@/utils/string";
 import { Keypad } from "@/components/SetPin";
 import toast from "react-hot-toast";
+import { useWallet } from "@/hooks/useWallet";
 
 interface PaymentPageProps {
   type: PurchaseAction
@@ -46,6 +47,7 @@ type Purchase = {
 };
 export default function PaymentPage({ type }: PaymentPageProps) {
   const { user } = useAuth();
+  const { wallet, hasBalance } = useWallet();
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [success, setSuccess] = useState<boolean | null>(null);
@@ -231,26 +233,31 @@ export default function PaymentPage({ type }: PaymentPageProps) {
 
   const isStep1Valid = () => {
     const baseCheck = !!formData.service_id;
+    const amount = Number(formData.amount);
+    if (amount <= 0 || !hasBalance || amount > Number(wallet?.balance)) {
+      return false;
+    }
     switch (type) {
       case "airtime":
-        return baseCheck && !!formData.customer_id && !!formData.amount;
+        return baseCheck && !!formData.customer_id && amount >= 10;
       case "data":
-        return baseCheck && !!formData.customer_id && !!formData.variation;
+        return baseCheck && !!formData.customer_id && !!formData.variation && amount > 0;
       case "betting":
-        return baseCheck && !!formData.customer_id && !!formData.amount;
+        return baseCheck && !!formData.customer_id && amount >= 100;
       case "tv":
         return (
           baseCheck &&
           !!formData.customer_id &&
           !!formData.variation &&
-          !!formData.type
+          !!formData.type &&
+          amount > 0
         );
       case "electricity":
         return (
           baseCheck &&
           !!formData.customer_id &&
           !!formData.type &&
-          !!formData.amount
+          amount >= 1000
         );
       default:
         return false;
@@ -429,7 +436,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 disabled={!isStep1Valid()}
                 className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 disabled:from-stone-300 disabled:to-stone-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl duration-300"
               >
-                Continue to Review
+                Continue
               </button>
             </div>
           </motion.div>

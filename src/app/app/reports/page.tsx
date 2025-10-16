@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import TransactionHistory from "@/components/reports/TransactionHistory";
 import WalletHistory from "@/components/reports/WalletHistory";
 import ProfileHeader from "@/components/ProfileHeader";
+import TransactionSkeleton from "@/components/TransactionSkeleton";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState<number>(1);
@@ -17,12 +18,12 @@ export default function ReportsPage() {
   return (
     <div className="container">
       {/* Header */}
-      <ProfileHeader title="Transaction & Wallet History" />
+      <ProfileHeader title="My Reports" />
 
       {/* Content */}
       <div className="w-full p-4 relative">
         <div className="flex items-center gap-2 bg-stone-200 p-1 mx-4 rounded-xl">
-          {[{ id: 1, name: "Transaction History" }, { id: 2, name: "Wallet History" }].map((tab) => (
+          {[{ id: 1, title: "Purchase History" }, { id: 2, title: "Wallet History" }].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -31,27 +32,15 @@ export default function ReportsPage() {
                 : "text-stone-600 hover:bg-stone-300/75"
                 }`}
             >
-              {tab.name}
+              {tab.title}
             </button>
           ))}
         </div>
         <div className="flex-1 overflow-scroll w-full p-4">
           {loading ? (
             <div className="space-y-4 animate-pulse">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="flex justify-between items-center bg-stone-100 p-4 rounded-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-stone-200 rounded-full" />
-                    <div>
-                      <div className="h-3 w-24 bg-stone-200 rounded-md mb-2" />
-                      <div className="h-3 w-16 bg-stone-200 rounded-md" />
-                    </div>
-                  </div>
-                  <div className="h-3 w-10 bg-stone-200 rounded-md" />
-                </div>
+              {[...Array(10)].map((_, i) => (
+                <TransactionSkeleton key={i} />
               ))}
             </div>
           ) : activeTab === 1 ? (

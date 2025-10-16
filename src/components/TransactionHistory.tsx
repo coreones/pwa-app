@@ -2,166 +2,98 @@
 
 import React, { useState } from "react";
 import {
-  Banknote,
-  ChevronRight,
-  Landmark,
-  Lightbulb,
-  Plane,
-  PlusCircle,
-  Reply,
-  Send,
-  Smartphone,
-  Star,
-  Tv,
-  Wallet,
-  Wifi,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  formatTransactionLabel,
-  TransactionAction,
-  TransactionStatus,
+  Transaction,
 } from "@/types/api";
-
-interface Extra{
-  phone?: string | undefined
-  service_id?: string;
-
-}
-interface Transaction {
-  id: number | string;
-  action: TransactionAction;
-  date: string;
-  amount: string;
-  status: TransactionStatus;
-  created_at: string;
-  session_id: string;
-  transactionNo: string;
-  remark: string;
-  description: string;
-  reference: string;
-  extra: Extra;
-}
+import { formatNGN } from "@/utils/amount";
+import { getFeatureData, statusLabel } from "@/utils/string";
+import { timeAgo } from "@/utils/date";
 
 interface Props {
   data: Transaction[];
+  minimal: boolean;
 }
 
-export default function TransactionHistory({ data }: Props) {
-  const [selectedTransaction, setSelectedTransaction] =
+export default function TransactionHistory({ data, minimal }: Props) {
+  const [transaction, setTransaction] =
     useState<Transaction | null>(null);
 
-  const getIcon = (action: TransactionAction) => {
-    switch (action) {
-      case "airtime":
-        return <Smartphone size={22} />;
-      case "data":
-        return <Wifi size={22} />;
-      case "electricity":
-        return <Lightbulb size={22} />;
-      case "betting":
-        return <Star size={22} />;
-      case "fund_sent":
-        return <Send size={22} />;
-      case "fund_eceived":
-        return <Reply size={22} />;
-      case "wallet_topup":
-        return <PlusCircle size={22} />;
-      case "bank_transfer":
-        return <Landmark size={22} />;
-      case "tv":
-        return <Tv size={22} />;
-      // case "Transportation":
-      //   return <Bus size={22} />;
-      case "flight_booking":
-        return <Plane size={22} />;
-      default:
-        return <Wallet size={22} />;
-    }
+  const formattedDate = (txn: string) => {
+    return new Date(txn).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
-
-  const getStatusStyle = (status: TransactionStatus) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-50 text-green-700 border border-green-100";
-      case "failed":
-        return "bg-red-50 text-red-600 border border-red-100";
-      case "pending":
-        return "bg-yellow-50 text-yellow-700 border border-yellow-100";
-      case "reversed":
-        return "bg-stone-50 text-stone-700 border border-stone-100";
-      default:
-        return "bg-gray-50 text-gray-600";
-    }
-  };
-
-   const formattedDate = (txn: string) => {
-        return  new Date(txn).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-        };
   return (
     <div className="space-y-3">
-      {data.map((item) => {
-        const isCredit = item.amount.startsWith("+");
-     
-        return (
-          <motion.div
-            key={item.id}
-            onClick={() => setSelectedTransaction(item)}
-            className="flex justify-between items-center bg-white hover:bg-gray-50 p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md cursor-pointer transition-all duration-300"
-            whileHover={{ scale: 1.01 }}
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusStyle(
-                  item.status
-                )}`}
+      {data.length == 0 ?
+        <p className="w-full p-4 text-center font-normal text-stone-800">No transactions yet</p>
+        :
+        data.map((item) => {
+          const feature = getFeatureData(item.action);
+          if (item && feature) {
+            const Icon = feature.icon;
+            return (
+              <motion.div
+                key={item.id}
+                onClick={() => setTransaction(item)}
+                className="flex justify-between items-center bg-white hover:bg-gray-50 p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md cursor-pointer transition-all duration-300"
+                whileHover={{ scale: 1.01 }}
               >
-                {getIcon(item.action)}
-              </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center ${item.type == "credit" ? "bg-lime-50" : "bg-rose-50"
+                      }`}
+                  >
+                    <Icon className={`w-6 h-6 ${item.type == "credit" ? "text-lime-400" : "text-rose-400"
+                      }`} />
+                  </div>
 
-              <div>
-                <h4 className="font-medium text-gray-800 text-sm md:text-base">
-                  {formatTransactionLabel(item.action)}
-                </h4>
-                <p className="text-gray-500 text-xs">{item.date}</p>
-              </div>
-            </div>
+                  <div>
+                    <h2 className="font-semibold text-stone-800 text-sm sm:text-md md:text-lg">
+                      {feature.title}
+                    </h2>
+                    {!minimal && <p className="w-[75%] hidden sm:flex text-stone-500 text-xs truncate">
+                      {item.description}
+                    </p>}
+                    {item.created_at && <p className="text-stone-300 text-xs">
+                      {timeAgo(item.created_at)}
+                    </p>}
+                  </div>
+                </div>
 
-            <div className="flex flex-col items-end">
-              <span
-                className={`text-sm md:text-base font-semibold ${
-                  isCredit ? "text-green-600" : "text-gray-800"
-                }`}
-              >
-                {item.amount}
-              </span>
-              <span
-                className={`text-xs mt-1 px-2 py-0.5 rounded-full font-medium ${getStatusStyle(
-                  item.status
-                )}`}
-              >
-                {formatTransactionLabel(item.status)}
-              </span>
-            </div>
-          </motion.div>
-        );
-      })}
-  
+                <div className="flex flex-col items-end">
+                  <span
+                    className={`text-sm md:text-base font-semibold ${item.type === "credit" ? "text-green-600" : "text-gray-800"
+                      }`}
+                  >
+                    {formatNGN(item.amount)}
+                  </span>
+                  <div
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: statusLabel(item.status) }}
+                  />
+                </div>
+              </motion.div>
+            );
+          }
+        })
+      }
+
       {/* 🔹 Transaction Detail Popup */}
       <AnimatePresence>
-        {selectedTransaction && (
-          
+        {transaction && (
+
           <motion.div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end md:items-center justify-center z-[99]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedTransaction(null)}
+            onClick={() => setTransaction(null)}
           >
             <motion.div
               initial={{ y: 100, opacity: 0 }}
@@ -177,7 +109,7 @@ export default function TransactionHistory({ data }: Props) {
                   Transaction Details
                 </h2>
                 <button
-                  onClick={() => setSelectedTransaction(null)}
+                  onClick={() => setTransaction(null)}
                   className="text-gray-400 hover:text-gray-700 transition-colors"
                 >
                   <X size={22} />
@@ -186,57 +118,59 @@ export default function TransactionHistory({ data }: Props) {
 
               {/* Amount and Status */}
               <div className="flex flex-col items-center mb-6">
-                <div className="text-3xl font-bold text-gray-800">
-                  {selectedTransaction.amount}
+                <div className="text-4xl font-bold text-gray-800">
+                  {formatNGN(transaction.amount)}
                 </div>
+
                 <div
-                  className={`mt-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(
-                    selectedTransaction.status
-                  )}`}
-                >
-                  {selectedTransaction.status}
-                </div>
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: statusLabel(transaction.status) }}
+                />
               </div>
 
               {/* Info Rows */}
               <div className="space-y-3 text-sm text-gray-700">
                 <InfoRow
-                  label="Credited To"
-                  value={selectedTransaction.extra.phone}
-                />
-                  <InfoRow
                   label="Service"
-                  value={selectedTransaction.extra.service_id}
+                  value={transaction.action}
+                />
+                <InfoRow
+                  label="Provider"
+                  value={transaction.extra?.service_id}
+                />
+                <InfoRow
+                  label="Recipient"
+                  value={transaction.extra?.customer_id ?? transaction.extra?.phone ?? "-"}
                 />
                 <InfoRow
                   label="Reference"
-                  value={selectedTransaction.reference}
+                  value={transaction.reference}
                 />
                 <InfoRow
-                  label="Session id"
-                  value={selectedTransaction.session_id}
+                  label="Session ID"
+                  value={transaction.session_id ?? "--"}
                 />
                 <InfoRow
-                  label="Transaction Date"
-                  value={formattedDate(selectedTransaction.created_at)}
+                  label="Amount"
+                  value={formatNGN(transaction.amount)}
+                />
+                <InfoRow
+                  label="Fee"
+                  value={formatNGN(transaction.fee)}
+                />
+                <InfoRow
+                  label="Date"
+                  value={transaction.created_at ? formattedDate(transaction.created_at) : "--"}
                 />
                 <InfoRow
                   label="Description"
-                  value={selectedTransaction.description}
+                  value={transaction.description ?? ""}
                 />
               </div>
-
-              {/* Action */}
-              {/* <div className="mt-8">
-                <button className="w-full flex justify-between items-center text-gray-700 font-medium border border-gray-200 rounded-xl p-3 hover:bg-gray-50 transition-all">
-                  <span>View Interest Details</span>
-                  <ChevronRight size={20} />
-                </button>
-              </div> */}
             </motion.div>
           </motion.div>
         )
-        
+
         }
       </AnimatePresence>
     </div>

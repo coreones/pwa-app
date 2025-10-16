@@ -1,15 +1,8 @@
 "use client";
 
 import { MenuItem } from "@/components/ui/buttons";
-import {
-  Lightbulb,
-  Tv,
-  Plane,
-  Volleyball,
-  Wifi,
-  PhoneCall,
-} from "lucide-react";
 import ProfileHeader from "@/components/ProfileHeader";
+import { features } from "@/utils/string";
 
 export default function ExpensesPage() {
 
@@ -25,42 +18,21 @@ export default function ExpensesPage() {
         </div>
 
         <div className="flex flex-col divide-y divide-stone-200">
-          <MenuItem
-            icon={<PhoneCall size={20} color="#21A29D" />}
-            label="Airtime"
-            showBorder={false}
-            type="data"
-          />
-          <MenuItem
-            icon={<Wifi size={20} color="#21A29D" />}
-            label="Data"
-            showBorder={false}
-            type="data"
-          />
-          <MenuItem
-            icon={<Lightbulb size={20} color="#21A29D" />}
-            label="Electricity"
-            showBorder={false}
-            type="data"
-          />
-          <MenuItem
-            icon={<Tv size={20} color="#21A29D" />}
-            label="Cable TV"
-            showBorder={false}
-            type="data"
-          />
-          <MenuItem
-            icon={<Volleyball size={20} color="#21A29D" />}
-            label="Betting"
-            showBorder={false}
-            type="data"
-          />
-          <MenuItem
-            icon={<Plane size={20} color="#21A29D" />}
-            label="Flight Booking"
-            showBorder={false}
-            type="data"
-          />
+          {features.map((item, idx) => {
+            if (item.purchaseable) {
+              const Icon = item.icon;
+              return (
+                <MenuItem
+                  key={idx}
+                  icon={<Icon size={20} color="#21A29D" />}
+                  label={item.title}
+                  showBorder={false}
+                  type="data"
+                />
+              );
+            }
+            return (<div key={idx}></div>);
+          })}
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
 import { formatNGN } from "@/utils/amount";
 
-export default function WalletTransfer() {
+export default function BankTransfer({ balance }: { balance: number }) {
   const [formData, setFormData] = useState({
     account_no: "",
     amount: "",
@@ -21,13 +21,13 @@ export default function WalletTransfer() {
     if (step === 1) window.history.back();
     else setStep((prev) => prev - 1);
   };
-   useEffect(() => {
-      if (formData.account_no.length === 10 && step === 1) {
-        handleNext();
-      }
-    }, [formData.account_no, step]);
-  
-  
+  useEffect(() => {
+    if (formData.account_no.length === 10 && step === 1) {
+      handleNext();
+    }
+  }, [formData.account_no, step]);
+
+
 
   const handleNext = () => setStep((prev) => prev + 1);
 
@@ -56,7 +56,7 @@ export default function WalletTransfer() {
               value={formData.account_no}
               onChange={(e) => handleInputChange("account_no", e.target.value)}
             />
-            
+
           </div>
         );
       case 2:
@@ -92,73 +92,73 @@ export default function WalletTransfer() {
             </div>
           </div>
         );
-         case 3:
-                return (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
-                  >
-                    <motion.div
-                      initial={{ y: 100, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: 100, opacity: 0 }}
-                      className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
-                    >
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-stone-900">
-                          Review Transaction
-                        </h2>
-                        <button
-                          onClick={handleBack}
-                          className="text-stone-400 hover:text-stone-600 transition-colors"
-                        >
-                          <X size={24} />
-                        </button>
-                      </div>
-        
-                      <div className="space-y-4 mb-8">
-                        <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
-                          <ReviewItem label="Tansfer" value={`Send`} />
-                          <div className="border-t border-teal-100" />
-                          <ReviewItem
-                            label="Amount"
-                            value={formData.amount.toUpperCase().replaceAll("-", " ")}
-                          />
-                          {formData.account_no && (
-                            <ReviewItem label="Account Number" value={formData.account_no} />
-                          )}
-                          {formData.remark && (
-                            <ReviewItem label={"Remark"} value={formData.remark} />
-                          )}
-        
-                          <div className="border-t border-teal-100" />
-                          <div className="flex justify-between items-center pt-2">
-                            <span className="text-stone-600 font-medium">Amount</span>
-                            <span className="text-2xl font-bold text-teal-600">
-                              {formatNGN(formData.amount)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-        
-                      <button
-                        onClick={handleNext}
-                        className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg mb-3"
-                      >
-                        Confirm & Pay
-                      </button>
-                      <button
-                        onClick={handleBack}
-                        className="w-full border border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
-                      >
-                        Back
-                      </button>
-                    </motion.div>
-                  </motion.div>
-                );
-        
+      case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
+          >
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-stone-900">
+                  Review Transaction
+                </h2>
+                <button
+                  onClick={handleBack}
+                  className="text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
+                  <ReviewItem label="Tansfer" value={`Send`} />
+                  <div className="border-t border-teal-100" />
+                  <ReviewItem
+                    label="Amount"
+                    value={formData.amount.toUpperCase().replaceAll("-", " ")}
+                  />
+                  {formData.account_no && (
+                    <ReviewItem label="Account Number" value={formData.account_no} />
+                  )}
+                  {formData.remark && (
+                    <ReviewItem label={"Remark"} value={formData.remark} />
+                  )}
+
+                  <div className="border-t border-teal-100" />
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-stone-600 font-medium">Amount</span>
+                    <span className="text-2xl font-bold text-teal-600">
+                      {formatNGN(formData.amount)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleNext}
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg mb-3"
+              >
+                Confirm & Pay
+              </button>
+              <button
+                onClick={handleBack}
+                className="w-full border border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
+              >
+                Back
+              </button>
+            </motion.div>
+          </motion.div>
+        );
+
       case 4:
         return (
           <AnimatePresence>
@@ -183,13 +183,12 @@ export default function WalletTransfer() {
                       key={i}
                       animate={{ scale: otp[i] ? 1.1 : 1 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
-                        showOTPFull
-                          ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
-                          : otp[i]
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${showOTPFull
+                        ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
+                        : otp[i]
                           ? "bg-teal-600 text-white"
                           : "bg-stone-200 border border-stone-300"
-                      }`}
+                        }`}
                     >
                       {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
                     </motion.div>
@@ -288,7 +287,8 @@ export default function WalletTransfer() {
         {step > 1 && (
           <button
             onClick={handleNext}
-            className="py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white px-3 max-w-50 w-full rounded-2xl"
+            disabled={Number(formData.amount) > balance}
+            className={`${Number(formData.amount) > balance ? 'bg-stone-300 text-stone-800 opacity-50' : 'bg-gradient-to-r from-teal-600 to-teal-600 text-white'} py-3 w-auto px-4 rounded-lg`}
           >
             Continue
           </button>

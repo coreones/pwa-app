@@ -56,17 +56,17 @@ export type TransactionAction =
   | "flight_booking";
 
 export type Transaction = {
-  id?: number | string;
-  user_id?: number | string;
-  reference?: string;
+  id: number | string;
+  user_id: number | string;
+  reference: string;
   session_id?: string | null;
-  type?: "credit" | "debit";
-  action?: TransactionAction;
-  amount?: number;
+  type: "credit" | "debit";
+  action: TransactionAction;
+  amount: number;
   fee?: number;
   balance_before?: number;
   balance_after?: number;
-  status?: TransactionStatus;
+  status: TransactionStatus;
   wallet?: string;
   description?: string | null;
   extra?: Record<string, any> | null;
@@ -136,7 +136,7 @@ export function formatTransactionLabel(
     fund_sent: "Fund Sent",
     wallet_topup: "Wallet Top-Up",
     bank_transfer: "Bank Transfer",
-    flight_booking: "Flight Booking",
+    flight: "Flight Booking",
   };
 
   if (map[value]) return map[value];

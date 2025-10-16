@@ -5,6 +5,7 @@ import axios, {
 } from "axios";
 import { deleteFromCookie, getFromCookie } from "./cookies";
 import { ApiResponse } from "@/types/api";
+import { deleteFromLocalStorage } from "./local-storage";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -40,7 +41,8 @@ api.interceptors.response.use(
       return response;
     } else if (status === 401) {
       deleteFromCookie("token");
-      return window.location.assign("/auth/login");
+      deleteFromLocalStorage("user")
+      return window.location.assign("/auth");
     } else if (status > 401 && status < 500) {
       return response;
     } else {

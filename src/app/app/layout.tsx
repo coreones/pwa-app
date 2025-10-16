@@ -68,12 +68,6 @@ export default function AppLayout({
         </motion.p>
       </div>
     );
-
-  // if (!authenticated) {
-  //   router.push("/auth/login");
-  //   return null;
-  // }
-
   return (
     authenticated ? (
       <DeviceRestriction>

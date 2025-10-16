@@ -107,8 +107,6 @@ export default function AdminLogin() {
               {/* Login Button */}
               <button
                 onClick={() => {
-                  // Handle login logic here
-                  console.log("Login attempted:", formData);
                 }}
                 disabled={!isFormValid()}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl duration-300"
