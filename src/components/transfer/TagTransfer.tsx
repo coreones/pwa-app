@@ -8,6 +8,7 @@ import { formatNGN } from "@/utils/amount";
 import toast from "react-hot-toast";
 import api from "@/lib/axios";
 import { ApiResponse } from "@/types/api";
+import { pinExtractor } from "@/utils/string";
 
 interface VerifyData {
   photo: string;
@@ -55,19 +56,26 @@ export default function TagTransfer({ balance }: { balance: number }) {
     }
 
   };
+
   const handleSend = async () => {
     try {
       setSending(true)
-      const res = await api.post<ApiResponse>("/transfer/wallet", { tag, remarks, amount, verify_data: verifyData })
+      const res = await api.post<ApiResponse>("/transfer/wallet", { tag, remarks, amount, verify_data: verifyData, pin: pinExtractor(otp) })
       if (res.data.error) {
-        toast.error(res.data.message ?? "Invalid Tag");
+        toast.error(res.data.message ?? "Failed to send to tag");
         return;
       }
-      setVerifyData(res.data.data)
-      handleNext();
+      toast.success(res.data.data?.message ?? "Transfer successful")
+      setTag("")
+      setRemarks("")
+      setAmount(0)
+      setVerifyData(null)
+      setOtp(["", "", "", ""])
+      setShowOTPFull(false);
+      setStep(1)
     } catch (err) {
       console.log(err)
-      toast.error("An error occurred while verifying tag, please try again!")
+      toast.error("An error occurred while sending to tag, please try again!")
     } finally {
       setSending(false)
     }
@@ -282,7 +290,8 @@ export default function TagTransfer({ balance }: { balance: number }) {
                     } else if (num === "✓") {
                       // Handle confirm
                       if (otp.every((d) => d)) {
-                        handleNext();
+                        handleSend();
+                        // handleNext();
                       }
                     } else {
                       // Handle number input
@@ -307,7 +316,7 @@ export default function TagTransfer({ balance }: { balance: number }) {
                   }}
                   onConfirm={handleSend}
                   disableConfirm={!otp.every((d) => d)}
-                  loading={false}
+                  loading={sending}
                 />
               </motion.div>
             </motion.div>

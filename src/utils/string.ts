@@ -150,9 +150,9 @@ export const features = [
     purchaseable: false,
   },
   {
-    id: "fund_sent",
-    name: "Fund Sent",
-    title: "Fund Sent",
+    id: "fund_transfer",
+    name: "Fund Tansfer",
+    title: "Fund Tansfer",
     icon: Upload,
     link: "",
     showInHome: false,

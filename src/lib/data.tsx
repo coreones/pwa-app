@@ -251,7 +251,7 @@ export const mockTransactions: Transaction[] = [
     user_id: '3',
     reference: 'REF-003',
     type: 'credit',
-    action: 'fund_sent',
+    action: 'fund_transfer',
     amount: 15000,
     fee: 10,
     balance_before: 10000,

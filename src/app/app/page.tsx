@@ -241,7 +241,7 @@ export default function DashboardPage() {
                 </div> : (
                   <TransactionHistory
                     data={transactions}
-                    minimal={false}
+                    minimal={true}
                   />
                 )}
             </div>

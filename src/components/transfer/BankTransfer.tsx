@@ -5,43 +5,89 @@ import { Keypad } from "@/components/SetPin";
 import { AnimatePresence, motion } from "framer-motion";
 import { EyeOff, Eye, X, ChevronLeft } from "lucide-react";
 import { formatNGN } from "@/utils/amount";
+import { ApiResponse } from "@/types/api";
+import api from "@/lib/axios";
+import toast from "react-hot-toast";
+import { pinExtractor } from "@/utils/string";
 
+interface VerifyData {
+  account_number: string;
+  account_name: string;
+  bank_code: string;
+  bank_name: string;
+}
 export default function BankTransfer({ balance }: { balance: number }) {
-  const [formData, setFormData] = useState({
-    account_no: "",
-    amount: "",
-    remark: "",
-  });
+
+  const [account_name, setAccountName] = useState<string>("");
+  const [account_number, setAccountNumber] = useState<string>("");
+  const [bank_code, setBankCode] = useState<string>("");
+  const [bank_name, setBankName] = useState<string>("");
+  const [remarks, setRemarks] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
   const [step, setStep] = useState(1);
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [success, setSuccess] = useState<boolean | null>(null);
+  const [verifying, setVerifying] = useState<boolean>(false)
+  const [sending, setSending] = useState<boolean>(false)
+  const [verifyData, setVerifyData] = useState<VerifyData | null>(null);
 
   const handleBack = () => {
     if (step === 1) window.history.back();
     else setStep((prev) => prev - 1);
   };
-  useEffect(() => {
-    if (formData.account_no.length === 10 && step === 1) {
-      handleNext();
-    }
-  }, [formData.account_no, step]);
-
 
 
   const handleNext = () => setStep((prev) => prev + 1);
 
-  const handleInputChange = useCallback(
-    (field: keyof typeof formData, value: string) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    },
-    []
-  );
 
-  const presetAmounts = [100, 200, 500, 1000, 2000, 5000];
+  const handleVerify = async () => {
+    try {
+      setVerifying(true)
+      const res = await api.post<ApiResponse>("/user/verify/bank", { account_number, bank_code })
+      if (res.data.error) {
+        toast.error(res.data.message ?? "Invalid Tag");
+        return;
+      }
+      setVerifyData(res.data.data)
+      handleNext();
+    } catch (err) {
+      console.log(err)
+      toast.error("An error occurred while verifying tag, please try again!")
+    } finally {
+      setVerifying(false)
+    }
+
+  };
+
+  const handleSend = async () => {
+    try {
+      setSending(true)
+      const res = await api.post<ApiResponse>("/transfer/bank", { account_name, account_number, bank_code, bank_name, remarks, amount, verify_data: verifyData, pin: pinExtractor(otp) })
+      if (res.data.error) {
+        toast.error(res.data.message ?? "Failed to send to bank");
+        return;
+      }
+      toast.success(res.data.data?.message ?? "Transfer successful")
+      setAccountName("")
+      setAccountNumber("")
+      setBankCode("")
+      setBankName("")
+      setRemarks("")
+      setAmount(0)
+      setVerifyData(null)
+      setOtp(["", "", "", ""])
+      setShowOTPFull(false);
+      setStep(1)
+    } catch (err) {
+      console.log(err)
+      toast.error("An error occurred while sending to bank, please try again!")
+    } finally {
+      setSending(false)
+    }
+
+  }
+
+  const presetAmounts = [500, 1000, 2000, 5000, 10000, 20000];
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -53,8 +99,8 @@ export default function BankTransfer({ balance }: { balance: number }) {
             <InputField
               label="Account number:"
               placeholder="0912345667"
-              value={formData.account_no}
-              onChange={(e) => handleInputChange("account_no", e.target.value)}
+              value={account_number}
+              onChange={(e) => setAccountNumber(e.target.value)}
             />
 
           </div>
@@ -79,15 +125,15 @@ export default function BankTransfer({ balance }: { balance: number }) {
               </div>
               <AmountGrid
                 type="transfer"
-                value={formData.amount}
-                onChange={(value) => handleInputChange("amount", value)}
+                value={amount}
+                onChange={(value) => setAmount(Number(value))}
                 presetAmounts={presetAmounts}
               />
               <InputField
                 label="Remark"
                 placeholder="School fee"
-                onChange={(e) => handleInputChange("remark", e.target.value)}
-                value={formData.remark}
+                onChange={(e) => setRemarks(e.target.value)}
+                value={remarks}
               />
             </div>
           </div>
@@ -120,24 +166,30 @@ export default function BankTransfer({ balance }: { balance: number }) {
 
               <div className="space-y-4 mb-8">
                 <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
-                  <ReviewItem label="Tansfer" value={`Send`} />
+                  <ReviewItem label="Transfer" value={`Bank`} />
                   <div className="border-t border-teal-100" />
                   <ReviewItem
                     label="Amount"
-                    value={formData.amount.toUpperCase().replaceAll("-", " ")}
+                    value={formatNGN(amount)}
                   />
-                  {formData.account_no && (
-                    <ReviewItem label="Account Number" value={formData.account_no} />
+                  {bank_name && (
+                    <ReviewItem label="Bank" value={bank_name} />
                   )}
-                  {formData.remark && (
-                    <ReviewItem label={"Remark"} value={formData.remark} />
+                  {account_number && (
+                    <ReviewItem label="Account Number" value={account_number} />
+                  )}
+                  {account_name && (
+                    <ReviewItem label="Account Name" value={account_name} />
+                  )}
+                  {remarks && (
+                    <ReviewItem label={"Remark"} value={remarks} />
                   )}
 
                   <div className="border-t border-teal-100" />
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-stone-600 font-medium">Amount</span>
                     <span className="text-2xl font-bold text-teal-600">
-                      {formatNGN(formData.amount)}
+                      {formatNGN(amount)}
                     </span>
                   </div>
                 </div>
@@ -147,7 +199,7 @@ export default function BankTransfer({ balance }: { balance: number }) {
                 onClick={handleNext}
                 className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white font-semibold py-4 rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg mb-3"
               >
-                Confirm & Pay
+                Confirm & Send
               </button>
               <button
                 onClick={handleBack}
@@ -163,21 +215,22 @@ export default function BankTransfer({ balance }: { balance: number }) {
         return (
           <AnimatePresence>
             <motion.div
-              className="container fixed inset-0 flex items-center justify-center z-[100]"
+              className="container fixed inset-0 flex flex-col items-center min-h-screen h-full justify-center z-[99] pb-"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleBack}
             >
+              <div className="w-full h-full bg-black/25 backdrop-blur-sm"></div>
               <motion.div
                 initial={{ y: 300 }}
                 animate={{ y: 0 }}
                 exit={{ y: 300 }}
                 transition={{ type: "spring", damping: 20, stiffness: 200 }}
                 onClick={(e) => e.stopPropagation()}
-                className="mt-8  bg-black/40 backdrop-blur-sm  p-10 rounded-2xl"
+                className="bg-white p-10 rounded-2xl pb-16"
               >
-                <div className="flex justify-center  gap-6 mb-6">
+                <div className="flex justify-center gap-6 mb-6">
                   {[...Array(4)].map((_, i) => (
                     <motion.div
                       key={i}
@@ -234,8 +287,8 @@ export default function BankTransfer({ balance }: { balance: number }) {
                     } else if (num === "✓") {
                       // Handle confirm
                       if (otp.every((d) => d)) {
-                        setSuccess(Math.random() > 0.4);
-                        handleNext();
+                        handleSend();
+                        // handleNext();
                       }
                     } else {
                       // Handle number input
@@ -258,14 +311,9 @@ export default function BankTransfer({ balance }: { balance: number }) {
                       setOtp(newOtp);
                     }
                   }}
-                  onConfirm={() => {
-                    if (otp.every((d) => d)) {
-                      setSuccess(Math.random() > 0.4);
-                      handleNext();
-                    }
-                  }}
+                  onConfirm={handleSend}
                   disableConfirm={!otp.every((d) => d)}
-                  loading={false}
+                  loading={sending}
                 />
               </motion.div>
             </motion.div>
@@ -275,23 +323,28 @@ export default function BankTransfer({ balance }: { balance: number }) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto min-h-full space-y-4">
-      <button
-        onClick={handleBack}
-        className="p-2 rounded-full hover:bg-alternate/10 hover:text-red-500 transition-all duration-300"
-      >
-        <ChevronLeft size={14} />
-      </button>
+    <div className="w-full">
       {renderStep()}
       <div className="flex flex-col items-center space-y py-4">
         {step > 1 && (
-          <button
-            onClick={handleNext}
-            disabled={Number(formData.amount) > balance}
-            className={`${Number(formData.amount) > balance ? 'bg-stone-300 text-stone-800 opacity-50' : 'bg-gradient-to-r from-teal-600 to-teal-600 text-white'} py-3 w-auto px-4 rounded-lg`}
-          >
-            Continue
-          </button>
+          <div className="w-full flex items-center gap-2 justify-end">
+            {step < 3 && (
+              <button
+                onClick={handleBack}
+                className="py-3 bg-gradient-to-r from-stone-600 to-stone-400 text-white w-auto px-4 rounded-lg"
+              >
+                Back
+              </button>
+            )}
+
+            <button
+              onClick={handleNext}
+              disabled={Number(amount) > balance}
+              className={`${Number(amount) > balance ? 'bg-stone-300 text-stone-800 opacity-50' : 'bg-gradient-to-r from-teal-600 to-teal-600 text-white'} py-3 w-auto px-4 rounded-lg`}
+            >
+              Continue
+            </button>
+          </div>
         )}
       </div>
     </div>

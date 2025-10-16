@@ -48,7 +48,7 @@ export type TransactionAction =
   | "data"
   | "electricity"
   | "betting"
-  | "fund_sent"
+  | "fund_transfer"
   | "fund_eceived"
   | "wallet_topup"
   | "bank_transfer"
@@ -133,7 +133,7 @@ export function formatTransactionLabel(
 ): string {
   const map: Record<string, string> = {
     fund_received: "Fund Received",
-    fund_sent: "Fund Sent",
+    fund_transfer: "Fund Tansfer",
     wallet_topup: "Wallet Top-Up",
     bank_transfer: "Bank Transfer",
     flight: "Flight Booking",
