@@ -105,12 +105,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen container">
-      <div className="flex flex-col w-full mx-auto h-auto pb-16">
+      <div className="flex flex-col w-full mx-auto h-auto pb-12">
         {/* HEADER */}
-        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-6 pt-6 pb-4 relative shadow-sm z-1">
-          <div className="flex items-center justify-between mb-4">
-            <Link href="/app/profile" className="flex items-center gap-3">
-              <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white/40">
+        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-4 pt-6 pb-4 relative shadow-sm z-1">
+          <div className="flex items-center justify-between mb-3">
+            <Link href="/app/profile" className="flex items-center gap-2">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/40">
                 <Image
                   src={user?.photo ?? "/default.png"}
                   alt="Profile"
@@ -119,7 +119,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">
+                <h2 className="font-semibold text-md">
                   {user?.firstname ?? "unknown"} {user?.lastname ?? "user"}
                 </h2>
                 <p className="text-sm text-white/80">
@@ -127,10 +127,10 @@ export default function DashboardPage() {
                 </p>
               </div>
             </Link>
-            <div className="flex flex-row gap-3 items-center">
-              <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
+            <div className="flex flex-row gap-2 items-center">
+              {/* <button className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
                 <Sun size={20} />
-              </button>
+              </button> */}
               <Link
                 href="/app/profile/edit"
                 className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition"
@@ -148,7 +148,7 @@ export default function DashboardPage() {
 
           <div className="flex justify-between flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold tracking-tight">
+              <h3 className="text-xl font-bold tracking-tight">
                 {showBalance ? formatNGN(wallet?.balance) : "₦****"}
               </h3>
               <button className="cursor-pointer" onClick={handleShowBalance}>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
               </Link>
               <button
                 onClick={() => setAddFunds(true)}
-                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-2 px-2 text-sm rounded-xl shadow-sm hover:shadow-md transition"
               >
                 <Plus size={12} />
                 <span className="flex flex-none">Fund Wallet</span>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.4, ease: "easeOut" }}
               className={`p-6 rounded-b-[50px] pt-20 -z-0 ${slides[currentIndex].bg} ${slides[currentIndex].textColor}`}
             >
-              <h2 className="text-xl font-semibold mb-2">
+              <h2 className="text-xl font-semibold">
                 {slides[currentIndex].title}
               </h2>
               <p className="text-sm font-normal">{slides[currentIndex].desc}</p>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex-1 px-6 py-6 space-y-6">
+        <div className="flex-1 px-6 mb-4 space-y-4">
           <h3 className="text-base font-semibold text-gray-700">
             Quick Actions
           </h3>

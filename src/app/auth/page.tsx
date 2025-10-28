@@ -13,7 +13,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Main content */}
-      <div className="w-full text-center space-y-10 pt-[200px]">
+      <div className="w-full text-center space-y-10 pt-[120px]">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -51,7 +51,7 @@ export default function WelcomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="max-w-xl mx-auto"
+          className="max-w-xl w-[90%] mx-auto"
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed">
             Pay bills, Withdraw, and stay connected — all in one place.
@@ -67,7 +67,7 @@ export default function WelcomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="w-full flex flex-col gap-4 max-w-sm mx-auto pt-8"
+          className="w-full flex flex-col gap-4 max-w-sm mx-auto p-8"
         >
           <Link href={"/auth/register"} className="w-full cursor-pointer bg-[#21A29D] text-white font-semibold py-4 px-6 rounded-xl shadow-md hover:shadow-lg hover:bg-[#1b8e89] transition-all">
             Create Account
@@ -82,7 +82,7 @@ export default function WelcomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="pt-10 text-gray-700 text-sm"
+          className="pb-12 text-gray-700 text-sm mx-auto text-center w-[80%]"
         >
           <p>
             🔒 Secure & trusted by thousands of Nigerians. Powered by

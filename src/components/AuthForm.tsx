@@ -127,7 +127,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 return (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-gray-500 mb-1">
                                 Email/Username
                             </label>
                             <input
@@ -137,11 +137,11 @@ export default function AuthForm({ type }: AuthFormProps) {
                                 className={inputClasses}
                             />
                             {errors.entity?.message && (
-                                <p className="text-red-500 text-sm mt-1">{errors.entity.message.toString()}</p>
+                                <p className="text-red-500 text-xs mt-1">{errors.entity.message.toString()}</p>
                             )}
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-gray-500 mb-1">
                                 Password
                             </label>
                             <div className="relative">
@@ -191,7 +191,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                                 </button>
                             </div>
                             {errors.password?.message && (
-                                <p className="text-red-500 text-sm mt-1">{errors.password.message.toString()}</p>
+                                <p className="text-red-500 text-xs mt-1">{errors.password.message.toString()}</p>
                             )}
                         </div>
                     </>
@@ -201,35 +201,35 @@ export default function AuthForm({ type }: AuthFormProps) {
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-xs font-medium text-gray-500 mb-1">
                                     First Name
                                 </label>
                                 <input type="text" placeholder="John" {...formRegister("firstname")} className={inputClasses} />
-                                {errors.firstname?.message && <p className="text-red-500 text-sm mt-1">{errors.firstname.message.toString()}</p>}
+                                {errors.firstname?.message && <p className="text-red-500 text-xs mt-1">{errors.firstname.message.toString()}</p>}
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-xs font-medium text-gray-500 mb-1">
                                     Last Name
                                 </label>
                                 <input type="text" placeholder="Doe" {...formRegister("lastname")} className={inputClasses} />
-                                {errors.lastname?.message && <p className="text-red-500 text-sm mt-1">{errors.lastname.message.toString()}</p>}
+                                {errors.lastname?.message && <p className="text-red-500 text-xs mt-1">{errors.lastname.message.toString()}</p>}
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Username</label>
                             <input type="text" placeholder="johndoe123" {...formRegister("username")} className={inputClasses} />
-                            {errors.username?.message && <p className="text-red-500 text-sm mt-1">{errors.username.message.toString()}</p>}
+                            {errors.username?.message && <p className="text-red-500 text-xs mt-1">{errors.username.message.toString()}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Email Address</label>
                             <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
-                            {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
+                            {errors.email?.message && <p className="text-red-500 text-xs mt-1">{errors.email.message.toString()}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-xs font-medium text-gray-500 mb-1">
                                 Phone Number
                             </label>
                             <input
@@ -257,12 +257,12 @@ export default function AuthForm({ type }: AuthFormProps) {
                                 }}
                             />
                             {errors.phone?.message && (
-                                <p className="text-red-500 text-sm mt-1">{errors.phone.message.toString()}</p>
+                                <p className="text-red-500 text-xs mt-1">{errors.phone.message.toString()}</p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
                             <div className="relative">
                                 <input type={showPassword ? "text" : "password"} placeholder="********" {...formRegister("password")} className={`${inputClasses} pr-12`} />
                                 <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute inset-y-0 right-4 flex items-center text-gray-500 hover:text-[#21A29D]">
@@ -278,7 +278,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                                     )}
                                 </button>
                             </div>
-                            {errors.password?.message && <p className="text-red-500 text-sm mt-1">{errors.password.message.toString()}</p>}
+                            {errors.password?.message && <p className="text-red-500 text-xs mt-1">{errors.password.message.toString()}</p>}
                         </div>
                     </>
                 );
@@ -286,9 +286,9 @@ export default function AuthForm({ type }: AuthFormProps) {
                 return (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Email Address</label>
                             <input type="email" placeholder="you@example.com" {...formRegister("email")} className={inputClasses} />
-                            {errors.email?.message && <p className="text-red-500 text-sm mt-1">{errors.email.message.toString()}</p>}
+                            {errors.email?.message && <p className="text-red-500 text-xs mt-1">{errors.email.message.toString()}</p>}
                         </div>
                     </>
                 );
@@ -324,8 +324,8 @@ export default function AuthForm({ type }: AuthFormProps) {
                 </button>
 
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">{getTitle()}</h2>
-                    <p className="text-gray-500 mt-2">{getDescription()}</p>
+                    <h2 className="text-xl md:text-2xl font-extrabold text-gray-900">{getTitle()}</h2>
+                    <p className="text-gray-500 text-xs md:text-sm mt-2">{getDescription()}</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

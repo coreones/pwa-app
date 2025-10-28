@@ -39,7 +39,7 @@ export default function AppLayout({
       ease: "easeOut",
     },
   };
-  
+
   useEffect(() => {
     if (!pinConfirmationLoading && !hasPin) {
       setPinModal.open()
@@ -79,10 +79,10 @@ export default function AppLayout({
           <LogoutModal />
           {/* Floating Mobile Nav */}
           <div
-            className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0
+            className="max-w-3xl mx-auto bg-white/95 fixed bottom-0 left-0 right-0
           pb-[env(safe-area-inset-bottom)] flex items-center justify-between w-full
           backdrop-blur-lg border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] p-4
-          rounded-t-2xl z-50"
+          rounded-t-2xl z-[98]"
           >
             {navItems.map((item, id) => {
               const Icon = item.icon;

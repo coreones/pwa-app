@@ -32,7 +32,7 @@ export default function AddFunds({
             exit={{ y: 300 }}
             transition={{ type: "spring", damping: 20, stiffness: 200 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full bg-white rounded-t-3xl space-y-4 p-6 shadow-lg"
+            className="w-full bg-white rounded-t-3xl space-y-4 px-6 pt-6 pb-20 shadow-lg"
           >
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold text-gray-800">
