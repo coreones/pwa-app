@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, Home, List, Send } from "lucide-react";
+import { LayoutGrid, Home, List, Send, Banknote } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ export default function AppLayout({
 
   const navItems = [
     { icon: Home, name: "Home", link: "/app" },
-    { icon: Send, name: "Send", link: "/app/transfer" },
+    { icon: Banknote, name: "Withdraw", link: "/app/withdraw" },
     { icon: List, name: "History", link: "/app/history" },
     { icon: LayoutGrid, name: "More", link: "/app/profile" },
   ];

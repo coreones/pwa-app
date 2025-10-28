@@ -54,11 +54,10 @@ export default function WelcomePage() {
           className="max-w-xl mx-auto"
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed">
-            Pay bills, send money, and stay connected — all in one place.
+            Pay bills, Withdraw, and stay connected — all in one place.
           </h2>
           <p className="mt-3 text-gray-600 text-sm md:text-base">
-            Buy airtime & data, pay electricity & TV bills, send and receive
-            money, and even book flight tickets — all with BillNa. Fast,
+            Buy airtime & data, pay electricity & TV bills, and even book flight tickets — all with BillNa. Fast,
             reliable, and built for your everyday life.
           </p>
         </motion.div>

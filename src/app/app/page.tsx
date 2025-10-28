@@ -7,6 +7,7 @@ import {
   Sun,
   Settings,
   LogOut,
+  Banknote,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -145,7 +146,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
             <div className="flex items-center gap-2">
               <h3 className="text-2xl font-bold tracking-tight">
                 {showBalance ? formatNGN(wallet?.balance) : "₦****"}
@@ -154,20 +155,20 @@ export default function DashboardPage() {
                 <Eye size={20} />
               </button>
             </div>
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex w-full justify-end items-center gap-2">
               <Link
-                href={"/app/transfer"}
+                href={"/app/withdraw"}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
-                <Send size={12} />
-                <span>Send</span>
+                <Banknote size={12} />
+                <span>Withdraw</span>
               </Link>
               <button
                 onClick={() => setAddFunds(true)}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
                 <Plus size={12} />
-                <span>Receive</span>
+                <span className="flex flex-none">Fund Wallet</span>
               </button>
             </div>
           </div>
