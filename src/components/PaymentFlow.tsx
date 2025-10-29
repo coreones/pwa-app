@@ -28,6 +28,7 @@ type Provider = {
   logo: string;
 };
 
+
 type Variation = {
   variation_id: string;
   service_name: string;
@@ -112,6 +113,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       const res = await api.get<ApiResponse>(`/general/bill/${type}-services`);
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setProviders(res.data.data);
+        console.log("bills", res.data.data)
       } else {
         setProviders([]);
       }
@@ -815,10 +817,10 @@ function ProviderSelect({
             >
               <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden ring-1 ring-stone-200 mb-2">
                 <Image
-                  src={provider.logo}
+                  src={`/providers/${provider.service_id}.png`}
                   alt={provider.service_name}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
               <span

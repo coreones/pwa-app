@@ -146,3 +146,12 @@ export function formatTransactionLabel(
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 }
+
+export interface ServicesResponse {
+      service_id: string;
+      name: string;
+      minimium_purchase_amount: number;
+      maximium_purchase_amount: number;
+      purchase_type: "flexible" | "fix" | string,
+      logo: string;
+    }
