@@ -155,3 +155,10 @@ export interface ServicesResponse {
       purchase_type: "flexible" | "fix" | string,
       logo: string;
     }
+
+    export interface ServiceVariationsResponse {
+      variation_code: string;
+      variation_amount: number;
+      name: string;
+      duration: string;
+    }
