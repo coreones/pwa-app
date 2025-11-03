@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, Home, List, Send, Banknote } from "lucide-react";
+import { LayoutGrid, Home, List, Send } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ export default function AppLayout({
 
   const navItems = [
     { icon: Home, name: "Home", link: "/app" },
-    { icon: Banknote, name: "Withdraw", link: "/app/withdraw" },
+    { icon: Send, name: "Send", link: "/app/transfer" },
     { icon: List, name: "History", link: "/app/history" },
     { icon: LayoutGrid, name: "More", link: "/app/profile" },
   ];
@@ -39,35 +39,35 @@ export default function AppLayout({
       ease: "easeOut",
     },
   };
-
+  
   useEffect(() => {
     if (!pinConfirmationLoading && !hasPin) {
       setPinModal.open()
     }
   }, [hasPin, pinConfirmationLoading]);
 
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-white">
-        <div className="flex items-center gap-2">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-4 h-4 bg-[#21A29D] rounded-full"
-              animate={{ y: ["0%", "-50%", "0%"] }}
-              transition={{ ...bounceTransition, delay: i * 0.2 }}
-            />
-          ))}
-        </div>
-        <motion.p
-          className="mt-4 text-gray-600 font-medium text-lg"
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ repeat: Infinity, duration: 1 }}
-        >
-          Loading...
-        </motion.p>
-      </div>
-    );
+	  if (loading)
+	    return (
+	      <div className="flex flex-col items-center justify-center h-screen bg-white">
+		<div className="flex items-center gap-2">
+		  {[0, 1, 2].map((i) => (
+		    <motion.div
+		      key={i}
+		      className="w-4 h-4 bg-[#21A29D] rounded-full"
+		      animate={{ y: ["0%", "-50%", "0%"] }}
+		      transition={{ ...bounceTransition, delay: i * 0.2 }}
+		    />
+		  ))}
+		</div>
+		<motion.p
+		  className="mt-4 text-gray-600 font-medium text-lg"
+		  animate={{ opacity: [0.3, 1, 0.3] }}
+		  transition={{ repeat: Infinity, duration: 1 }}
+		>
+		  Loading...
+		</motion.p>
+	      </div>
+	    );
   return (
     authenticated ? (
       <DeviceRestriction>
@@ -79,10 +79,10 @@ export default function AppLayout({
           <LogoutModal />
           {/* Floating Mobile Nav */}
           <div
-            className="max-w-3xl mx-auto bg-white/95 fixed bottom-0 left-0 right-0
+            className="max-w-3xl  mx-auto bg-white/95 fixed bottom-0 left-0 right-0
           pb-[env(safe-area-inset-bottom)] flex items-center justify-between w-full
           backdrop-blur-lg border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] p-4
-          rounded-t-2xl z-[98]"
+          rounded-t-2xl z-50"
           >
             {navItems.map((item, id) => {
               const Icon = item.icon;

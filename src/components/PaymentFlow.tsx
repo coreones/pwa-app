@@ -54,7 +54,6 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [reference, setReference] = useState<string>("");
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [isSelected, setIsSelected] = useState<boolean>(true);
-  const [Electricity, setElectricity] = useState<string>("prepaid");
   const [formData, setFormData] = useState<Purchase>({
     service_id: "",
     amount: "",
