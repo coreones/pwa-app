@@ -156,6 +156,13 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="flex w-full justify-end items-center gap-2">
+                  <Link
+                href={"/app/tag"}
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+              >
+                <Send size={12} />
+                <span>Send</span>
+              </Link>
               <Link
                 href={"/app/withdraw"}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
