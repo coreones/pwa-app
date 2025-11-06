@@ -156,7 +156,14 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="flex w-full justify-end items-center gap-2">
-                  <Link
+              <button
+                onClick={() => setAddFunds(true)}
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-2 px-2 text-sm rounded-xl shadow-sm hover:shadow-md transition"
+              >
+                <Plus size={12} />
+                <span className="flex flex-none">Fund</span>
+              </button>
+              <Link
                 href={"/app/tag"}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
@@ -170,13 +177,6 @@ export default function DashboardPage() {
                 <Banknote size={12} />
                 <span>Withdraw</span>
               </Link>
-              <button
-                onClick={() => setAddFunds(true)}
-                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-2 px-2 text-sm rounded-xl shadow-sm hover:shadow-md transition"
-              >
-                <Plus size={12} />
-                <span className="flex flex-none">Fund Wallet</span>
-              </button>
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function DashboardPage() {
               {!transactions ?
                 <div className="space-y-4 animate-pulse">
                   {[...Array(10)].map((_, i) => (
-                   <TransactionSkeleton key={i} />
+                    <TransactionSkeleton key={i} />
                   ))}
                 </div> : (
                   <TransactionHistory
