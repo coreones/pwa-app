@@ -62,7 +62,7 @@ export const pinExtractor = (otp: string[]) => {
 
 export const features = [
   {
-    id: "receive",
+    id: "Fund wallet",
     name: "Receive",
     title: "Money Received",
     icon: Plus,
@@ -71,12 +71,12 @@ export const features = [
     purchaseable: false,
   },
   {
-    id: "send",
-    name: "Send",
+    id: "withdraw",
+    name: "Withdraw",
     title: "Money Sent",
     icon: Send,
-    link: "/app/transfer",
-    showInHome: false,
+    link: "/app/withdraw",
+    showInHome: true,
     purchaseable: false,
   },
   {

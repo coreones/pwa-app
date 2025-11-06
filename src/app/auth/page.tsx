@@ -5,11 +5,11 @@ import Link from "next/link";
 
 export default function WelcomePage() {
   return (
-    <div className="container flex flex-col items-center justify-center bg-gradient-to-b from-[#21A29D] via-[#21A29D]/30 to-[#ffffff] relative overflow-hidden py-6">
+    <div className="container w-full min-h-screen flex flex-col items-center justify-start bg-gradient-to-b from-[#21A29D] via-[#21A29D]/10 to-[#ffffff] relative overflow-hidden py-6">
       {/* Background decorative shapes */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#21A29D]/20 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 w-full -z-10 overflow-hidden">
+        <div className="absolute top-20  left-10 w-72 h-full bg-white rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-10 w-96 h-96 bg-white rounded-full "></div>
       </div>
 
       {/* Main content */}
@@ -54,11 +54,10 @@ export default function WelcomePage() {
           className="max-w-xl w-[90%] mx-auto"
         >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed">
-            Pay bills, send money, and stay connected — all in one place.
+            Pay bills, and stay connected — all in one place.
           </h2>
           <p className="mt-3 text-gray-600 text-sm md:text-base">
-            Buy airtime & data, pay electricity & TV bills, send and receive
-            money, and even book flight tickets — all with BillNa. Fast,
+            Buy airtime & data, pay electricity & TV bills, and even book flight tickets — all with BillNa. Fast,
             reliable, and built for your everyday life.
           </p>
         </motion.div>

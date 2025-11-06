@@ -21,6 +21,7 @@ import { MenuItem, ToggleItem } from "@/components/ui/buttons";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { logoutModal } from "@/lib/logout-modal";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -55,23 +56,23 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.28 }}
-          className="bg-white border border-stone-100 rounded-2xl shadow-sm p-4 flex items-center gap-4"
+          className="bg-white border border-stone-100 rounded-2xl flex-col text-center sm:text-start sm:flex-row shadow-sm p-4 flex items-center gap-4"
         >
-          <div className="relative w-16 h-16 rounded-full overflow-hidden bg-stone-100">
-            <Image src={user?.photo ?? "/default.png"} alt="profile" fill className="object-cover" />
+          <div className="relative w-16 h-16 rounded-full overflow-hidden flex flex-none bg-stone-100">
+            <Image src={user?.photo ?? "/default.png"} alt="profile" fill className="object-cover flex flex-none" />
           </div>
 
           <div className="flex-1">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex  items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold text-stone-900">{user?.firstname ?? "unknown"} {user?.lastname ?? "user"}</h2>
                 <p className="text-stone-500 text-sm">{user?.email ?? "--"}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 rounded-lg bg-[#E6FFFB] text-[#0f9c95] font-semibold">Verified</span>
-              </div>
             </div>
           </div>
+              <Link href={"/app/profile/upgrade-account"} className="flex items-center gap-2">
+                <span className="text-xs px-2 py-2 rounded-lg bg-[#E6FFFB] text-[#0f9c95] font-semibold">Upgrade account</span>
+              </Link>
         </motion.section>
 
         {/* Section: Account */}

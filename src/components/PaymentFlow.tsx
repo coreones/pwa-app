@@ -18,25 +18,19 @@ import { customerLabel, pinExtractor, stringArray } from "@/utils/string";
 import { Keypad } from "@/components/SetPin";
 import toast from "react-hot-toast";
 import { useWallet } from "@/hooks/useWallet";
+import { ServicesResponse, ServiceVariationsResponse } from "@/types/api";
 
 interface PaymentPageProps {
-  type: PurchaseAction
+  type: PurchaseAction;
 }
-type Provider = {
-  service_id: string;
-  service_name: string;
-  logo: string;
+type Provider = ServicesResponse;
+type Variation = ServiceVariationsResponse & {
+  service_name?: string;
+  service_id?: string;
+  price?: string | number;
+  data_plan?: string;
+  package_bouquet?: string;
 };
-
-type Variation = {
-  variation_id: string;
-  service_name: string;
-  service_id: string;
-  price: string;
-} & (
-    | { data_plan: string; package_bouquet?: never }
-    | { package_bouquet: string; data_plan?: never }
-  );
 
 type Purchase = {
   service_id: string;
@@ -44,6 +38,8 @@ type Purchase = {
   customer_id: string | number;
   variation: null | Variation;
   type: string;
+  variation_code: null | string;
+  meter_number: null | string;
 };
 export default function PaymentPage({ type }: PaymentPageProps) {
   const { user } = useAuth();
@@ -57,12 +53,15 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [verifyData, setVerifyData] = useState<any>(null);
   const [reference, setReference] = useState<string>("");
   const [showOTPFull, setShowOTPFull] = useState(false);
+  const [isSelected, setIsSelected] = useState<boolean>(true);
   const [formData, setFormData] = useState<Purchase>({
     service_id: "",
     amount: "",
     customer_id: "",
     variation: null,
-    type: "",
+    type: type,
+    variation_code: null,
+    meter_number: null,
   });
   const [providers, setProviders] = useState<Provider[] | null | []>(null);
   const [tvVariations, setTvVariations] = useState<Variation[] | null | []>(
@@ -71,6 +70,12 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const [dataVariations, setDataVariations] = useState<Variation[] | null | []>(
     null
   );
+
+  // console.log("service id", formData.service_id);
+  // console.log("Amount", formData.amount);
+  // console.log("Customer id", formData.customer_id);
+  // console.log("Variation", formData.variation);
+  // console.log("type", formData.type);
 
   const handleBack = () => {
     if (step === 1) window.history.back();
@@ -89,6 +94,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       customer_id: "",
       variation: null,
       type: "",
+      variation_code: null,
+      meter_number: null,
     });
   };
 
@@ -103,15 +110,18 @@ export default function PaymentPage({ type }: PaymentPageProps) {
     data: { title: "Purchase Data" },
     betting: { title: "Betting Top-Up" },
     tv: { title: "Cable Subscription" },
-    electricity: { title: "Electricity Token" }
+    electricity: { title: "Electricity Token" },
   };
 
   useEffect(() => {
     setLoading(true);
     const getProviders = async () => {
-      const res = await api.get<ApiResponse>(`/general/bill/${type}-services`);
+      const res = await api.get<ApiResponse<ServicesResponse[]>>(
+        `/general/bill/${type}-services`
+      );
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setProviders(res.data.data);
+        console.log("bills", res.data.data);
       } else {
         setProviders([]);
       }
@@ -123,8 +133,8 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const getDataVariations = async (service_id: string) => {
     setLoading(true);
     try {
-      const res = await api.get<ApiResponse>(
-        `/general/bill/data-variations?service=${service_id}`
+      const res = await api.get<ApiResponse<ServiceVariationsResponse[]>>(
+        `/general/bill/service-variations?service_id=${service_id}`
       );
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
         setDataVariations(res.data.data);
@@ -141,11 +151,18 @@ export default function PaymentPage({ type }: PaymentPageProps) {
   const getTVVariations = async (service_id: string) => {
     setLoading(true);
     try {
-      const res = await api.get<ApiResponse>(
-        `/general/bill/tv-variations?service=${service_id}`
+      const res = await api.get<ApiResponse<ServiceVariationsResponse[]>>(
+        `/general/bill/service-variations?service_id=${service_id}`
       );
       if (!res.data.error && res.data.data && res.data.data.length > 0) {
-        setTvVariations(res.data.data);
+        const mappedVariations = res.data.data.map((variation) => ({
+          ...variation,
+          variation_id: variation.variation_code,
+          price: variation.variation_amount,
+          package_bouquet: variation.name,
+        }));
+        console.log("servide variation", mappedVariations);
+        setTvVariations(mappedVariations);
       } else {
         setTvVariations([]);
       }
@@ -178,90 +195,162 @@ export default function PaymentPage({ type }: PaymentPageProps) {
       }
     }
   };
-
   const handleSubmit = async () => {
     setPurchasing(true);
     try {
-      let payload = {
-        service_id: formData.service_id, pin: pinExtractor(otp), amount: formData.amount,
-        ...(formData.customer_id) && { phone: ["airtime", "data"].includes(type) ? formData.customer_id : (user?.phone ?? null) },
-        ...(["betting", "tv", "data"].includes(type) && formData.variation) && { variation_id: formData.variation.variation_id.toString() },
-        ...(["betting", "tv", "electricity"].includes(type) && formData.customer_id) && { customer_id: formData.customer_id },
-        ...(["tv"].includes(type) && formData.type) && { type: formData.type },
-        ...(["electricity"].includes(type) && formData.type) && { variation_id: formData.type },
-        ...(verifyData) && { verify_data: verifyData }
+      let payload: any = {
+        service_id: formData.service_id,
+        pin: pinExtractor(otp),
+        amount:  Number(formData.amount),
+      };
+
+      switch (type) {
+        case "tv":
+          payload = {
+            ...payload,
+            ...(formData.customer_id && {
+              smartcard_number: formData.customer_id,
+            }),
+            ...(formData.variation && {
+              variation_code: formData.variation.variation_code,
+            }),
+            ...(formData.type && { type: formData.type }),
+          };
+          break;
+
+        case "airtime":
+        case "data":
+          payload = {
+            ...payload,
+            ...(formData.customer_id && { phone: formData.customer_id }),
+            ...(type === "data" &&
+              formData.variation && {
+                variation_code: formData.variation.variation_code,
+              }),
+          };
+          break;
+
+        case "betting":
+          payload = {
+            ...payload,
+            ...(formData.customer_id && { customer_id: formData.customer_id }),
+            ...(formData.variation && {
+              variation_code: formData.variation.variation_code,
+            }),
+          };
+          break;
+
+        case "electricity":
+          payload = {
+            ...payload,
+            ...(formData.customer_id && {
+              meter_number: formData.customer_id,
+            }),
+            ...(formData.type && {
+              variation_code: formData.type,
+            }),
+          };
+          break;
       }
+
+      if (verifyData) {
+        payload.verify_data = verifyData;
+      }
+  
       const url = `/transactions/buy-${type}`;
       const res = await api.post<ApiResponse<Transaction | null>>(url, payload);
+
       if (res.data.error) {
-        setSuccess(false)
-        toast.error(res.data.message ?? "Transaction failed")
+        setSuccess(false);
+        toast.error(res.data.message ?? "Transaction failed");
       } else {
-        setSuccess(true)
+        setSuccess(true);
         toast.success("Transaction successful");
       }
-      setReference(res.data?.data?.reference ?? "--")
+      setReference(res.data?.data?.reference ?? "--");
     } catch (err) {
-      toast.error("An error was encountered while processing your request, please try again.")
+      toast.error(
+        "An error was encountered while processing your request, please try again."
+      );
     } finally {
       setPurchasing(false);
       handleNext();
     }
-  }
+  };
 
   const handleVerifyCustomer = async () => {
     setVerifying(true);
     try {
       let payload = {
         service_id: formData.service_id,
-        customer_id: formData.customer_id,
-        variation_id: type === "electricity" ? formData.type : formData.variation?.variation_id,
-      }
-      const url = "/general/bill/verify-customer";
+        number: formData.customer_id,
+        type: "",
+      };
+      const url = "/general/bill/verify";
       const res = await api.post<ApiResponse>(url, payload);
       if (res.data.error) {
-        toast.error("Verification failed")
+        toast.error("Verification failed");
       } else {
         toast.success("Verification successful");
       }
       setVerifyData(res.data.data ?? null);
     } catch (err) {
     } finally {
-      setVerifying(false)
+      setVerifying(false);
     }
-  }
+  };
 
   const isStep1Valid = () => {
     const baseCheck = !!formData.service_id;
     const amount = Number(formData.amount);
-    if (amount <= 0 || !hasBalance || amount > Number(wallet?.balance)) {
-      return false;
-    }
+
+    let result = false;
     switch (type) {
       case "airtime":
-        return baseCheck && !!formData.customer_id && amount >= 10;
+        result = baseCheck && !!formData.customer_id && amount >= 10;
+        break;
+
       case "data":
-        return baseCheck && !!formData.customer_id && !!formData.variation && amount > 0;
+        result =
+          baseCheck &&
+          !!formData.customer_id &&
+          !!formData.variation &&
+          amount > 0;
+       
+        break;
+
       case "betting":
-        return baseCheck && !!formData.customer_id && amount >= 100;
+        result = baseCheck && !!formData.customer_id && amount >= 100;
+        break;
+
       case "tv":
-        return (
+        result =
           baseCheck &&
           !!formData.customer_id &&
           !!formData.variation &&
           !!formData.type &&
-          amount > 0
-        );
+          amount > 0;
+      
+        break;
+
       case "electricity":
-        return (
+        if( amount > 1000 && amount < 1100 ){
+          toast.error("amount must be greater 1000")
+        }
+        result =
           baseCheck &&
           !!formData.customer_id &&
           !!formData.type &&
-          amount >= 1000
-        );
+          amount >= 1100;
+
+          
+        break;
+
       default:
-        return false;
+        result = false;
     }
+
+    return result;
   };
 
   const renderStep = () => {
@@ -304,7 +393,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     label="Receiving Phone Number"
                     placeholder="2348012345678"
                     value={formData.customer_id}
-                    onChange={(e) => handleFormChange("customer_id", e.target.value)}
+                    onChange={(e) =>
+                      handleFormChange("customer_id", e.target.value)
+                    }
                     type="airtime"
                   />
                   <AmountGrid
@@ -328,7 +419,7 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       value={formData.variation}
                       onSelect={(plan) => {
                         handleFormChange("variation", plan);
-                        handleFormChange("amount", plan.price);
+                        handleFormChange("amount", plan.variation_amount || 0);
                       }}
                       variations={dataVariations}
                       type={type}
@@ -341,7 +432,9 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       placeholder="2348012345678"
                       value={formData.customer_id}
                       type="data"
-                      onChange={(e) => handleFormChange("customer_id", e.target.value)}
+                      onChange={(e) =>
+                        handleFormChange("customer_id", e.target.value)
+                      }
                     />
                   )}
                 </>
@@ -380,10 +473,38 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                     variations={tvVariations}
                     onSelect={(plan) => {
                       handleFormChange("variation", plan);
-                      handleFormChange("amount", plan.price);
+                      handleFormChange("amount", plan.price || 0);
                     }}
                     type={type}
                   />
+
+                  <div className=" flex  items-center gap-5 relative">
+                    <h4 className="text-sm font-semibold  text-gray-700 tracking-wide">
+                      Is this your current package
+                    </h4>
+
+                    <div className="flex flex-row items-center  space-x-4">
+                      <span>No</span>
+                      <button
+                        onClick={() => setIsSelected(!isSelected)}
+                        className={` w-20 cursor-pointer border border-teal-500 h-9 p-1 flex items-center rounded-full ${
+                          isSelected
+                            ? "border-teal-500 bg-gradient-to-r from-teal-500/10 to-teal-200 text-teal-700 shadow-[0_3px_8px_rgba(13,148,136,0.25)] "
+                            : "border-stone-200 text-stone-700 bg-teal-500 hover:bg-stone-50 hover:border-stone-300"
+                        } `}
+                      >
+                        <span
+                          className={`w-8 h-8 rounded-full transition-all duration-300 ${
+                            isSelected
+                              ? "translate-x-9 bg-teal-500"
+                              : "translate-x-1 bg-black/50"
+                          }`}
+                        ></span>
+                      </button>
+                      <span>Yes</span>
+                    </div>
+                  </div>
+
                   <InputField
                     label="Smartcard Number"
                     placeholder="Enter Smartcard number"
@@ -566,12 +687,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                       key={i}
                       animate={{ scale: otp[i] ? 1.1 : 1 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${showOTPFull
-                        ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
-                        : otp[i]
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
+                        showOTPFull
+                          ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
+                          : otp[i]
                           ? "bg-teal-600 text-white"
                           : "bg-stone-200 border border-stone-300"
-                        }`}
+                      }`}
                     >
                       {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
                     </motion.div>
@@ -643,16 +765,17 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                   }}
                   onConfirm={() => {
                     if (otp.every((d) => d)) {
-                      handleSubmit()
+                      handleSubmit();
                     } else {
-                      toast.error("Unable to process your request at the moment, please try again.")
+                      toast.error(
+                        "Unable to process your request at the moment, please try again."
+                      );
                     }
                   }}
                   disableConfirm={!otp.every((d) => d)}
                   loading={false}
                 />
               </div>
-
             </motion.div>
           </motion.div>
         );
@@ -717,13 +840,13 @@ export default function PaymentPage({ type }: PaymentPageProps) {
                 <button
                   onClick={() => {
                     setOtp(["", "", "", ""]);
-                    handleBack()
-                  }
-                  }
+                    handleBack();
+                  }}
                   className="w-full border border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
                 >
                   Back
-                </button>)}
+                </button>
+              )}
             </motion.div>
           </motion.div>
         );
@@ -808,24 +931,26 @@ function ProviderSelect({
               whileTap={{ scale: 0.97 }}
               onClick={() => onChange(provider.service_id)}
               className={`flex flex-col items-center justify-center shrink-0 min-w-[90px] md:min-w-[100px] p-4 rounded-2xl transition-all duration-300
-                ${isSelected
-                  ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
-                  : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
+                ${
+                  isSelected
+                    ? "bg-gradient-to-b from-teal-50 to-white border-2 border-teal-500 shadow-lg"
+                    : "bg-white border border-stone-200 hover:bg-stone-50 shadow-sm"
                 }`}
             >
               <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden ring-1 ring-stone-200 mb-2">
                 <Image
-                  src={provider.logo}
-                  alt={provider.service_name}
+                  src={`/providers/${provider.service_id}.png`}
+                  alt={provider.name}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
               <span
-                className={`text-xs md:text-sm font-medium ${isSelected ? "text-teal-700" : "text-stone-700"
-                  } text-center truncate w-full`}
+                className={`text-xs md:text-sm font-medium ${
+                  isSelected ? "text-teal-700" : "text-stone-700"
+                } text-center truncate w-full`}
               >
-                {provider.service_name}
+                {provider.name}
               </span>
             </motion.button>
           );
@@ -855,54 +980,91 @@ function PlanSelect({
   variations,
   type,
 }: PlanSelectProps) {
+  console.log("variation", variations);
+
+  const uniqueDurations = Array.from(
+    new Set(variations?.map((v) => v.duration) || [])
+  );
+  const [selectedDuration, setSelectedDuration] = useState(
+    uniqueDurations[0] || "others"
+  );
+
+  const filteredVariations =
+    variations?.filter((v) => v.duration === selectedDuration) || [];
+
   return (
     <div className="space-y-3 relative">
-      {/* Label */}
-      {variations && <label className="text-sm font-semibold text-stone-700 block">
-        {label}
-      </label>}
+      {variations && (
+        <label className="text-sm font-semibold text-stone-700 block">
+          {label}
+        </label>
+      )}
 
-      {/* Plan Grid / Scroll */}
+      {/* Duration Tabs */}
+      {uniqueDurations.length > 0 && (
+        <div className="w-full flex gap-2 flex-wrap">
+          {uniqueDurations.map((duration) => (
+            <button
+              key={duration}
+              onClick={() => setSelectedDuration(duration)}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border ${
+                selectedDuration === duration
+                  ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white border-teal-600 shadow-md"
+                  : "bg-white border-stone-200 text-stone-700 hover:bg-stone-50 hover:border-stone-300"
+              }`}
+            >
+              {duration.charAt(0).toUpperCase() + duration.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent py-1"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-teal-400 scrollbar-track-transparent py-1"
       >
-        {variations?.map((item, index) => {
-          const planStr =
-            type === "data" ? item.data_plan : item.package_bouquet;
-          const [planTitle, planSubtitle] = planStr
-            ? stringArray(planStr, " - ")
-            : ["--", "--"];
+        {filteredVariations.length > 0 ? (
+          filteredVariations.map((item) => {
+            const planStr =
+              type === "data" ? item.data_plan : item.package_bouquet;
+            const [planTitle] = planStr
+              ? stringArray(planStr, " - ")
+              : [item.name, item.duration];
 
-          const isSelected = value && value.variation_id === item.variation_id;
+            const isSelected =
+              value && value.variation_code === item.variation_code;
 
-          return (
-            <motion.button
-              key={index}
-              type="button"
-              onClick={() => onSelect(item)}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${isSelected
-                ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
-                : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
+            return (
+              <motion.button
+                key={item.name}
+                type="button"
+                onClick={() => onSelect(item)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className={`flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all duration-300 shadow-sm border ${
+                  isSelected
+                    ? "bg-gradient-to-b from-teal-50 to-white border-teal-500 text-teal-700 shadow-md"
+                    : "bg-white border-stone-200 text-stone-800 hover:bg-stone-50"
                 }`}
-            >
-              <span className="font-semibold text-sm">{planTitle}</span>
-              <span
-                className={`text-base md:text-lg font-bold ${isSelected ? "text-teal-600" : "text-primary"
-                  }`}
               >
-                {formatNGN(item.price)}
-              </span>
-              <span className="font-normal text-xs text-stone-500">
-                {planSubtitle}
-              </span>
-            </motion.button>
-          );
-        })}
+                <span className="font-semibold text-sm mb-1">{planTitle}</span>
+                <span
+                  className={`text-base md:text-lg font-bold ${
+                    isSelected ? "text-teal-600" : "text-primary"
+                  }`}
+                >
+                  {formatNGN(item.variation_amount)}
+                </span>
+              </motion.button>
+            );
+          })
+        ) : (
+          <div className="col-span-full text-center py-8 text-stone-500">
+            No plans available for {selectedDuration}
+          </div>
+        )}
       </motion.div>
     </div>
   );
@@ -915,7 +1077,12 @@ type AmountGridProps = {
   presetAmounts: number[];
 };
 
-export function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridProps) {
+export function AmountGrid({
+  type,
+  value,
+  onChange,
+  presetAmounts,
+}: AmountGridProps) {
   return (
     <div className="space-y-4">
       {/* Label */}
@@ -936,10 +1103,11 @@ export function AmountGrid({ type, value, onChange, presetAmounts }: AmountGridP
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onChange(amt.toString())}
                 className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 border text-sm
-                ${isSelected
+                ${
+                  isSelected
                     ? "border-teal-500 bg-gradient-to-r from-teal-500/10 to-teal-200 text-teal-700 shadow-[0_3px_8px_rgba(13,148,136,0.25)]"
                     : "border-stone-200 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-300"
-                  }`}
+                }`}
               >
                 ₦{amt.toLocaleString()}
               </motion.button>
@@ -1026,9 +1194,17 @@ export function InputField({
       </div>
       {verifyData && type && (
         <div className="w-full text-sm font-normal text-primary">
-          {type === "betting" && <span>{verifyData.customer_name} ({verifyData.customer_username})</span>}
+          {type === "betting" && (
+            <span>
+              {verifyData.customer_name} ({verifyData.customer_username})
+            </span>
+          )}
           {type === "tv" && <span>{verifyData.customer_name}</span>}
-          {type === "electricity" && <span>{verifyData.customer_name} ({verifyData.customer_address})</span>}
+          {type === "electricity" && (
+            <span>
+              {verifyData.customer_name} ({verifyData.customer_address})
+            </span>
+          )}
         </div>
       )}
     </div>
@@ -1064,8 +1240,9 @@ function SelectField({ label, options, value, onChange }: SelectFieldProps) {
         <div className="flex justify-between items-center">
           <span>{value || "Select an option"}</span>
           <ChevronDown
-            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"
-              }`}
+            className={`w-5 h-5 text-teal-600 transition-transform duration-200 ${
+              open ? "rotate-180" : "rotate-0"
+            }`}
           />
         </div>
 
@@ -1084,8 +1261,9 @@ function SelectField({ label, options, value, onChange }: SelectFieldProps) {
                   <li
                     key={i}
                     onClick={() => handleSelect(opt)}
-                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${value === opt ? "bg-teal-50 text-teal-700" : ""
-                      }`}
+                    className={`px-4 py-3 hover:bg-teal-50 transition-colors cursor-pointer ${
+                      value === opt ? "bg-teal-50 text-teal-700" : ""
+                    }`}
                   >
                     {opt}
                   </li>
