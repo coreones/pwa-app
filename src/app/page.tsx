@@ -18,13 +18,13 @@ export default function HomePage() {
         setLoading(true);
         const res = await api.get("/user/profile");
         if (res.data.error) {
-          router.push("/auth/login2");
+          router.push("/auth");
         } else {
           setToLocalStorage("user", JSON.stringify(res.data.data));
           router.push("/app");
         }
       } catch (err) {
-        router.push("/auth/login3");
+        router.push("/auth");
       } finally {
         setLoading(false);
       }
