@@ -11,10 +11,11 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
     return (
-        <AnimatePresence>
+        // <AnimatePresence>
+        <>
             {show && (
                 <motion.div
-                    className="fixed inset-0 z-50 flex items-end justify-center pb-8 w-full max-w-3xl mx-auto"
+                    className="fixed inset-0 z-[99] flex items-end justify-center pb-0 w-full max-w-3xl mx-auto"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -27,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
                         exit={{ opacity: 0 }}
                     />
                     <motion.div
-                        className="relative w-full bg-white rounded-2xl p-5 shadow-xl"
+                        className="relative w-full bg-white rounded-t-3xl p-4 shadow-xl"
                         initial={{ y: 200 }}
                         animate={{ y: 0 }}
                         exit={{ y: 200 }}
@@ -38,7 +39,8 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, children }) => {
                     </motion.div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </>
+        //  </AnimatePresence>
     );
 };
 

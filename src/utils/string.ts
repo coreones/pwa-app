@@ -76,7 +76,7 @@ export const features = [
     title: "Money Sent",
     icon: Send,
     link: "/app/withdraw",
-    showInHome: true,
+    showInHome: false,
     purchaseable: false,
   },
   {

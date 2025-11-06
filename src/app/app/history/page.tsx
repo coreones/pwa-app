@@ -10,12 +10,12 @@ import TransactionSkeleton from "@/components/TransactionSkeleton";
 export default function History() {
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   useEffect(() => {
-    const getRecentTransactions = async () => {
+    const getTransactions = async () => {
       const res = await api.get("/transactions/history");
       if (!res.data.error) setTransactions(res.data.data.data);
     };
 
-    getRecentTransactions();
+    getTransactions();
   }, []);
 
   return (
@@ -37,7 +37,6 @@ export default function History() {
             minimal={false}
           />
         }
-
       </div>
     </div>
   );

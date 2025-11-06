@@ -158,21 +158,21 @@ export default function DashboardPage() {
             <div className="flex w-full justify-end items-center gap-2">
               <button
                 onClick={() => setAddFunds(true)}
-                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-2 px-2 text-sm rounded-xl shadow-sm hover:shadow-md transition"
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium p-2.5 text-sm rounded-xl shadow-sm hover:shadow-md transition"
               >
                 <Plus size={12} />
                 <span className="flex flex-none">Fund</span>
               </button>
               <Link
                 href={"/app/tag"}
-                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium p-2.5 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
                 <Send size={12} />
                 <span>Send</span>
               </Link>
               <Link
                 href={"/app/withdraw"}
-                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium py-3 px-4 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
+                className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium p-2.5 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
                 <Banknote size={12} />
                 <span>Withdraw</span>

@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 relative rounded-full overflow-hidden border-4 border-stone-400">
                 <Image
-                  src={leaderboard && leaderboard.length > 1 ? leaderboard[1]?.photo : "/default.png"}
+                  src={leaderboard && leaderboard.length > 1 ? leaderboard[1]?.photo ?? "/default.png" : "/default.png"}
                   alt="2nd place"
                   fill
                   className="object-cover"
@@ -75,7 +75,7 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2 scale-110">
               <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-yellow-400 shadow-md">
                 <Image
-                  src={leaderboard && leaderboard.length > 0 ? leaderboard[0]?.photo : "/default.png"}
+                  src={leaderboard && leaderboard.length > 0 ? leaderboard[0]?.photo ?? "/default.png" : "/default.png"}
                   alt="1st place"
                   fill
                   className="object-cover"
@@ -92,13 +92,13 @@ export default function LeaderboardPage() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-12 h-12 relative rounded-full overflow-hidden border-4 border-red-400">
                 <Image
-                  src={leaderboard && leaderboard.length > 2 ? leaderboard[2]?.photo : "/default.png"}
+                  src={leaderboard && leaderboard.length > 2 ? leaderboard[2]?.photo ?? "/default.png" : "/default.png"}
                   alt="3rd place"
                   fill
                   className="object-cover"
                 />
               </div>
-              <span className="font-semibold text-red-700">{leaderboard && leaderboard.length > 2 ? leaderboard[2]?.photo : "--"}</span>
+              <span className="font-semibold text-red-700">{leaderboard && leaderboard.length > 2 ? leaderboard[2]?.name : "--"}</span>
               <span className="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full">
                 3rd
               </span>

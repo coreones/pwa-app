@@ -1,18 +1,44 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import TransactionHistory from "@/components/reports/TransactionHistory";
-import WalletHistory from "@/components/reports/WalletHistory";
 import ProfileHeader from "@/components/ProfileHeader";
 import TransactionSkeleton from "@/components/TransactionSkeleton";
+import api from "@/lib/axios";
+import { Transaction } from "@/types/api";
+import TransactionHistory from "@/components/TransactionHistory";
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState<number>(1);
   const [loading, setLoading] = useState(true);
+  const [walletTransactions, setWalletTransactions] = useState<Transaction[] | null>(null);
+  const [purchaseTransactions, setPurchaseTransactions] = useState<Transaction[] | null>(null);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(timeout);
+    const getWalletTransactions = async () => {
+      setLoading(true)
+      try {
+        const res = await api.get("/transactions/wallet-history");
+        if (!res.data.error) setWalletTransactions(res.data.data.data);
+      } catch (err) {
+
+      } finally {
+        setLoading(false)
+      }
+    };
+    const getPurchaseTransactions = async () => {
+      setLoading(true)
+      try {
+        const res = await api.get("/transactions/purchase-history");
+        if (!res.data.error) setPurchaseTransactions(res.data.data.data);
+      } catch (err) {
+
+      } finally {
+        setLoading(false)
+      }
+    };
+
+    getPurchaseTransactions();
+    getWalletTransactions();
   }, []);
 
   return (
@@ -43,25 +69,27 @@ export default function ReportsPage() {
                 <TransactionSkeleton key={i} />
               ))}
             </div>
-          ) : activeTab === 1 ? (
+          ) : activeTab === 1 ? (!purchaseTransactions ?
+            <div className="space-y-4 animate-pulse">
+              {[...Array(10)].map((_, i) => (
+                <TransactionSkeleton key={i} />
+              ))}
+            </div> :
             <TransactionHistory
-              data={[
-                { name: "Airtime Purchase", date: "Oct 10, 2025", amount: "-₦500", status: "Successful" },
-                { name: "Electricity Bill", date: "Oct 8, 2025", amount: "-₦8,200", status: "Successful" },
-                { name: "Bet9ja Top-up", date: "Oct 6, 2025", amount: "-₦2,000", status: "Failed" },
-                { name: "Wallet Funding", date: "Oct 3, 2025", amount: "+₦50,000", status: "Successful" },
-              ]}
-            />
-          ) : (
-            <WalletHistory
-              data={[
-                { type: "Deposit", date: "Oct 10, 2025", amount: "+₦20,000" },
-                { type: "Transfer", date: "Oct 8, 2025", amount: "-₦5,000" },
-                { type: "Cashback", date: "Oct 7, 2025", amount: "+₦1,200" },
-                { type: "POS Withdrawal", date: "Oct 5, 2025", amount: "-₦10,000" },
-              ]}
-            />
-          )}
+              data={purchaseTransactions}
+              minimal={false}
+            />)
+            : (!walletTransactions ?
+              <div className="space-y-4 animate-pulse">
+                {[...Array(10)].map((_, i) => (
+                  <TransactionSkeleton key={i} />
+                ))}
+              </div> :
+              <TransactionHistory
+                data={walletTransactions}
+                minimal={false}
+              />)
+          }
         </div>
       </div>
     </div>
