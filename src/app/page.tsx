@@ -18,7 +18,7 @@ export default function HomePage() {
         setLoading(true);
         const res = await api.get("/user/profile");
         if (res.data.error) {
-          router.push("/auth");
+          router.push("/auth/login");
         } else {
           setToLocalStorage("user", JSON.stringify(res.data.data));
           router.push("/app");
