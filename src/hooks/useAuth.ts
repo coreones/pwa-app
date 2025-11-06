@@ -16,7 +16,7 @@ export const useAuth = () => {
     const token = getFromCookie("token");
     const get_user = getFromLocalStorage("user");
     if (!token && pathname !== "/auth") {
-      router.push("/auth");
+      router.push("/auth/login4");
       setAuthenticated(false);
     } else {
       if (get_user) {
