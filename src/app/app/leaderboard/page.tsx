@@ -65,7 +65,7 @@ export default function LeaderboardPage() {
                   className="object-cover"
                 />
               </div>
-              <span className="font-semibold text-stone-700">{leaderboard && leaderboard.length > 1 ? leaderboard[1]?.name : "--"}</span>
+              <span className="font-semibold text-[12px] text-stone-700">{leaderboard && leaderboard.length > 1 ? leaderboard[1]?.name : "--"}</span>
               <span className="bg-stone-100 text-stone-700 text-xs px-3 py-1 rounded-full">
                 2nd
               </span>
@@ -82,7 +82,7 @@ export default function LeaderboardPage() {
                 />
                 <Trophy className="absolute -top-3 right-0 text-yellow-400 bg-white rounded-full p-1 w-6 h-6" />
               </div>
-              <span className="font-bold text-gray-800">{leaderboard && leaderboard.length > 0 ? leaderboard[0]?.name : "--"}</span>
+              <span className="font-bold text-[12px] text-gray-800">{leaderboard && leaderboard.length > 0 ? leaderboard[0]?.name : "--"}</span>
               <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">
                 1st
               </span>
@@ -98,7 +98,7 @@ export default function LeaderboardPage() {
                   className="object-cover"
                 />
               </div>
-              <span className="font-semibold text-red-700">{leaderboard && leaderboard.length > 2 ? leaderboard[2]?.name : "--"}</span>
+              <span className="font-semibold text-[12px] text-red-700">{leaderboard && leaderboard.length > 2 ? leaderboard[2]?.name : "--"}</span>
               <span className="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full">
                 3rd
               </span>
