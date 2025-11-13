@@ -8,7 +8,7 @@ interface ProfileHeaderProps {
 export default function ProfileHeader({ title }: ProfileHeaderProps) {
     const handleBack = useBack("/app");
     return (
-        <header className="sticky top-0 z-10 bg-[#21A29D] p-4 flex items-center justify-between shadow-sm">
+        <header className="bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 sticky top-0 z-10 p-4 flex items-center justify-between shadow-sm">
             <button
                 onClick={handleBack}
                 className="p-2 rounded-full hover:bg-white/20 transition"
