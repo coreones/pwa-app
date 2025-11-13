@@ -107,7 +107,7 @@ export default function DashboardPage() {
     <div className="min-h-screen container">
       <div className="flex flex-col w-full mx-auto h-auto pb-12">
         {/* HEADER */}
-        <div className="bg-[#21A29D] text-white rounded-b-[50px] px-4 pt-6 pb-4 relative shadow-sm z-1">
+        <div className="bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 text-white rounded-b-[50px] px-4 pt-6 pb-4 relative shadow-sm z-1">
           <div className="flex items-center justify-between mb-3">
             <Link href="/app/profile" className="flex items-center gap-2">
               <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white/40">
