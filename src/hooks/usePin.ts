@@ -4,7 +4,7 @@ import api from "@/lib/axios";
 import { useAuth } from "./useAuth";
 
 export const usePin = () => {
-  const { loading } = useAuth();
+  const { loading, authenticated } = useAuth();
   const [hasPin, setHasPin] = useState<boolean>(false);
   const [pinConfirmationLoading, setPinConfirmationLoading] =
     useState<boolean>(true);
@@ -19,8 +19,8 @@ export const usePin = () => {
         setPinConfirmationLoading(false);
       }
     };
-    if (loading) checkPinStatus();
-  }, [loading]);
+    if (!loading && authenticated) checkPinStatus();
+  }, [loading, authenticated]);
 
   return { hasPin, pinConfirmationLoading };
 };
