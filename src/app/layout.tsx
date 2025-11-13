@@ -34,7 +34,8 @@ export default function RootLayout({
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="theme-color" content="#21A29D" />
                 <link rel="manifest" href="/manifest.json" />
-                <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+                <link rel="apple-touch-icon" href="/icon.png" />
+                <link rel="icon" href="/icon.png" type="image/png" />
             </head>
             <body className="min-h-screen w-full overflow-x-hidden font-geist bg-white text-gray-900">
                 <Toaster />
