@@ -26,7 +26,7 @@ export default function AppLayout({
 
   const navItems = [
     { icon: Home, name: "Home", link: "/app" },
-    { icon: Send, name: "Send", link: "/app/transfer" },
+    { icon: Send, name: "Send", link: "/app/send" },
     { icon: List, name: "History", link: "/app/history" },
     { icon: LayoutGrid, name: "More", link: "/app/profile" },
   ];
