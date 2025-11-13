@@ -164,7 +164,7 @@ export default function DashboardPage() {
                 <span className="flex flex-none">Fund</span>
               </button>
               <Link
-                href={"/app/tag"}
+                href={"/app/send"}
                 className="flex flex-row items-center gap-2 bg-white text-[#21A29D] font-medium p-2.5 text-sm rounded-2xl shadow-sm hover:shadow-md transition"
               >
                 <Send size={12} />

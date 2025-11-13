@@ -30,7 +30,7 @@ export default function ProfilePage() {
   return (
     <div className="container">
       {/* Top header */}
-      <div className="w-full bg-[#21A29D] px-6 pb-6 pt-10 rounded-b-3xl">
+      <div className="w-full bg-gradient-to-br from-teal-600 via-teal-800 to-teal-900 px-6 pb-6 pt-10 rounded-b-3xl">
         <div className="flex items-center justify-between">
           <h1 className="text-white text-2xl font-bold tracking-tight">
             Account Settings
