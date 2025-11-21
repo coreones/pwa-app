@@ -3,11 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { AmountGrid, InputField, ReviewItem } from "@/components/PaymentFlow";
 import { Keypad } from "@/components/SetPin";
-import { motion } from "framer-motion";
-import {
-  Loader2,
-  ChevronDown,
-} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2, ChevronDown, Eye, EyeOff, X } from "lucide-react";
 import { formatNGN } from "@/utils/amount";
 import { ApiResponse } from "@/types/api";
 import api from "@/lib/axios";
@@ -48,6 +45,11 @@ export default function BankTransfer({ balance }: { balance: number }) {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [showOTPFull, setShowOTPFull] = useState(false);
   const [sending, setSending] = useState(false);
+
+  const handleBack = () => {
+    if (step === 1) window.history.back();
+    else setStep((prev) => prev - 1);
+  };
 
   /* --------------------------------
       Fetch Banks Once
@@ -112,7 +114,7 @@ export default function BankTransfer({ balance }: { balance: number }) {
         return;
       }
 
-      setVerifyData(res.data.data)
+      setVerifyData(res.data.data);
       updateForm("account_name", res.data.data.account_name);
     } catch (err) {
       toast.error("Failed to verify account details");
@@ -145,11 +147,11 @@ export default function BankTransfer({ balance }: { balance: number }) {
         amount: formData.amount,
         remarks: formData.remarks,
         verify_data: verifyData,
-        pin: pinExtractor(otp)
-      })
+        pin: pinExtractor(otp),
+      });
 
       if (res.data.error) {
-        toast.error("Transfer failed")
+        toast.error("Transfer failed");
         return;
       }
       toast.success("Transfer successful!");
@@ -163,10 +165,9 @@ export default function BankTransfer({ balance }: { balance: number }) {
         amount: "",
         remarks: "",
       });
-      setVerifyData(null)
+      setVerifyData(null);
       setOtp(["", "", "", ""]);
       setStep(1);
-
     } catch (err) {
       toast.error("Error performing transfer");
     } finally {
@@ -174,18 +175,15 @@ export default function BankTransfer({ balance }: { balance: number }) {
     }
   };
 
-  const handleDelete = () => {
-  };
+  const handleDelete = () => {};
 
-  const handleConfirm = () => {
-  };
+  const handleConfirm = () => {};
 
   /* --------------------------------
       Render Steps
   -------------------------------- */
   const renderStep = () => {
     switch (step) {
-
       /* --------------------------------
             STEP 1 — Account Number + Bank
       -------------------------------- */
@@ -293,23 +291,56 @@ export default function BankTransfer({ balance }: { balance: number }) {
       case 3:
         return (
           <motion.div
-            className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0"
           >
             <motion.div
-              className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 100, opacity: 0 }}
+              className="bg-white rounded-3xl px-6 pb-16 pt-8 w-full max-w-md shadow-2xl"
             >
-              <h2 className="text-xl font-bold mb-4">Review Transaction</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-stone-900">
+                  Review Transaction
+                </h2>
+                <button
+                  onClick={handleBack}
+                  className="text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
 
-              <div className="space-y-3">
-                <ReviewItem label="Bank" value={formData.bank_name} />
-                <ReviewItem label="Account Number" value={formData.account_number} />
-                <ReviewItem label="Account Name" value={formData.account_name} />
-                <ReviewItem label="Amount" value={formatNGN(Number(formData.amount))} />
-                {formData.remarks && (
-                  <ReviewItem label="Remarks" value={formData.remarks} />
-                )}
+              <div className="space-y-4 mb-8">
+                <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-2xl p-6 border border-teal-100 space-y-4">
+                  <ReviewItem label="Bank" value={formData.bank_name} />
+                  <ReviewItem
+                    label="Account Number"
+                    value={formData.account_number}
+                  />
+                  <ReviewItem
+                    label="Account Name"
+                    value={formData.account_name}
+                  />
+                  <ReviewItem
+                    label="Amount"
+                    value={formatNGN(Number(formData.amount))}
+                  />
+                  {formData.remarks && (
+                    <ReviewItem label="Remarks" value={formData.remarks} />
+                  )}
+
+                  <div className="border-t border-teal-100" />
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-stone-600 font-medium">Amount</span>
+                    <span className="text-2xl font-bold text-teal-600">
+                      {formatNGN(formData.amount)}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <button
@@ -317,6 +348,13 @@ export default function BankTransfer({ balance }: { balance: number }) {
                 className="w-full mt-5 bg-teal-600 text-white py-3 rounded-xl"
               >
                 Confirm & Send
+              </button>
+
+               <button
+                onClick={handleBack}
+                className="w-full border mt-2 border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
+              >
+                Back
               </button>
             </motion.div>
           </motion.div>
@@ -327,71 +365,112 @@ export default function BankTransfer({ balance }: { balance: number }) {
       -------------------------------- */
       case 4:
         return (
-          <div className="p-6 text-center">
-            <h2 className="text-lg font-bold mb-4">Enter PIN</h2>
-
-            <div className="flex justify-center gap-3 mb-4">
-              {otp.map((d, i) => (
-                <div
-                  key={i}
-                  className="w-12 h-12 flex items-center justify-center bg-stone-200 rounded-xl text-xl"
-                >
-                  {showOTPFull ? d : d ? "•" : ""}
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setShowOTPFull(!showOTPFull)}
-              className="mb-4 text-sm text-stone-500"
+          <AnimatePresence>
+            <motion.div
+              className="container fixed inset-0 flex flex-col items-center min-h-screen h-full justify-center z-[99] pb-"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleBack}
             >
-              {showOTPFull ? "Hide PIN" : "Show PIN"}
-            </button>
+              <div className="w-full h-full bg-black/25 backdrop-blur-sm"></div>
+              <motion.div
+                initial={{ y: 300 }}
+                animate={{ y: 0 }}
+                exit={{ y: 300 }}
+                transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white p-10 rounded-2xl pb-16"
+              >
+                <div className="flex justify-center gap-6 mb-6">
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ scale: otp[i] ? 1.1 : 1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
+                        showOTPFull
+                          ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
+                          : otp[i]
+                          ? "bg-teal-600 text-white"
+                          : "bg-stone-200 border border-stone-300"
+                      }`}
+                    >
+                      {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
+                    </motion.div>
+                  ))}
+                </div>
 
-            <Keypad
-              numbers={[
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "←",
-                "0",
-                "✓",
-              ]}
-              onNumberClick={(num) => {
-                if (num === "←") {
-                  const lastFilled = otp.findLastIndex((d) => d !== "");
-                  if (lastFilled >= 0) {
-                    const newOtp = [...otp];
-                    newOtp[lastFilled] = "";
-                    setOtp(newOtp);
-                  }
-                  return;
-                }
+                {/* Show/Hide Toggle */}
+                <button
+                  onClick={() => setShowOTPFull(!showOTPFull)}
+                  className="flex items-center justify-center gap-2 mx-auto mb-6 text-sm text-stone-600 hover:text-stone-800"
+                >
+                  {showOTPFull ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showOTPFull ? "Hide" : "Show"} PIN
+                </button>
 
-                if (num === "✓") {
-                  if (otp.every((d) => d)) handleSend();
-                  return;
-                }
-
-                const empty = otp.findIndex((d) => d === "");
-                if (empty !== -1) {
-                  const newOtp = [...otp];
-                  newOtp[empty] = num;
-                  setOtp(newOtp);
-                }
-              }}
-              onDelete={handleDelete}
-              onConfirm={handleConfirm}
-              disableConfirm={!otp.every((d) => d)}
-              loading={sending}
-            />
-          </div>
+                <Keypad
+                  numbers={[
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "←",
+                    "0",
+                    "✓",
+                  ]}
+                  onNumberClick={(num) => {
+                    if (num === "←") {
+                      // Handle delete
+                      const lastFilledIndex = otp.reduce(
+                        (acc, digit, idx) => (digit ? idx : acc),
+                        -1
+                      );
+                      if (lastFilledIndex >= 0) {
+                        const newOtp = [...otp];
+                        newOtp[lastFilledIndex] = "";
+                        setOtp(newOtp);
+                      }
+                    } else if (num === "✓") {
+                      // Handle confirm
+                      if (otp.every((d) => d)) {
+                        handleSend();
+                        // handleNext();
+                      }
+                    } else {
+                      // Handle number input
+                      const emptyIndex = otp.findIndex((digit) => !digit);
+                      if (emptyIndex !== -1) {
+                        const newOtp = [...otp];
+                        newOtp[emptyIndex] = num;
+                        setOtp(newOtp);
+                      }
+                    }
+                  }}
+                  onDelete={() => {
+                    const lastFilledIndex = otp.reduce(
+                      (acc, digit, idx) => (digit ? idx : acc),
+                      -1
+                    );
+                    if (lastFilledIndex >= 0) {
+                      const newOtp = [...otp];
+                      newOtp[lastFilledIndex] = "";
+                      setOtp(newOtp);
+                    }
+                  }}
+                  onConfirm={handleSend}
+                  disableConfirm={!otp.every((d) => d)}
+                  loading={sending}
+                />
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
         );
     }
   };
@@ -399,9 +478,5 @@ export default function BankTransfer({ balance }: { balance: number }) {
   /* --------------------------------
       Return Main
   -------------------------------- */
-  return (
-    <div className="w-full max-w-lg mx-auto">
-      {renderStep()}
-    </div>
-  );
+  return <div className="w-full max-w-lg mx-auto">{renderStep()}</div>;
 }
