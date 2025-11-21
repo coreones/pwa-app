@@ -1,20 +1,47 @@
+import api from "@/lib/axios";
+import { ApiResponse } from "@/types/api";
 import {
   XMarkIcon,
   ClipboardDocumentIcon,
 } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion } from "framer-motion";
 import { Landmark, User, X } from "lucide-react";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
+interface BankAccount {
+  account_name: string;
+  bank_code: string;
+  bank_name: string;
+  account_number: string;
+  account_id: string;
+  account_reference: string;
+}
 export default function AddFunds({
   close,
 }: {
   close: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getBankAccount = async () => {
+      try {
+        const res = await api.get<ApiResponse>('/user/bank-account');
+        if (!res.data.error && res.data.data) {
+          setBankAccount(res.data.data)
+        }
+      } catch (e) {
+
+      } finally {
+        setLoading(false)
+      }
+    }
+    getBankAccount();
+  }, [])
   const handleCopy = () => {
-    navigator.clipboard.writeText("08123456789");
-    toast.success("Referral code copied");
+    navigator.clipboard.writeText(bankAccount ? bankAccount.account_number : "");
+    toast.success("Account number copied");
   };
   return (
     <div>
@@ -46,38 +73,42 @@ export default function AddFunds({
               </button>
             </div>
 
-            <div className="w-full text-center bg-alternate/10 p-3 rounded-xl font-semibold text-black/70 ">
-              Transafer to the virtual account below
-            </div>
-            <div className="bg-gray-100 border border-gray-200 rounded-xl flex  items-center justify-between px-4 py-3 mb-4">
-              <div className="flex flex-col w-full">
-                <h4 className="text-[#21A29D]">Account Number</h4>
-                <span className="text-gray-700 text-lg truncate max-w-[70%]">
-                  08123456789
-                </span>
-              </div>
-              <button
-                onClick={handleCopy}
-                className="text-[#21A29D] hover:text-[#1b8a88] transition"
-              >
-                <ClipboardDocumentIcon className="w-5 h-5" />
-              </button>
-            </div>
+            {loading && <p className="text-center w-full p-4 text-primary">Fetching topup account, please wait..</p>}
 
-            <div className="w-full text-center bg-alternate/10 p-3 flex gap-3 justify-start items-center rounded-xl font-semibold text-black/70 ">
-              <Landmark color="#21A29D" size={35} />
-              <div className="flex text-start flex-col">
-                <h4>Bank Name</h4>
-                <h4 className="text-[#21A29D]">BillNa</h4>
+            {!loading && bankAccount && <div className="w-full flex flex-col space-y-3">
+              <div className="w-full text-center bg-alternate/10 p-3 rounded-xl font-semibold text-black/70 ">
+                Please Note! the account number below is not fixed. Make sure to always get your account number from here(DONT SAVE AS BENEFICIARY)
               </div>
-            </div>
-            <div className="w-full text-center bg-alternate/10 p-3 flex gap-3 justify-start items-center rounded-xl font-semibold text-black/70 ">
-              <User color="#21A29D" size={35} />
-              <div className="flex text-start flex-col">
-                <h4>Account Name</h4>
-                <h4 className="text-[#21A29D]">Tali Nanzing</h4>
+              <div className="bg-gray-100 border border-gray-200 rounded-xl flex  items-center justify-between px-4 py-3 mb-4">
+                <div className="flex flex-col w-full">
+                  <h4 className="text-[#21A29D]">Account Number</h4>
+                  <span className="text-gray-700 text-lg truncate max-w-[70%]">
+                    {bankAccount?.account_number}
+                  </span>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className="text-[#21A29D] hover:text-[#1b8a88] transition"
+                >
+                  <ClipboardDocumentIcon className="w-5 h-5" />
+                </button>
               </div>
-            </div>
+
+              <div className="w-full text-center bg-alternate/10 p-3 flex gap-3 justify-start items-center rounded-xl font-semibold text-black/70 ">
+                <Landmark color="#21A29D" size={35} />
+                <div className="flex text-start flex-col">
+                  <h4>Bank Name</h4>
+                  <h4 className="text-[#21A29D]">{bankAccount?.bank_name}</h4>
+                </div>
+              </div>
+              <div className="w-full text-center bg-alternate/10 p-3 flex gap-3 justify-start items-center rounded-xl font-semibold text-black/70 ">
+                <User color="#21A29D" size={35} />
+                <div className="flex text-start flex-col">
+                  <h4>Account Name</h4>
+                  <h4 className="text-[#21A29D]">{bankAccount?.account_name}</h4>
+                </div>
+              </div>
+            </div>}
           </motion.div>
         </motion.div>
       </AnimatePresence>
