@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function WelcomePage() {
@@ -23,7 +24,7 @@ export default function WelcomePage() {
         >
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg">
-              <svg
+              {/* <svg
                 className="w-8 h-8 text-[#21A29D]"
                 fill="none"
                 stroke="currentColor"
@@ -35,7 +36,13 @@ export default function WelcomePage() {
                   strokeWidth={2.5}
                   d="M5 13l4 4L19 7"
                 />
-              </svg>
+              </svg> */}
+              <Image
+                src="/icons/icon.png"
+                alt="Logo"
+                width={48}
+                height={48}
+              />
             </div>
             <h1 className="text-4xl font-extrabold text-white tracking-tight">
               BillNa

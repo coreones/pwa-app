@@ -139,7 +139,7 @@ export default function BankTransfer({ balance }: { balance: number }) {
     try {
       setSending(true);
 
-      const res = await api.post<ApiResponse>("/transfers/bank", {
+      const res = await api.post<ApiResponse>("/transfer/bank", {
         account_name: formData.account_name,
         account_number: formData.account_number,
         bank_name: formData.bank_name,
@@ -151,10 +151,10 @@ export default function BankTransfer({ balance }: { balance: number }) {
       });
 
       if (res.data.error) {
-        toast.error("Transfer failed");
+        toast.error(res.data.message || "Transfer failed");
         return;
       }
-      toast.success("Transfer successful!");
+      toast.success(res.data.message || "Transfer successful!");
 
       // Reset all
       setFormData({
@@ -169,15 +169,11 @@ export default function BankTransfer({ balance }: { balance: number }) {
       setOtp(["", "", "", ""]);
       setStep(1);
     } catch (err) {
-      toast.error("Error performing transfer");
+      toast.error("Unable to complete transfer, please try again..");
     } finally {
       setSending(false);
     }
   };
-
-  const handleDelete = () => {};
-
-  const handleConfirm = () => {};
 
   /* --------------------------------
       Render Steps
@@ -350,7 +346,7 @@ export default function BankTransfer({ balance }: { balance: number }) {
                 Confirm & Send
               </button>
 
-               <button
+              <button
                 onClick={handleBack}
                 className="w-full border mt-2 border-stone-200 text-stone-700 font-semibold py-4 rounded-xl hover:bg-stone-50 transition-all"
               >
@@ -388,13 +384,12 @@ export default function BankTransfer({ balance }: { balance: number }) {
                       key={i}
                       animate={{ scale: otp[i] ? 1.1 : 1 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${
-                        showOTPFull
-                          ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
-                          : otp[i]
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-semibold ${showOTPFull
+                        ? "border-2 border-teal-200 bg-teal-50 text-teal-700"
+                        : otp[i]
                           ? "bg-teal-600 text-white"
                           : "bg-stone-200 border border-stone-300"
-                      }`}
+                        }`}
                     >
                       {showOTPFull ? otp[i] || "" : otp[i] ? "•" : ""}
                     </motion.div>

@@ -135,7 +135,7 @@ export default function TagTransfer({ balance }: { balance: number }) {
                 />
                 <InputField
                   label="Remarks"
-                  placeholder="School fee"
+                  placeholder="Optional note"
                   onChange={(e) => setRemarks(e.target.value)}
                   value={remarks}
                 />

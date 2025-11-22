@@ -51,16 +51,16 @@ export default function HomePage() {
         >
           <div className="flex items-center justify-center mb-6">
             <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-              className="p-3 bg-white/10 rounded-full"
+              // animate={{ rotate: [0, 360] }}
+              // transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+              // className="p-3 bg-white/10 rounded-full animate-pulse"
+              className="animate-pulse"
             >
               <Image
-                src="/logo.svg"
-                alt="App Logo"
-                width={64}
-                height={64}
-                className="rounded-full"
+                src="/icons/icon.png"
+                alt="Logo"
+                width={100}
+                height={100}
               />
             </motion.div>
           </div>
